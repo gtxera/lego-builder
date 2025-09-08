@@ -17,7 +17,7 @@ public class HueWheel : ValidatedMonoBehaviour, IPointerDownHandler, IPointerUpH
     private Image _reticleImage;
 
     [SerializeField]
-    private float _minDistance = 200;
+    private float _minDistance;
 
     [SerializeField]
     private float _reticleMagnitude;
@@ -32,6 +32,11 @@ public class HueWheel : ValidatedMonoBehaviour, IPointerDownHandler, IPointerUpH
     {
         BuildColorTexture();
         _rectTransform = GetComponent<RectTransform>();
+    }
+
+    private void Start()
+    {
+        MoveReticle(new Vector2(Screen.width / 2, Screen.height));
     }
 
     private void BuildColorTexture()
