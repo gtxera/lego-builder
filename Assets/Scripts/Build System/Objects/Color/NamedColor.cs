@@ -66,9 +66,54 @@ public class NamedColor
     public override string ToString()
     {
         if (_isGray)
-            return _grayType.ToString();
+            return GrayName(_grayType);
         else
-            return $"{_hue} - {_shade}";
+            return $"{HueName(_hue)} {ShadeName(_shade)}";
+    }
+
+    private static string GrayName(GrayType grayType)
+    {
+        return grayType switch
+        {
+            GrayType.Black => "Preto",
+            GrayType.DarkGray => "Cinza Escuro",
+            GrayType.MidGray => "Cinza",
+            GrayType.LightGray => "Cinza Claro",
+            GrayType.White => "Branco",
+            _ => throw new ArgumentOutOfRangeException(nameof(grayType), grayType, null)
+        };
+    }
+
+    private static string HueName(Hue hue)
+    {
+        return hue switch
+        {
+            Hue.Red => "Vermelho",
+            Hue.Orange => "Laranja",
+            Hue.Yellow => "Amarelo",
+            Hue.Lime => "Lima",
+            Hue.Green => "Verde",
+            Hue.Mint => "Menta",
+            Hue.Cyan => "Ciano",
+            Hue.Azure => "Azure",
+            Hue.Blue => "Azul",
+            Hue.Violet => "Violeta",
+            Hue.Magenta => "Magenta",
+            Hue.Rose => "Rosa",
+            _ => throw new ArgumentOutOfRangeException(nameof(hue), hue, null)
+        };
+    }
+
+    private static string ShadeName(Shade shade)
+    {
+        return shade switch
+        {
+            Shade.Pale => "Pálido",
+            Shade.Dull => "Fosco",
+            Shade.Bright => "Claro",
+            Shade.Dark => "Escuro",
+            _ => throw new ArgumentOutOfRangeException(nameof(shade), shade, null)
+        };
     }
 }
 
