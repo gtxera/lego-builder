@@ -22,5 +22,5 @@ public class SwatchColor : PieceColor
         }
     }
 
-    public override bool Equals(object other) => other is SwatchColor swatchColor && swatchColor == this;
+    public override bool IsEqual(PieceColor pieceColor) => pieceColor is SwatchColor swatchColor && swatchColor == this;
 }

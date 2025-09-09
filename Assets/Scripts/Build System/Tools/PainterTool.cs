@@ -69,7 +69,7 @@ public class PainterTool : ITool
         
         var selectedColor = _buildColorSelector.GetSelectedColorFor(0);
         
-        if (piece.Colors[0].Equals(selectedColor))
+        if (piece.Colors[0].IsEqual(selectedColor))
             return;
         
         _coloredPiecesIds.Add(piece.Id, piece.Colors[0]);
