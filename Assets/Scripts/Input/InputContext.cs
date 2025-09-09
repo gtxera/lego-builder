@@ -4,6 +4,8 @@ public abstract class InputContext
 {
     private readonly LegoBuilderInputActions _inputActions;
 
+    private bool _enabled;
+
     protected InputContext(LegoBuilderInputActions inputActions)
     {
         _inputActions = inputActions;
@@ -11,11 +13,19 @@ public abstract class InputContext
 
     public void Enable()
     {
+        if (_enabled)
+            return;
+
+        _enabled = true;
         Enable(_inputActions);
     }
 
     public void Disable()
     {
+        if (!_enabled)
+            return;
+
+        _enabled = false;
         Disable(_inputActions);
     }
     
