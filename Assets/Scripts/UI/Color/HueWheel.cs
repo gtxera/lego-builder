@@ -36,7 +36,7 @@ public class HueWheel : ValidatedMonoBehaviour, IPointerDownHandler, IPointerUpH
 
     private void Start()
     {
-        MoveReticle(new Vector2(Screen.width / 2, Screen.height));
+        MoveReticle(new Vector2(_rectTransform.position.x, Screen.height));
     }
 
     private void BuildColorTexture()
