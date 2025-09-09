@@ -5,15 +5,20 @@ using UnityEngine.InputSystem.Controls;
 
 public class CameraControlInputContext : InputContext
 {
-    public CameraControlInputContext(LegoBuilderInputActions inputActions) : base(inputActions)
-    {
-    }
-    
     private bool _primaryTouchPerformed;
     private bool _secondTouchPerformed;
     private Vector2 _firstTouchDelta;
     private Vector2 _secondTouchDelta;
+    private bool _touchBeganInUI;
 
+    private readonly PointerUIController _pointerUIController;
+    
+    public CameraControlInputContext(LegoBuilderInputActions inputActions, PointerUIController pointerUIController) : base(inputActions)
+    {
+        _pointerUIController = pointerUIController;
+    }
+
+    public event Action CameraMoveStarted = delegate { };
     public event Action<Vector2> CameraMoveRequested = delegate { };
     public event Action CameraMoveFinished = delegate { };
     public event Action<float> CameraLookOrbitYRequested = delegate { };
@@ -28,8 +33,10 @@ public class CameraControlInputContext : InputContext
         inputActions.Camera.SecondTouch.performed += OnSecondTouchPerformed;
         inputActions.Camera.SecondTouch.canceled += OnSecondTouchCanceled;
 
+        inputActions.Camera.Touch.performed += OnMoveStarted;
         inputActions.Camera.Move.performed += OnMovePerformed;
         inputActions.Camera.Touch.canceled += OnMoveCanceled;
+        
         inputActions.Camera.Look.performed += OnLookPerformed;
         inputActions.Camera.Zoom.performed += OnZoomPerformed;
     }
@@ -42,8 +49,10 @@ public class CameraControlInputContext : InputContext
         inputActions.Camera.SecondTouch.performed -= OnSecondTouchPerformed;
         inputActions.Camera.SecondTouch.canceled -= OnSecondTouchCanceled;
 
+        inputActions.Camera.Touch.performed -= OnMoveStarted;
         inputActions.Camera.Move.performed -= OnMovePerformed;
         inputActions.Camera.Touch.canceled -= OnMoveCanceled;
+        
         inputActions.Camera.Look.performed -= OnLookPerformed;
         inputActions.Camera.Zoom.performed -= OnZoomPerformed;
     }
@@ -75,15 +84,44 @@ public class CameraControlInputContext : InputContext
         _secondTouchPerformed = false;
     }
 
+    private void OnMoveStarted(InputAction.CallbackContext context)
+    {
+        if (context.control.device is not Pointer pointer)
+            throw new InvalidOperationException("Press deve ser pointer");
+
+        _touchBeganInUI = _pointerUIController.IsPointerOverUI(pointer.position.ReadValue());
+
+        if (!_touchBeganInUI)
+            CameraMoveStarted();
+    }
+    
     private void OnMovePerformed(InputAction.CallbackContext context)
     {
+        if (_touchBeganInUI)
+            return;
+        
         HandleCameraMoveRequest(context.ReadValue<Vector2>());
     }
 
-    private void OnMoveCanceled(InputAction.CallbackContext _) => CameraMoveFinished();
+    private void OnMoveCanceled(InputAction.CallbackContext _)
+    {
+        var touchBeganInUI = _touchBeganInUI;
+        _touchBeganInUI = false;
+        
+        if (touchBeganInUI)
+            return;
+
+        CameraMoveFinished();
+    }
 
     private void OnLookPerformed(InputAction.CallbackContext context)
     {
+        if (context.control.device is not Pointer pointer)
+            throw new InvalidOperationException("Press deve ser pointer");
+
+        if (_touchBeganInUI)
+            return;
+        
         var delta = NormalizeToScreen(context.ReadValue<Vector2>());
         
         if (delta.x != 0)
@@ -95,6 +133,9 @@ public class CameraControlInputContext : InputContext
 
     private void OnZoomPerformed(InputAction.CallbackContext context)
     {
+        if (_pointerUIController.IsPointerOverUI(Pointer.current.position.ReadValue()))
+            return;
+        
         var delta = context.ReadValue<Vector2>();
         
         HandleCameraZoomRequested(-delta.y);

@@ -4,8 +4,13 @@ using UnityEngine.InputSystem;
 
 public class ToolInputContext : InputContext
 {
-    public ToolInputContext(LegoBuilderInputActions inputActions) : base(inputActions)
+    private readonly PointerUIController _pointerUIController;
+
+    private bool _pressBeganInUI;
+    
+    public ToolInputContext(LegoBuilderInputActions inputActions, PointerUIController pointerUIController) : base(inputActions)
     {
+        _pointerUIController = pointerUIController;
     }
 
     public event Action<Vector2> Pressed = delegate { };
@@ -51,6 +56,12 @@ public class ToolInputContext : InputContext
             throw new InvalidOperationException("Press deve ser pointer");
 
         var pointerPosition = pointer.position.ReadValue();
+
+        _pressBeganInUI = _pointerUIController.IsPointerOverUI(pointerPosition);
+        
+        if (_pressBeganInUI)
+            return;
+        
         Pressed(pointerPosition);
     }
 
@@ -60,6 +71,14 @@ public class ToolInputContext : InputContext
             throw new InvalidOperationException("Press deve ser pointer");
         
         var pointerPosition = pointer.position.ReadValue();
+
+        var pressBeganInUI = _pressBeganInUI;
+
+        _pressBeganInUI = false;
+        
+        if (_pointerUIController.IsPointerOverUI(pointerPosition) || pressBeganInUI)
+            return;
+        
         Released(pointerPosition);
     }
 
@@ -70,11 +89,17 @@ public class ToolInputContext : InputContext
         
         var pointerPosition = pointer.position.ReadValue();
         
+        if (_pointerUIController.IsPointerOverUI(pointerPosition) || _pressBeganInUI)
+            return;
+        
         Dragged(pointerPosition);
     }
 
     private void OnSecondaryTapPerformed(InputAction.CallbackContext context)
     {
+        if (_pointerUIController.IsPointerOverUI(Pointer.current.position.ReadValue()))
+            return;
+        
         Tapped();
     }
 }

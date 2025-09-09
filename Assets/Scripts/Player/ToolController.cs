@@ -10,7 +10,7 @@ public class ToolController
     public ToolController(ToolInputContext toolInputContext)
     {
         _toolInputContext = toolInputContext;
-        _toolInputContext.Enable();
+        //_toolInputContext.Enable();
         _toolInputContext.Pressed += OnPressed;
         _toolInputContext.Released += OnReleased;
         _toolInputContext.Dragged += OnDrag;
