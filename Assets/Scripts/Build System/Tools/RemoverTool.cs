@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class RemoverTool : ITool
@@ -6,7 +7,7 @@ public class RemoverTool : ITool
     private readonly BuildEditor _buildEditor;
     private readonly ScreenRaycaster _screenRaycaster;
 
-    private readonly List<PieceData> _removedPieces = new();
+    private readonly HashSet<PieceData> _removedPieces = new();
 
     public RemoverTool(BuildEditor buildEditor, ScreenRaycaster screenRaycaster)
     {

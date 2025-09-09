@@ -10,4 +10,14 @@ public class PieceData
 
     public IPieceTemplate Template { get; }
     public PieceTransientData TransientData { get; }
+
+    public override bool Equals(object obj)
+    {
+        return obj is PieceData data && data.TransientData.Id == TransientData.Id;
+    }
+
+    public override int GetHashCode()
+    {
+        return TransientData.Id.GetHashCode();
+    }
 }

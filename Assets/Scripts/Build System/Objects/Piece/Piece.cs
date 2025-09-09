@@ -15,9 +15,6 @@ public class Piece : MonoBehaviour
     private readonly List<Socket> _sockets = new();
     private readonly List<Stud> _studs = new();
     
-    [SerializeField]
-    private Vector3 _test;
-    
     public IPieceTemplate Template { get; private set; }
 
     public Guid Id { get; private set; }
@@ -85,13 +82,10 @@ public class Piece : MonoBehaviour
 
     public Vector3 MoveTo(Vector3 position)
     {
-        var halfSize = Template.GetSize() / 2;
+        var halfSize = Template.GetSize().ToWorld() / 2;
         var cornerPosition = position - _rigidbody.rotation * halfSize;
         
-        var gridSnappedPosition = new Vector3(
-            Mathf.Round(cornerPosition.x),
-            cornerPosition.y,
-            Mathf.Round(cornerPosition.z));
+        var gridSnappedPosition = PieceVector.FromWorld(cornerPosition).ToWorld();
         
         _rigidbody.position = gridSnappedPosition + _rigidbody.rotation * halfSize;
 

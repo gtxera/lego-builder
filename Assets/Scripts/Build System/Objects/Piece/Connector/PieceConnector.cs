@@ -18,7 +18,7 @@ public abstract class PieceConnector<TConnector, TConnecting> : PieceConnector
     {
         var collider = GetComponent<BoxCollider>();
         collider.isTrigger = true;
-        collider.size = new Vector3(.9f, .1f, .9f);
+        collider.size = new Vector3(.48f, .1f, .48f);
         gameObject.layer = LayerMask.NameToLayer("Connectors");
     }
 
