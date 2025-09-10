@@ -2,18 +2,10 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public class MinimumSizeRequirement : IBuildRequirement
+public class MinimumSizeRequirement : SizeRequirement
 {
-    [SerializeField]
-    private PieceVector _size;
-    
-    public bool IsSatisfied(Build build)
+    protected override bool SizeCondition(Bounds sizeBounds, Bounds buildBounds)
     {
-        var bounds = new Bounds(Vector3.zero, _size.ToWorld());
-        var buildBounds = build.GetBounds();
-
-        return buildBounds.Contains(bounds.max) && buildBounds.Contains(bounds.min);
+        return buildBounds.Contains(sizeBounds.max) && buildBounds.Contains(sizeBounds.min);
     }
-
-    public string GetText() => string.Empty;
 }

@@ -7,9 +7,9 @@ using Object = UnityEngine.Object;
 public class BrickPieceTemplate : IPieceTemplate
 {
     [SerializeField]
-    private int _width = 3;
+    private int _width = 2;
     [SerializeField]
-    private int _length = 3;
+    private int _length = 1;
     [SerializeField]
     private float _height = .5f;
     

@@ -23,7 +23,9 @@ public class SubclassInstancePropertyDrawer : PropertyDrawer
         
         Debug.Log(type);
         
-        var types = TypeCache.GetTypesDerivedFrom(type);
+        var types = TypeCache.GetTypesDerivedFrom(type)
+            .Where(t => !t.IsAbstract)
+            .ToList();
 
         var currentType = property.managedReferenceValue?.GetType();
         

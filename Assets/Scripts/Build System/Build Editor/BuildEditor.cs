@@ -3,7 +3,8 @@ using System;
 public class BuildEditor
 {
     public event Action<Build> StartedEditing = delegate { };
-    public event Action FinishedEditing = delegate { };
+    public event Action<Build> CommandCommited = delegate { };
+    public event Action<Build> FinishedEditing = delegate { };
     
     public Build Build { get; private set; }
 
@@ -25,14 +26,15 @@ public class BuildEditor
     {
         if (Build == null)
             return;
-
+        
+        FinishedEditing(Build);
         Build = null;
-        FinishedEditing();
     }
 
     public void Commit(ICommand command)
     {
         command.Commit();
         _commandStack.Push(command);
+        CommandCommited(Build);
     }
 }

@@ -20,7 +20,6 @@ public class Build : MonoBehaviour
     private void Start()
     {
         _buildEditor.StartEditing(this);
-        //Add(new BrickPieceTemplate());
     }
 
     public Piece Add(PieceData pieceData)
@@ -67,6 +66,18 @@ public class Build : MonoBehaviour
         }
 
         return bounds;
+    }
+
+    public void Create(BuildData buildData)
+    {
+        foreach (var piece in buildData.Pieces)
+            Add(piece);
+    }
+
+    public BuildData GetBuildData()
+    {
+        var pieces = _pieces.Select(piece => piece.GetData()).ToArray();
+        return new BuildData(pieces);
     }
     
     private void Update()

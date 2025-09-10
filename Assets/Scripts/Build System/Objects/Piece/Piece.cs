@@ -74,7 +74,7 @@ public class Piece : MonoBehaviour
         if (transientData.Id != default)
             Id = transientData.Id;
         
-        transform.position = transientData.Position;
+        transform.localPosition = transientData.Position;
 
         for (int i = 0; i < transientData.Colors.Length; i++)
             TrySetColor(transientData.Colors[i], i);
@@ -147,7 +147,7 @@ public class Piece : MonoBehaviour
         GetComponentInChildren<Renderer>().material.SetColor("_BaseColor", color);
     }
 
-    public PieceTransientData GetTransientData() => new(Id, transform.position, _colors);
+    public PieceTransientData GetTransientData() => new(Id, transform.localPosition, _colors);
 
     public PieceData GetData() => new(Template, GetTransientData());
 
