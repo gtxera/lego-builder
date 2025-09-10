@@ -1,10 +1,12 @@
+using System;
 using UnityEngine;
 
+[Serializable]
 public struct PieceVector
 {
-    public int X { get; set; }
-    public int Y { get; set; }
-    public float Height { get; set; }
+    public int X;
+    public int Y;
+    public float Height;
 
     public PieceVector(int x, int y, float height = 0)
     {

@@ -15,6 +15,8 @@ public class Build : MonoBehaviour
     [Inject]
     private BuildEditorCommandStack _commandStack;
 
+    public IReadOnlyCollection<Piece> Pieces => _pieces;
+
     private void Start()
     {
         _buildEditor.StartEditing(this);
@@ -52,6 +54,20 @@ public class Build : MonoBehaviour
     public Piece GetPiece(Guid id) => _pieces.Single(piece => piece.Id == id);
 
     public IEnumerable<Piece> GetPieces(IEnumerable<Guid> ids) => _pieces.Where(piece => ids.Contains(piece.Id));
+
+    public Bounds GetBounds()
+    {
+        var bounds = new Bounds();
+
+        foreach (var piece in _pieces)
+        {
+            var pieceBounds = piece.GetBounds();
+            pieceBounds.center = piece.transform.localPosition;
+            bounds.Encapsulate(pieceBounds);
+        }
+
+        return bounds;
+    }
     
     private void Update()
     {

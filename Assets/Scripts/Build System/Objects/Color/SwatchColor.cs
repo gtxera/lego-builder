@@ -12,14 +12,12 @@ public class SwatchColor : PieceColor
 
     public event Action<Color> ColorChanged = delegate { };
 
-    public override Color Color
+    protected override Color GetColor() => _color;
+
+    protected override void SetColor(Color color)
     {
-        get => _color;
-        set
-        {
-            _color = value;
-            ColorChanged(_color);
-        }
+        _color = color;
+        ColorChanged(_color);
     }
 
     public override bool IsEqual(PieceColor pieceColor) => pieceColor is SwatchColor swatchColor && swatchColor == this;

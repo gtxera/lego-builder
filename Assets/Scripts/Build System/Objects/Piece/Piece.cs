@@ -153,6 +153,8 @@ public class Piece : MonoBehaviour
 
     public override int GetHashCode() => Id.GetHashCode();
 
+    public Bounds GetBounds() => new Bounds(Vector3.zero, Template.GetSize().ToWorld());
+
     private void OnDestroy()
     {
         for (int i = 0; i < _colors.Length; i++)
