@@ -5,21 +5,21 @@ using UnityEngine;
 public class RemoverTool : ITool
 {
     private readonly BuildEditor _buildEditor;
-    private readonly ScreenRaycaster _screenRaycaster;
+    private readonly CameraServices _cameraServices;
 
     private readonly HashSet<PieceData> _removedPieces = new();
 
-    public RemoverTool(BuildEditor buildEditor, ScreenRaycaster screenRaycaster)
+    public RemoverTool(BuildEditor buildEditor, CameraServices cameraServices)
     {
         _buildEditor = buildEditor;
-        _screenRaycaster = screenRaycaster;
+        _cameraServices = cameraServices;
     }
 
     public void Press(Vector2 pointerScreenPosition)
     {
         _removedPieces.Clear();
         
-        var ray = _screenRaycaster.ScreenToWorldRay(pointerScreenPosition);
+        var ray = _cameraServices.ScreenToWorldRay(pointerScreenPosition);
         
         if (!Physics.Raycast(ray, out var hit, 10f))
             return;
@@ -44,7 +44,7 @@ public class RemoverTool : ITool
 
     public void Drag(Vector2 pointerScreenPosition)
     {
-        var ray = _screenRaycaster.ScreenToWorldRay(pointerScreenPosition);
+        var ray = _cameraServices.ScreenToWorldRay(pointerScreenPosition);
         
         if (!Physics.Raycast(ray, out var hit, 10f))
             return;

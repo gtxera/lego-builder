@@ -8,7 +8,7 @@ public class BuildSystemInstaller : MonoBehaviour, IInstaller
         containerBuilder.AddScoped(typeof(BuildEditor));
         containerBuilder.AddScoped(typeof(BuildEditorCommandStack));
         containerBuilder.AddScoped(typeof(BuildColorSelector));
-        containerBuilder.AddScoped(typeof(ScreenRaycaster));
+        containerBuilder.AddScoped(typeof(CameraServices));
         
         RegisterTools(containerBuilder);
     }

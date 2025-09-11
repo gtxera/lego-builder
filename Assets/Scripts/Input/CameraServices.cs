@@ -1,13 +1,15 @@
 using UnityEngine;
 
-public class ScreenRaycaster
+public class CameraServices
 {
     private readonly Camera _mainCamera;
 
-    public ScreenRaycaster()
+    public CameraServices()
     {
         _mainCamera = Camera.main;
     }
 
     public Ray ScreenToWorldRay(Vector2 screenPosition) => _mainCamera.ScreenPointToRay(screenPosition);
+
+    public Quaternion GetInverseCameraLookRotation() => Quaternion.LookRotation(-_mainCamera.transform.forward);
 }

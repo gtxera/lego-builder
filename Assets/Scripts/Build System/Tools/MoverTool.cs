@@ -3,21 +3,21 @@ using UnityEngine;
 public class MoverTool : ITool
 {
     private readonly BuildEditor _buildEditor;
-    private readonly ScreenRaycaster _screenRaycaster;
+    private readonly CameraServices _cameraServices;
 
     private Piece _movingPiece;
     private Vector3 _pieceInitialPosition;
     private Vector3 _lastMovePosition;
 
-    public MoverTool(BuildEditor buildEditor, ScreenRaycaster screenRaycaster)
+    public MoverTool(BuildEditor buildEditor, CameraServices cameraServices)
     {
         _buildEditor = buildEditor;
-        _screenRaycaster = screenRaycaster;
+        _cameraServices = cameraServices;
     }
 
     public void Press(Vector2 pointerScreenPosition)
     {
-        var ray = _screenRaycaster.ScreenToWorldRay(pointerScreenPosition);
+        var ray = _cameraServices.ScreenToWorldRay(pointerScreenPosition);
         
         if (!Physics.Raycast(ray, out var hit))
             return;
@@ -46,7 +46,7 @@ public class MoverTool : ITool
         if (_movingPiece == null)
             return;
         
-        var ray = _screenRaycaster.ScreenToWorldRay(pointerScreenPosition);
+        var ray = _cameraServices.ScreenToWorldRay(pointerScreenPosition);
         var newMovePosition = _movingPiece.GetSweepPosition(ray.origin, ray.direction);
         if ((newMovePosition - _lastMovePosition).magnitude > 0.01f)
         {

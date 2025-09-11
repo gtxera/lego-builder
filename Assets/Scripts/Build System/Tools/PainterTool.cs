@@ -6,14 +6,14 @@ public class PainterTool : ITool
 {
     private readonly BuildEditor _buildEditor;
     private readonly BuildColorSelector _buildColorSelector;
-    private readonly ScreenRaycaster _screenRaycaster;
+    private readonly CameraServices _cameraServices;
 
     private readonly Dictionary<Guid, PieceColor> _coloredPiecesIds = new();
 
-    public PainterTool(BuildColorSelector buildColorSelector, ScreenRaycaster screenRaycaster, BuildEditor buildEditor)
+    public PainterTool(BuildColorSelector buildColorSelector, CameraServices cameraServices, BuildEditor buildEditor)
     {
         _buildColorSelector = buildColorSelector;
-        _screenRaycaster = screenRaycaster;
+        _cameraServices = cameraServices;
         _buildEditor = buildEditor;
     }
 
@@ -21,7 +21,7 @@ public class PainterTool : ITool
     {
         _coloredPiecesIds.Clear();
 
-        var ray = _screenRaycaster.ScreenToWorldRay(pointerScreenPosition);
+        var ray = _cameraServices.ScreenToWorldRay(pointerScreenPosition);
         
         if (!Physics.Raycast(ray, out var hit, 10f))
             return;
@@ -49,7 +49,7 @@ public class PainterTool : ITool
 
     public void Drag(Vector2 pointerScreenPosition)
     {
-        var ray = _screenRaycaster.ScreenToWorldRay(pointerScreenPosition);
+        var ray = _cameraServices.ScreenToWorldRay(pointerScreenPosition);
         
         if (!Physics.Raycast(ray, out var hit, 10f))
             return;
