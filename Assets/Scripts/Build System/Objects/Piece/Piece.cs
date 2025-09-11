@@ -84,13 +84,29 @@ public class Piece : MonoBehaviour
             TrySetColor(transientData.Colors[i], i);
     }
 
-    public Vector3 MoveTo(Vector3 position, bool print = false)
+    public void MoveDifference(Vector3 difference)
     {
+        _rigidbody.position += difference;
+        _rigidbody.PublishTransform();
+    }
+    
+    public Vector3 MoveTo(Vector3 position)
+    {
+        foreach (var socket in _sockets)
+            socket.Disconnect();
+        foreach (var stud in _studs)
+            stud.Disconnect();
+        
         var gridPosition = GetGridPosition(position);
         _rigidbody.position = gridPosition;
         _rigidbody.PublishTransform();
         
         _lastMovementTime = Time.time;
+        
+        foreach (var socket in _sockets)
+            socket.Connect();
+        foreach (var stud in _studs)
+            stud.Connect();
 
         return gridPosition;
     }

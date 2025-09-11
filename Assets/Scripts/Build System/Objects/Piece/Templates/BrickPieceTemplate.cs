@@ -25,26 +25,26 @@ public class BrickPieceTemplate : IPieceTemplate
     }
 
     public PieceVector GetSize() => new(_width, _length, _height);
-    
+
     public int GetColorCount() => 1;
     
     public IEnumerable<Vector3> GetSocketPositions()
     {
-        var halfSize = GetSize().ToWorld() / 4;
-        var centerOffset = new Vector3(1, 0, 1) * .2f;
-        
+        var halfHeight = GetSize().ToWorld().y / 2;
+        var offset = new Vector3((_width - 1) * .4f, 0, (_length - 1) * .4f);
+
         for (var x = 0; x < _width; x++)
             for (var y = 0; y < _length; y++) 
-                yield return halfSize - new PieceVector(x, y, 3 * halfSize.y).ToWorld() + centerOffset;
+                yield return new PieceVector(x, y, -halfHeight).ToWorld() - offset;
     }
 
     public IEnumerable<Vector3> GetStudPositions()
     {
-        var halfSize = GetSize().ToWorld() / 4;
-        var centerOffset = new Vector3(1, 0, 1) * .2f;
-        
+        var halfHeight = GetSize().ToWorld().y / 2;
+        var offset = new Vector3((_width - 1) * .4f, 0, (_length - 1) * .4f);
+
         for (var x = 0; x < _width; x++)
             for (var y = 0; y < _length; y++) 
-                yield return halfSize - new PieceVector(x, y, -halfSize.y).ToWorld() + centerOffset;
+                yield return new PieceVector(x, y, halfHeight).ToWorld() - offset;
     }
 }

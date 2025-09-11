@@ -1,12 +1,14 @@
 using System;
 using UnityEngine;
 
-[RequireComponent(typeof(BoxCollider))]
+[RequireComponent(typeof(SphereCollider))]
 public abstract class PieceConnector<TConnector, TConnecting> : PieceConnector 
     where TConnector : PieceConnector<TConnector, TConnecting>
     where TConnecting : PieceConnector<TConnecting, TConnector>
 {
     private Piece _ownerPiece;
+
+    private Collider[] _castResults = new Collider[2];
     
     [SerializeField]
     private TConnecting _connecting;
@@ -16,9 +18,9 @@ public abstract class PieceConnector<TConnector, TConnecting> : PieceConnector
     
     private void Awake()
     {
-        var collider = GetComponent<BoxCollider>();
+        var collider = GetComponent<SphereCollider>();
         collider.isTrigger = true;
-        collider.size = new Vector3(.48f, .1f, .48f);
+        collider.radius = 0.24f;
         gameObject.layer = LayerMask.NameToLayer("Connectors");
     }
 
@@ -29,24 +31,37 @@ public abstract class PieceConnector<TConnector, TConnecting> : PieceConnector
 
     public sealed override bool IsOwnedBy(Piece piece) => _ownerPiece.Id == piece.Id;
 
+    public void Connect()
+    {
+        var size = Physics.OverlapSphereNonAlloc(transform.position - new Vector3(0, .01f, 0), .24f, _castResults, LayerMask.GetMask("Connectors"), QueryTriggerInteraction.Collide);
+        for (int i = 0; i < size; i++)
+        {
+            var collider = _castResults[i];
+            if (collider.gameObject == gameObject)
+                continue;
+
+            if (collider.gameObject.TryGetComponent<TConnecting>(out var connecting))
+                Connect(connecting);
+        }
+    }
     
     private void Connect(TConnecting connecting)
     {
-        if (Connected || _ownerPiece.Id == connecting._ownerPiece.Id)
+        if (Connected || _ownerPiece?.Id == connecting._ownerPiece?.Id)
             return;
         
         _connecting = connecting;
         Connected = true;
         _connecting.Connect((TConnector)this);
 
-        if (_ownerPiece.MovedMoreRecentlyThan(_connecting._ownerPiece))
+        if (_ownerPiece != null && (_connecting._ownerPiece == null || _ownerPiece.MovedMoreRecentlyThan(_connecting._ownerPiece)))
         {
             var difference = _connecting.transform.position - transform.position;
-            _ownerPiece.MoveTo(_ownerPiece.GetComponent<Rigidbody>().position + difference);
+            _ownerPiece.MoveDifference(difference);
         }
     }
 
-    private void Disconnect()
+    public void Disconnect()
     {
         if (!Connected)
             return;
@@ -54,18 +69,6 @@ public abstract class PieceConnector<TConnector, TConnecting> : PieceConnector
         Connected = false;
         _connecting.Disconnect();
         _connecting = null;
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.transform.TryGetComponent<TConnecting>(out var connecting))
-            Connect(connecting);
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (_connecting != null && other.transform == _connecting.transform)
-            Disconnect();
     }
 }
 
