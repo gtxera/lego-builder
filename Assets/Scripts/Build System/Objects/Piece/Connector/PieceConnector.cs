@@ -6,8 +6,8 @@ public abstract class PieceConnector<TConnector, TConnecting> : PieceConnector
     where TConnector : PieceConnector<TConnector, TConnecting>
     where TConnecting : PieceConnector<TConnecting, TConnector>
 {
-    private Guid _ownerPieceId;
-
+    private Piece _ownerPiece;
+    
     [SerializeField]
     private TConnecting _connecting;
     
@@ -24,19 +24,26 @@ public abstract class PieceConnector<TConnector, TConnecting> : PieceConnector
 
     public void Initialize(Piece piece)
     {
-        _ownerPieceId = piece.Id;
+        _ownerPiece = piece;
     }
 
-    public sealed override bool IsOwnedBy(Piece piece) => _ownerPieceId == piece.Id;
+    public sealed override bool IsOwnedBy(Piece piece) => _ownerPiece.Id == piece.Id;
+
     
     private void Connect(TConnecting connecting)
     {
-        if (Connected || _ownerPieceId == connecting._ownerPieceId)
+        if (Connected || _ownerPiece.Id == connecting._ownerPiece.Id)
             return;
         
         _connecting = connecting;
         Connected = true;
         _connecting.Connect((TConnector)this);
+
+        if (_ownerPiece.MovedMoreRecentlyThan(_connecting._ownerPiece))
+        {
+            var difference = _connecting.transform.position - transform.position;
+            _ownerPiece.MoveTo(_ownerPiece.GetComponent<Rigidbody>().position + difference);
+        }
     }
 
     private void Disconnect()

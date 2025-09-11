@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [RequireComponent(typeof(Rigidbody))]
 public class Piece : MonoBehaviour
@@ -14,6 +15,9 @@ public class Piece : MonoBehaviour
     private GameObject _connectorsRoot;
     private readonly List<Socket> _sockets = new();
     private readonly List<Stud> _studs = new();
+
+    [SerializeField]
+    private float _lastMovementTime;
     
     public IPieceTemplate Template { get; private set; }
 
@@ -80,20 +84,22 @@ public class Piece : MonoBehaviour
             TrySetColor(transientData.Colors[i], i);
     }
 
-    public Vector3 MoveTo(Vector3 position)
+    public Vector3 MoveTo(Vector3 position, bool print = false)
     {
-        var halfSize = Template.GetSize().ToWorld() / 2;
-        var cornerPosition = position - _rigidbody.rotation * halfSize;
+        var gridPosition = GetGridPosition(position);
+        _rigidbody.position = gridPosition;
+        _rigidbody.PublishTransform();
         
-        var gridSnappedPosition = PieceVector.FromWorld(cornerPosition).ToWorld();
-        
-        _rigidbody.position = gridSnappedPosition + _rigidbody.rotation * halfSize;
+        _lastMovementTime = Time.time;
 
-        return gridSnappedPosition;
+        return gridPosition;
     }
 
-    public Vector3 SweepMove(Vector3 origin, Vector3 direction)
+    public Vector3 GetSweepPosition(Vector3 origin, Vector3 direction)
     {
+        var originalPosition = _rigidbody.position;
+        direction.Normalize();
+        
         _connectorsRoot.SetActive(false);
         
         _rigidbody.position = origin;
@@ -102,12 +108,23 @@ public class Piece : MonoBehaviour
             return Vector3.zero;
 
         var originalPoint = hit.point - direction * hit.distance;
-        var center = originalPoint - origin;
-        var position = MoveTo(hit.point - center);
+        var center = origin - originalPoint;
+        var position = GetGridPosition(hit.point + center);
+
+        _rigidbody.position = originalPosition;
         
         _connectorsRoot.SetActive(true);
-
+        
         return position;
+    }
+
+    private Vector3 GetGridPosition(Vector3 position)
+    {
+        var halfSize = Template.GetSize().ToWorld() / 2;
+        var cornerPosition = position - _rigidbody.rotation * halfSize;
+        var gridSnappedPosition = PieceVector.FromWorld(cornerPosition).ToWorld();
+
+        return gridSnappedPosition + _rigidbody.rotation * halfSize;
     }
 
     public void RotateClockwise()
@@ -145,6 +162,11 @@ public class Piece : MonoBehaviour
     private void OnColorChanged(Color color, int index)
     {
         GetComponentInChildren<Renderer>().material.SetColor("_BaseColor", color);
+    }
+
+    public bool MovedMoreRecentlyThan(Piece piece)
+    {
+        return _lastMovementTime > piece._lastMovementTime;
     }
 
     public PieceTransientData GetTransientData() => new(Id, transform.localPosition, _colors);

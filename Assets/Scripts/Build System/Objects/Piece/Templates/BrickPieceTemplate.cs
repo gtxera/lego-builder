@@ -9,7 +9,7 @@ public class BrickPieceTemplate : IPieceTemplate
     [SerializeField]
     private int _width = 2;
     [SerializeField]
-    private int _length = 1;
+    private int _length = 2;
     [SerializeField]
     private float _height = .5f;
     

@@ -7,6 +7,7 @@ public class SpawnerTool : ITool
     private readonly BuildColorSelector _buildColorSelector;
 
     private Piece _newPiece;
+    private Vector3 _lastMovePosition;
 
     public SpawnerTool(BuildEditor buildEditor, ScreenRaycaster screenRaycaster, BuildColorSelector buildColorSelector)
     {
@@ -19,8 +20,8 @@ public class SpawnerTool : ITool
     {
         _newPiece = _buildEditor.Build.Add(new BrickPieceTemplate());
         var ray = _screenRaycaster.ScreenToWorldRay(pointerScreenPosition);
-        var position = _newPiece.SweepMove(ray.origin, ray.direction);
-        _newPiece.transform.position = position;
+        var position = _newPiece.GetSweepPosition(ray.origin, ray.direction);
+        _lastMovePosition = _newPiece.MoveTo(position);
 
         _newPiece.TrySetColor(_buildColorSelector.GetSelectedColorFor(0), 0);
     }
@@ -38,7 +39,11 @@ public class SpawnerTool : ITool
             return;
         
         var ray = _screenRaycaster.ScreenToWorldRay(pointerScreenPosition);
-        _newPiece.SweepMove(ray.origin, ray.direction);
+        var newMovePosition = _newPiece.GetSweepPosition(ray.origin, ray.direction);
+        if ((newMovePosition - _lastMovePosition).magnitude > 0.01f)
+        {
+            _lastMovePosition = _newPiece.MoveTo(newMovePosition);
+        }
     }
 
     public void Tap()

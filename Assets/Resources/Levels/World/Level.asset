@@ -12,16 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3485b9488749b546b9917cd61c62716, type: 3}
   m_Name: Level
   m_EditorClassIdentifier: 
-  <World>k__BackingField: {fileID: 0}
+  <World>k__BackingField: {fileID: 11400000, guid: b39469ff9fffaa04487a663bace57d28, type: 2}
   _requiredLevelsToUnlock: []
   _requirements:
-  - rid: 6535569922643198018
+  - rid: 6535569922643198020
   <Name>k__BackingField: 
   <Description>k__BackingField: 
   references:
     version: 2
     RefIds:
-    - rid: 6535569922643198018
-      type: {class: MinimumColorsRequirement, ns: , asm: Assembly-CSharp}
+    - rid: 6535569922643198020
+      type: {class: ExactSizeRequirement, ns: , asm: Assembly-CSharp}
       data:
-        _count: 2
+        _size:
+          X: 2
+          Y: 2
+          Height: 1

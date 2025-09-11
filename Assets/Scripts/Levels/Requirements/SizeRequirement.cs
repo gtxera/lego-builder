@@ -5,15 +5,16 @@ public abstract class SizeRequirement : IBuildRequirement
     [SerializeField]
     private PieceVector _size;
     
+    public Bounds SizeBounds => new (new Vector3(_size.X % 2 == 0 ? 0 : .4f, _size.Height / 2f, _size.Y % 2 == 0 ? 0 : .4f), _size.ToWorld());
+    
     public bool IsSatisfied(Build build)
     {
-        var bounds = new Bounds(new Vector3(0, _size.Height / 2f, 0), _size.ToWorld());
         var buildBounds = build.GetBounds();
         
-        Debug.Log(bounds);
+        Debug.Log(SizeBounds);
         Debug.Log(buildBounds);
 
-        return SizeCondition(bounds, buildBounds);
+        return SizeCondition(SizeBounds, buildBounds);
     }
 
     public string GetText() => string.Empty;

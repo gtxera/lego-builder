@@ -7,6 +7,7 @@ public class MoverTool : ITool
 
     private Piece _movingPiece;
     private Vector3 _pieceInitialPosition;
+    private Vector3 _lastMovePosition;
 
     public MoverTool(BuildEditor buildEditor, ScreenRaycaster screenRaycaster)
     {
@@ -26,7 +27,7 @@ public class MoverTool : ITool
         if (_movingPiece == null)
             return;
 
-        _pieceInitialPosition = _movingPiece.transform.position;
+        _pieceInitialPosition = _lastMovePosition = _movingPiece.transform.position;
     }
 
     public void Release(Vector2 pointerScreenPosition)
@@ -46,7 +47,11 @@ public class MoverTool : ITool
             return;
         
         var ray = _screenRaycaster.ScreenToWorldRay(pointerScreenPosition);
-        _movingPiece.SweepMove(ray.origin, ray.direction);
+        var newMovePosition = _movingPiece.GetSweepPosition(ray.origin, ray.direction);
+        if ((newMovePosition - _lastMovePosition).magnitude > 0.01f)
+        {
+            _lastMovePosition = _movingPiece.MoveTo(newMovePosition);
+        }
     }
 
     public void Tap()

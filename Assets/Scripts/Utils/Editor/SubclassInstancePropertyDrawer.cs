@@ -21,8 +21,6 @@ public class SubclassInstancePropertyDrawer : PropertyDrawer
             ? field.FieldType.GenericTypeArguments[0]
             : field.FieldType.GetElementType();
         
-        Debug.Log(type);
-        
         var types = TypeCache.GetTypesDerivedFrom(type)
             .Where(t => !t.IsAbstract)
             .ToList();
