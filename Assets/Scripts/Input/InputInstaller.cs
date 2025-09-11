@@ -10,6 +10,7 @@ public class InputInstaller : MonoBehaviour, IInstaller
         containerBuilder.AddScoped(_ => inputActions, typeof(LegoBuilderInputActions));
         containerBuilder.AddScoped(typeof(CameraControlInputContext));
         containerBuilder.AddScoped(typeof(ToolInputContext));
+        containerBuilder.AddScoped(typeof(LevelSelectorInputContext));
         containerBuilder.AddSingleton(typeof(PointerUIController));
     }
 }

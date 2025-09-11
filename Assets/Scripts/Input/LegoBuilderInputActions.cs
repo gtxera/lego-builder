@@ -914,6 +914,34 @@ public partial class @LegoBuilderInputActions: IInputActionCollection2, IDisposa
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""LevelSelector"",
+            ""id"": ""77589454-5560-4c53-beae-cd099da37485"",
+            ""actions"": [
+                {
+                    ""name"": ""Tap"",
+                    ""type"": ""Button"",
+                    ""id"": ""8ed82771-a9c9-4401-9b15-a004207ec664"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": ""Tap"",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""d5393a94-9679-4db5-95ad-ad1ed4124dca"",
+                    ""path"": ""<Pointer>/press"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Tap"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -1008,6 +1036,9 @@ public partial class @LegoBuilderInputActions: IInputActionCollection2, IDisposa
         m_UI_ScrollWheel = m_UI.FindAction("ScrollWheel", throwIfNotFound: true);
         m_UI_TrackedDevicePosition = m_UI.FindAction("TrackedDevicePosition", throwIfNotFound: true);
         m_UI_TrackedDeviceOrientation = m_UI.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
+        // LevelSelector
+        m_LevelSelector = asset.FindActionMap("LevelSelector", throwIfNotFound: true);
+        m_LevelSelector_Tap = m_LevelSelector.FindAction("Tap", throwIfNotFound: true);
     }
 
     ~@LegoBuilderInputActions()
@@ -1016,6 +1047,7 @@ public partial class @LegoBuilderInputActions: IInputActionCollection2, IDisposa
         UnityEngine.Debug.Assert(!m_Tool.enabled, "This will cause a leak and performance issues, LegoBuilderInputActions.Tool.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_Build.enabled, "This will cause a leak and performance issues, LegoBuilderInputActions.Build.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_UI.enabled, "This will cause a leak and performance issues, LegoBuilderInputActions.UI.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_LevelSelector.enabled, "This will cause a leak and performance issues, LegoBuilderInputActions.LevelSelector.Disable() has not been called.");
     }
 
     public void Dispose()
@@ -1393,6 +1425,52 @@ public partial class @LegoBuilderInputActions: IInputActionCollection2, IDisposa
         }
     }
     public UIActions @UI => new UIActions(this);
+
+    // LevelSelector
+    private readonly InputActionMap m_LevelSelector;
+    private List<ILevelSelectorActions> m_LevelSelectorActionsCallbackInterfaces = new List<ILevelSelectorActions>();
+    private readonly InputAction m_LevelSelector_Tap;
+    public struct LevelSelectorActions
+    {
+        private @LegoBuilderInputActions m_Wrapper;
+        public LevelSelectorActions(@LegoBuilderInputActions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Tap => m_Wrapper.m_LevelSelector_Tap;
+        public InputActionMap Get() { return m_Wrapper.m_LevelSelector; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(LevelSelectorActions set) { return set.Get(); }
+        public void AddCallbacks(ILevelSelectorActions instance)
+        {
+            if (instance == null || m_Wrapper.m_LevelSelectorActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_LevelSelectorActionsCallbackInterfaces.Add(instance);
+            @Tap.started += instance.OnTap;
+            @Tap.performed += instance.OnTap;
+            @Tap.canceled += instance.OnTap;
+        }
+
+        private void UnregisterCallbacks(ILevelSelectorActions instance)
+        {
+            @Tap.started -= instance.OnTap;
+            @Tap.performed -= instance.OnTap;
+            @Tap.canceled -= instance.OnTap;
+        }
+
+        public void RemoveCallbacks(ILevelSelectorActions instance)
+        {
+            if (m_Wrapper.m_LevelSelectorActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(ILevelSelectorActions instance)
+        {
+            foreach (var item in m_Wrapper.m_LevelSelectorActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_LevelSelectorActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public LevelSelectorActions @LevelSelector => new LevelSelectorActions(this);
     private int m_KeyboardMouseSchemeIndex = -1;
     public InputControlScheme KeyboardMouseScheme
     {
@@ -1470,5 +1548,9 @@ public partial class @LegoBuilderInputActions: IInputActionCollection2, IDisposa
         void OnScrollWheel(InputAction.CallbackContext context);
         void OnTrackedDevicePosition(InputAction.CallbackContext context);
         void OnTrackedDeviceOrientation(InputAction.CallbackContext context);
+    }
+    public interface ILevelSelectorActions
+    {
+        void OnTap(InputAction.CallbackContext context);
     }
 }

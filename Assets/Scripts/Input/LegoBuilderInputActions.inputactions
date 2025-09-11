@@ -892,6 +892,34 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "LevelSelector",
+            "id": "77589454-5560-4c53-beae-cd099da37485",
+            "actions": [
+                {
+                    "name": "Tap",
+                    "type": "Button",
+                    "id": "8ed82771-a9c9-4401-9b15-a004207ec664",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "Tap",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "d5393a94-9679-4db5-95ad-ad1ed4124dca",
+                    "path": "<Pointer>/press",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Tap",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [

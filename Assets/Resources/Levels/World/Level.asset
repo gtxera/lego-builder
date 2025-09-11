@@ -16,8 +16,8 @@ MonoBehaviour:
   _requiredLevelsToUnlock: []
   _requirements:
   - rid: 6535569922643198020
-  <Name>k__BackingField: 
-  <Description>k__BackingField: 
+  <Name>k__BackingField: Construa uma casa!
+  <Description>k__BackingField: "Fa\xE7a uma pequena e singela casa."
   references:
     version: 2
     RefIds:

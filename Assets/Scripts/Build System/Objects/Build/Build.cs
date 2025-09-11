@@ -17,11 +17,6 @@ public class Build : MonoBehaviour
 
     public IReadOnlyCollection<Piece> Pieces => _pieces;
 
-    private void Start()
-    {
-        _buildEditor.StartEditing(this);
-    }
-
     public Piece Add(PieceData pieceData)
     {
         var pieceGameObject = new GameObject("Piece");

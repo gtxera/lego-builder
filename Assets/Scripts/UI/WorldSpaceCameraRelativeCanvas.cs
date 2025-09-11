@@ -6,15 +6,7 @@ using UnityEngine;
 public class WorldSpaceCameraRelativeCanvas : MonoBehaviour
 {
     [Inject]
-    private CameraServices _cameraServices;
-
-    [SerializeField]
-    private float _size;
-
-    private void Awake()
-    {
-        
-    }
+    private readonly CameraServices _cameraServices;
 
     private void Update()
     {

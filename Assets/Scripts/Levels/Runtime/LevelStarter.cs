@@ -4,10 +4,13 @@ using KBCore.Refs;
 using Reflex.Attributes;
 using UnityEngine;
 
-public class LevelStarter : MonoBehaviour
+public class LevelStarter : ValidatedMonoBehaviour
 {
     [Inject]
     private readonly LevelController _levelController;
+
+    [Inject]
+    private readonly LevelSelectorInputContext _inputContext;
 
     [SerializeField]
     private Level _level;
@@ -15,9 +18,29 @@ public class LevelStarter : MonoBehaviour
     [SerializeField, Child]
     private Build _build;
 
+    [SerializeField, Child]
+    private LevelStarterUI _ui;
+
+    [SerializeField, Scene]
+    private CameraController _cameraController;
+
     private void Start()
     {
-        _levelController.Start(_level, _build);
+        _ui.Initialize(_level, () => _levelController.Start(_level, _build));
+        _inputContext.Enable();
+        gameObject.layer = LayerMask.NameToLayer("Levels");
+    }
+
+    public void Select()
+    {
+        _ui.SelectAnimation();
+        var position = transform.position;
+        _cameraController.SetTargetPosition(new Vector3(position.x, position.z));
+    }
+
+    public void Deselect()
+    {
+        _ui.DeselectAnimation();
     }
 
     private void OnDrawGizmos()
@@ -33,7 +56,8 @@ public class LevelStarter : MonoBehaviour
             {
                 ExactSizeRequirement exactSizeRequirement => Color.blue,
                 MaximumSizeRequirement maximumSizeRequirement => Color.red,
-                MinimumSizeRequirement min => Color.green
+                MinimumSizeRequirement min => Color.green,
+                _ => throw new NotImplementedException()
             };
 
             var gizmoColor = Gizmos.color;

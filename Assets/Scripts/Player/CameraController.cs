@@ -61,7 +61,9 @@ public class CameraController : ValidatedMonoBehaviour
 
     public void SetTargetPosition(Vector2 position)
     {
-        _moveToTargetTween = Tween.Position(transform, new Vector3(position.x, 0, position.y), _moveToTargetTweenSettings);
+        var worldPosition = new Vector3(position.x, 0, position.y);
+        if (transform.position != worldPosition)
+            _moveToTargetTween = Tween.Position(transform, new Vector3(position.x, 0, position.y), _moveToTargetTweenSettings);
     }
 
     private void OnMove(Vector2 delta)
