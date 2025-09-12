@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Reflex.Attributes;
 using UnityEngine;
 using UnityEngine.Pool;
+using UnityEngine.UI;
 
 public class LevelInfoUI : MonoBehaviour
 {
@@ -14,6 +15,9 @@ public class LevelInfoUI : MonoBehaviour
 
     [SerializeField]
     private RectTransform _requirementsRoot;
+
+    [SerializeField]
+    private Button _completeButton;
     
     private ObjectPool<LevelRequirementText> _requirementTextPool;
 
@@ -23,6 +27,8 @@ public class LevelInfoUI : MonoBehaviour
     {
         _levelController.LevelStarted += OnLevelStarted;
         _levelController.LevelFinished += OnLevelFinished;
+        _levelController.LevelBecameCompletable += () => _completeButton.interactable = true;
+        _levelController.LevelBecameUncompletable += () => _completeButton.interactable = false;
 
         _requirementTextPool =
             new ObjectPool<LevelRequirementText>(CreateRequirementText, GetRequirementText, ReleaseRequirementText, DestroyRequirementText);
