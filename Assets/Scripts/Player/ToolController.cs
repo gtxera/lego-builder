@@ -8,10 +8,12 @@ public class ToolController
 
     private ITool _activeTool;
 
-    public ToolController(ToolInputContext toolInputContext, CameraControlInputContext cameraControlInputContext)
+    public ToolController(ToolInputContext toolInputContext, CameraControlInputContext cameraControlInputContext, BuildEditor buildEditor)
     {
         _toolInputContext = toolInputContext;
         _cameraControlInputContext = cameraControlInputContext;
+
+        buildEditor.FinishedEditing += _ => DeselectTool();
         
         _toolInputContext.Pressed += OnPressed;
         _toolInputContext.Released += OnReleased;

@@ -29,6 +29,8 @@ public class LevelInfoUI : MonoBehaviour
         _levelController.LevelFinished += OnLevelFinished;
         _levelController.LevelBecameCompletable += () => _completeButton.interactable = true;
         _levelController.LevelBecameUncompletable += () => _completeButton.interactable = false;
+        
+        _completeButton.onClick.AddListener(() => _levelController.Complete());
 
         _requirementTextPool =
             new ObjectPool<LevelRequirementText>(CreateRequirementText, GetRequirementText, ReleaseRequirementText, DestroyRequirementText);

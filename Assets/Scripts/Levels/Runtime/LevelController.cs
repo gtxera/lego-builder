@@ -54,8 +54,8 @@ public class LevelController
         if (!_canComplete)
             return;
         
-        Quit();
         _progressManager.Complete(_currentLevel, _currentBuild.GetBuildData());
+        Quit();
     }
 
     private void VerifyLevelCompletion(Build build)
