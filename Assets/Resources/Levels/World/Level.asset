@@ -16,6 +16,7 @@ MonoBehaviour:
   _requiredLevelsToUnlock: []
   _requirements:
   - rid: 6535569954094186564
+  - rid: 6535569965930512450
   <Name>k__BackingField: Construa uma casa!
   <Description>k__BackingField: "Fa\xE7a uma pequena e singela casa."
   references:
@@ -25,3 +26,10 @@ MonoBehaviour:
       type: {class: MaximumColorsRequirement, ns: , asm: Assembly-CSharp}
       data:
         _count: 2
+    - rid: 6535569965930512450
+      type: {class: ExactSizeRequirement, ns: , asm: Assembly-CSharp}
+      data:
+        _size:
+          X: 2
+          Y: 2
+          Height: 0.5

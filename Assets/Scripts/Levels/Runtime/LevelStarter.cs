@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using KBCore.Refs;
+using PrimeTween;
 using Reflex.Attributes;
 using UnityEngine;
 
@@ -25,15 +27,36 @@ public class LevelStarter : ValidatedMonoBehaviour
     [SerializeField, Scene]
     private CameraController _cameraController;
 
+    [SerializeField, Child]
+    private MeshRenderer _indicatorRenderer;
+
+    [SerializeField]
+    private SizeRequirementIndicator _sizeRequirementIndicatorPrefab;
+
     [SerializeField, Self]
     private BoxCollider _collider;
+
+    private readonly List<SizeRequirementIndicator> _sizeRequirementIndicators = new();
+
+    private void Awake()
+    {
+        foreach (var requirement in _level.Requirements)
+        {
+            if (requirement is not SizeRequirement sizeRequirement)
+                continue;
+
+            var requirementIndicator = Instantiate(_sizeRequirementIndicatorPrefab, transform);
+            requirementIndicator.Initialize(sizeRequirement);
+            _sizeRequirementIndicators.Add(requirementIndicator);
+        }
+    }
 
     private void Start()
     {
         _ui.Initialize(_level, () => _levelController.Start(_level, _build));
         gameObject.layer = LayerMask.NameToLayer("Levels");
-        _levelController.LevelStarted += _ => _collider.enabled = false;
-        _levelController.LevelFinished += _ => _collider.enabled = true;
+        _levelController.LevelStarted += OnLevelStarted;
+        _levelController.LevelFinished += OnLevelFinished;
     }
 
     public void Select()
@@ -48,28 +71,31 @@ public class LevelStarter : ValidatedMonoBehaviour
         _ui.DeselectAnimation();
     }
 
-    private void OnDrawGizmos()
+    private void OnLevelStarted(Level level)
     {
-        if (_level == null)
+        _collider.enabled = false;
+        var color = _indicatorRenderer.material.color;
+        color.a = 0f;
+        Tween.MaterialColor(_indicatorRenderer.material, color, 1f);
+
+        if (level != _level)
             return;
 
-        var sizes = _level.Requirements.OfType<SizeRequirement>();
+        foreach (var requirementIndicator in _sizeRequirementIndicators)
+            requirementIndicator.LevelStarted(_levelController);
+    }
 
-        foreach (var size in sizes)
-        {
-            var color = size switch
-            {
-                ExactSizeRequirement exactSizeRequirement => Color.blue,
-                MaximumSizeRequirement maximumSizeRequirement => Color.red,
-                MinimumSizeRequirement min => Color.green,
-                _ => throw new NotImplementedException()
-            };
+    private void OnLevelFinished(Level level)
+    {
+        _collider.enabled = true;
+        var color = _indicatorRenderer.material.color;
+        color.a = 1f;
+        Tween.MaterialColor(_indicatorRenderer.material, color, 1f);
+        
+        if (level != _level)
+            return;
 
-            var gizmoColor = Gizmos.color;
-            Gizmos.color = color;
-            var bounds = size.SizeBounds;
-            Gizmos.DrawCube(bounds.center, bounds.size);
-            Gizmos.color = gizmoColor;
-        }
+        foreach (var requirementIndicator in _sizeRequirementIndicators)
+            requirementIndicator.LevelFinished(_levelController);
     }
 }

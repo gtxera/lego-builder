@@ -40,9 +40,6 @@ public class LevelInfoUI : MonoBehaviour
     {
         foreach (var requirement in level.Requirements)
         {
-            if (requirement is SizeRequirement)
-                continue;
-            
             var requirementText = _requirementTextPool.Get();
             _takenRequirementTexts.Add(requirementText);
             requirementText.Initialize(requirement, _levelController);
