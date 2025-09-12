@@ -5,20 +5,22 @@ public class SpawnerTool : ITool
     private readonly BuildEditor _buildEditor;
     private readonly CameraServices _cameraServices;
     private readonly BuildColorSelector _buildColorSelector;
+    private readonly BuildTemplateSelector _buildTemplateSelector;
 
     private Piece _newPiece;
     private Vector3 _lastMovePosition;
 
-    public SpawnerTool(BuildEditor buildEditor, CameraServices cameraServices, BuildColorSelector buildColorSelector)
+    public SpawnerTool(BuildEditor buildEditor, CameraServices cameraServices, BuildColorSelector buildColorSelector, BuildTemplateSelector buildTemplateSelector)
     {
         _buildEditor = buildEditor;
         _cameraServices = cameraServices;
         _buildColorSelector = buildColorSelector;
+        _buildTemplateSelector = buildTemplateSelector;
     }
 
     public void Press(Vector2 pointerScreenPosition)
     {
-        _newPiece = _buildEditor.Build.Add(new BrickPieceTemplate());
+        _newPiece = _buildEditor.Build.Add(_buildTemplateSelector.SelectedTemplate);
         var ray = _cameraServices.ScreenToWorldRay(pointerScreenPosition);
         var position = _newPiece.GetSweepPosition(ray.origin, ray.direction);
         _lastMovePosition = _newPiece.MoveTo(position);

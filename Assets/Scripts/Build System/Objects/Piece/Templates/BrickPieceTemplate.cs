@@ -10,8 +10,14 @@ public class BrickPieceTemplate : IPieceTemplate
     private int _width = 2;
     [SerializeField]
     private int _length = 2;
-    [SerializeField]
-    private float _height = .5f;
+    
+    private const float Height = .5f;
+
+    public BrickPieceTemplate(int width, int length)
+    {
+        _width = width;
+        _length = length;
+    }
     
     public void Configure(GameObject pieceObject)
     {
@@ -24,7 +30,7 @@ public class BrickPieceTemplate : IPieceTemplate
         collider.size = size.ToWorld();
     }
 
-    public PieceVector GetSize() => new(_width, _length, _height);
+    public PieceVector GetSize() => new(_width, _length, Height);
 
     public int GetColorCount() => 1;
     

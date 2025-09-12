@@ -8,7 +8,7 @@ public class BuildColorSelector
     public BuildColorSelector()
     {
         _colors = new();
-        _colors.Add(new SimpleColor(Color.red));
+        _colors.Add(new SimpleColor(Color.white));
     }
 
     public PieceColor GetSelectedColorFor(int index) => _colors[index];

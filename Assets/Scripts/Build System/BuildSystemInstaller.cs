@@ -7,7 +7,11 @@ public class BuildSystemInstaller : MonoBehaviour, IInstaller
     {
         containerBuilder.AddScoped(typeof(BuildEditor));
         containerBuilder.AddScoped(typeof(BuildColorSelector));
+        containerBuilder.AddScoped(typeof(BuildTemplateSelector));
+        containerBuilder.AddSingleton(typeof(PieceTemplateDatabase));
         containerBuilder.AddScoped(typeof(CameraServices));
+
+        containerBuilder.AddScoped(typeof(PiecePreviewService));
         
         RegisterTools(containerBuilder);
     }
