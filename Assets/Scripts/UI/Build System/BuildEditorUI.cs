@@ -21,6 +21,7 @@ public class BuildEditorUI : MonoBehaviour
         _buildEditor.StartedEditing += _ => Show();
         _buildEditor.FinishedEditing += _ => Hide();
         _rectTransform = (RectTransform)transform;
+        _rectTransform.sizeDelta = _hiddenSizeDelta;
     }
 
     private void Show()

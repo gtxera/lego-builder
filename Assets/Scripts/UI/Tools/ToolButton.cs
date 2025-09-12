@@ -38,7 +38,7 @@ public class ToolButton : ValidatedMonoBehaviour
         if (tool != _tool)
             return;
         
-        _selectedBorder.color = Color.white;
+        _selectedBorder.gameObject.SetActive(true);
     }
 
     private void OnToolDeselected(ITool tool)
@@ -46,7 +46,7 @@ public class ToolButton : ValidatedMonoBehaviour
         if (tool != _tool)
             return;
         
-        _selectedBorder.color = Color.clear;
+        _selectedBorder.gameObject.SetActive(false);
     }
 
     private void OnClick()
