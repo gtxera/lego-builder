@@ -23,9 +23,9 @@ public class TitleScreen : MonoBehaviour
 
     private void Start()
     {
-        Sequence.Create()
-            .Chain(Tween.Alpha(_titleImage, 1f, 2.5f))
-            .Chain(Tween.Alpha(_startText, 1f, 2.5f))
+        Sequence.Create(sequenceEase: Ease.InCirc)
+            .Chain(Tween.Alpha(_titleImage, 1f, 2f))
+            .Chain(Tween.Alpha(_startText, 1f, 2f))
             .OnComplete(() =>
             {
                 _playing = false;

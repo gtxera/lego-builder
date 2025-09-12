@@ -15,6 +15,9 @@ public class LevelStarter : ValidatedMonoBehaviour
     [Inject]
     private readonly LevelSelectorInputContext _inputContext;
 
+    [Inject]
+    private readonly ProgressManager _progressManager;
+
     [SerializeField]
     private Level _level;
     
@@ -38,6 +41,8 @@ public class LevelStarter : ValidatedMonoBehaviour
 
     private readonly List<SizeRequirementIndicator> _sizeRequirementIndicators = new();
 
+    private MaterialPropertyBlock _materialPropertyBlock;
+
     private void Awake()
     {
         foreach (var requirement in _level.Requirements)
@@ -49,6 +54,9 @@ public class LevelStarter : ValidatedMonoBehaviour
             requirementIndicator.Initialize(sizeRequirement);
             _sizeRequirementIndicators.Add(requirementIndicator);
         }
+        
+        _progressManager.SubscribeOnLevelCompleted(_level, OnLevelCompleted);
+        _progressManager.SubscribeOnLevelUnlocked(_level, OnLevelUnlocked);
     }
 
     private void Start()
@@ -97,5 +105,15 @@ public class LevelStarter : ValidatedMonoBehaviour
 
         foreach (var requirementIndicator in _sizeRequirementIndicators)
             requirementIndicator.LevelFinished(_levelController);
+    }
+
+    private void OnLevelUnlocked()
+    {
+        
+    }
+    
+    private void OnLevelCompleted()
+    {
+        
     }
 }

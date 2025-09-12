@@ -99,4 +99,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 058e3da514340aa47a47be2375061b54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _meshRenderer: {fileID: 0}
+  _meshRenderer: {fileID: 9179184629621892024}
+  _unsatisfiedColor: {r: 1, g: 0, b: 0, a: 1}
+  _isSatisfied: 0

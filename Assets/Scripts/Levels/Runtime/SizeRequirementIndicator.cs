@@ -31,7 +31,8 @@ public class SizeRequirementIndicator : ValidatedMonoBehaviour
         _buildRequirement = sizeRequirement;
         _meshRenderer.material = sizeRequirement.GetMaterial();
         _meshRenderer.GetPropertyBlock(_materialPropertyBlock);
-        _color = _materialPropertyBlock.GetColor(Color);
+        _color = _meshRenderer.material.color;
+        SetColor(_unsatisfiedColor);
         SetAlpha(0);
 
         var bounds = sizeRequirement.SizeBounds;
@@ -90,7 +91,7 @@ public class SizeRequirementIndicator : ValidatedMonoBehaviour
 
     private void SetColor(Color color)
     {
-        _materialPropertyBlock.SetColor(AlphaMultiplier, color);
+        _materialPropertyBlock.SetColor(Color, color);
         _meshRenderer.SetPropertyBlock(_materialPropertyBlock);
     }
 }
