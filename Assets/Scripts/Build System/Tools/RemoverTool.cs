@@ -21,12 +21,12 @@ public class RemoverTool : ITool
         
         var ray = _cameraServices.ScreenToWorldRay(pointerScreenPosition);
         
-        if (!Physics.Raycast(ray, out var hit, 10f))
+        if (!Physics.Raycast(ray, out var hit))
             return;
 
         var piece = hit.transform.GetComponentInParent<Piece>();
         
-        if (piece == null)
+        if (piece == null || !_buildEditor.Build.IsPartOfBuild(piece))
             return;
         
         RemovePiece(piece);
@@ -46,12 +46,12 @@ public class RemoverTool : ITool
     {
         var ray = _cameraServices.ScreenToWorldRay(pointerScreenPosition);
         
-        if (!Physics.Raycast(ray, out var hit, 10f))
+        if (!Physics.Raycast(ray, out var hit))
             return;
 
         var piece = hit.transform.GetComponentInParent<Piece>();
         
-        if (piece == null)
+        if (piece == null || !_buildEditor.Build.IsPartOfBuild(piece))
             return;
         
         RemovePiece(piece);

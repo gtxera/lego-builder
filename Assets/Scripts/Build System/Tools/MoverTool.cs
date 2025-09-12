@@ -24,7 +24,7 @@ public class MoverTool : ITool
 
         _movingPiece = hit.transform.GetComponentInParent<Piece>();
         
-        if (_movingPiece == null)
+        if (_movingPiece == null || !_buildEditor.Build.IsPartOfBuild(_movingPiece))
             return;
 
         _pieceInitialPosition = _lastMovePosition = _movingPiece.transform.position;

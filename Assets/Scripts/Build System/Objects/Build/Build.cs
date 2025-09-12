@@ -12,7 +12,6 @@ public class Build : MonoBehaviour
     [Inject]
     private BuildEditor _buildEditor;
 
-
     public IReadOnlyCollection<Piece> Pieces => _pieces;
 
     public Piece Add(PieceData pieceData)
@@ -72,4 +71,6 @@ public class Build : MonoBehaviour
         var pieces = _pieces.Select(piece => piece.GetData()).ToArray();
         return new BuildData(pieces);
     }
+
+    public bool IsPartOfBuild(Piece piece) => _pieces.Contains(piece);
 }
