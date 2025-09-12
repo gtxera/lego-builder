@@ -43,6 +43,9 @@ public class LevelStarter : ValidatedMonoBehaviour
 
     private MaterialPropertyBlock _materialPropertyBlock;
 
+    private static readonly int AlphaMultiplier = Shader.PropertyToID("_AlphaMultiplier");
+    private static readonly int ColorId = Shader.PropertyToID("_Color");
+    
     private void Awake()
     {
         foreach (var requirement in _level.Requirements)
@@ -57,6 +60,19 @@ public class LevelStarter : ValidatedMonoBehaviour
         
         _progressManager.SubscribeOnLevelCompleted(_level, OnLevelCompleted);
         _progressManager.SubscribeOnLevelUnlocked(_level, OnLevelUnlocked);
+
+        _materialPropertyBlock = new MaterialPropertyBlock();
+        _indicatorRenderer.GetPropertyBlock(_materialPropertyBlock);
+        
+        if (_progressManager.IsCompleted(_level))
+            SetColor(Color.green);
+        else if (_progressManager.IsUnlocked(_level))
+            SetColor(Color.blue);
+        else
+        {
+            SetAlpha(0f);
+            _collider.enabled = false;
+        }
     }
 
     private void Start()
@@ -81,10 +97,11 @@ public class LevelStarter : ValidatedMonoBehaviour
 
     private void OnLevelStarted(Level level)
     {
+        if (!_progressManager.IsUnlocked(_level))
+            return;
+        
         _collider.enabled = false;
-        var color = _indicatorRenderer.material.color;
-        color.a = 0f;
-        Tween.MaterialColor(_indicatorRenderer.material, color, 1f);
+        Tween.Custom(1f, 0f, 1f, SetAlpha);
 
         if (level != _level)
             return;
@@ -95,10 +112,11 @@ public class LevelStarter : ValidatedMonoBehaviour
 
     private void OnLevelFinished(Level level)
     {
-        _collider.enabled = true;
-        var color = _indicatorRenderer.material.color;
-        color.a = 1f;
-        Tween.MaterialColor(_indicatorRenderer.material, color, 1f);
+        if (!_progressManager.IsUnlocked(_level))
+            return;
+        
+        Tween.Custom(0f, 1f, 1f, SetAlpha)
+            .OnComplete(() => _collider.enabled = true);
         
         if (level != _level)
             return;
@@ -109,11 +127,23 @@ public class LevelStarter : ValidatedMonoBehaviour
 
     private void OnLevelUnlocked()
     {
-        
+        Tween.Custom(_materialPropertyBlock.GetColor(ColorId), Color.blue, 1f, SetColor);
     }
     
     private void OnLevelCompleted()
     {
-        
+        Tween.Custom(_materialPropertyBlock.GetColor(ColorId), Color.green, 1f, SetColor);
+    }
+    
+    private void SetAlpha(float alpha)
+    {
+        _materialPropertyBlock.SetFloat(AlphaMultiplier, alpha);
+        _indicatorRenderer.SetPropertyBlock(_materialPropertyBlock);
+    }
+    
+    private void SetColor(Color color)
+    {
+        _materialPropertyBlock.SetColor(ColorId, color);
+        _indicatorRenderer.SetPropertyBlock(_materialPropertyBlock);
     }
 }
