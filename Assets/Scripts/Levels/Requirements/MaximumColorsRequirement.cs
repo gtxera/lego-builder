@@ -10,8 +10,8 @@ public class MaximumColorsRequirement : IBuildRequirement
     
     public bool IsSatisfied(Build build)
     {
-        return build.Pieces.Select(piece => piece.Colors[0].NamedColor).ToHashSet().Count < _count;
+        return build.Pieces.Select(piece => piece.Colors[0].NamedColor).ToHashSet().Count <= _count;
     }
 
-    public string GetText() => $"Conter menos que {_count} cores";
+    public string GetText() => $"Conter no máximo {_count} cores";
 }

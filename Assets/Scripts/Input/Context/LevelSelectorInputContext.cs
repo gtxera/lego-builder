@@ -13,14 +13,14 @@ public class LevelSelectorInputContext : InputContext
 
     public event Action<Vector2> Tapped = delegate { };
 
-    protected override void Disable(LegoBuilderInputActions inputActions)
-    {
-        inputActions.LevelSelector.Tap.performed += OnTap;
-    }
-
     protected override void Enable(LegoBuilderInputActions inputActions)
     {
         inputActions.LevelSelector.Tap.performed += OnTap;
+    }
+    
+    protected override void Disable(LegoBuilderInputActions inputActions)
+    {
+        inputActions.LevelSelector.Tap.performed -= OnTap;
     }
 
     private void OnTap(InputAction.CallbackContext context)

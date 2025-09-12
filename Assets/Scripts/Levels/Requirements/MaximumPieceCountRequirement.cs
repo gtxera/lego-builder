@@ -9,8 +9,8 @@ public class MaximumPieceCountRequirement : IBuildRequirement
     
     public bool IsSatisfied(Build build)
     {
-        return build.Pieces.Count < _count;
+        return build.Pieces.Count <= _count;
     }
 
-    public string GetText() => $"Conter menos que {_count} peças";
+    public string GetText() => $"Conter no máximo {_count} peças";
 }

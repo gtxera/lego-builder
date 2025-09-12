@@ -4,16 +4,13 @@ public class BuildEditor
 {
     public event Action<Build> StartedEditing = delegate { };
     public event Action<Build> CommandCommited = delegate { };
+    public event Action<Build> CommandUndone = delegate { };
+    public event Action<Build> CommandRedone = delegate { }; 
     public event Action<Build> FinishedEditing = delegate { };
     
     public Build Build { get; private set; }
 
-    private readonly BuildEditorCommandStack _commandStack;
-
-    public BuildEditor(BuildEditorCommandStack commandStack)
-    {
-        _commandStack = commandStack;
-    }
+    private BuildEditorCommandStack _commandStack = new();
 
     public void StartEditing(Build build)
     {
@@ -36,5 +33,21 @@ public class BuildEditor
         command.Commit();
         _commandStack.Push(command);
         CommandCommited(Build);
+    }
+
+    public void Undo()
+    {
+        if (!_commandStack.TryUndo())
+            return;
+
+        CommandUndone(Build);
+    }
+
+    public void Redo()
+    {
+        if (!_commandStack.TryRedo())
+            return;
+
+        CommandRedone(Build);
     }
 }

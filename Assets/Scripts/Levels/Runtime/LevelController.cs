@@ -22,6 +22,8 @@ public class LevelController
     public event Action<Level> LevelFinished = delegate { };
     public event Action LevelBecameCompletable = delegate { };
     public event Action LevelBecameUncompletable = delegate { };
+    public event Action<IBuildRequirement> RequirementWasSatisfied = delegate { };
+    public event Action<IBuildRequirement> RequirementWasUnsatisfied = delegate { }; 
     
     public void Start(Level level, Build build)
     {
@@ -30,6 +32,8 @@ public class LevelController
         
         _buildEditor.StartEditing(build);
         _buildEditor.CommandCommited += VerifyLevelCompletion;
+        _buildEditor.CommandUndone += VerifyLevelCompletion;
+        _buildEditor.CommandRedone += VerifyLevelCompletion;
         
         LevelStarted(_currentLevel);
         
@@ -56,7 +60,18 @@ public class LevelController
 
     private void VerifyLevelCompletion(Build build)
     {
-        var allRequirementsSatisfied = _currentLevel.Requirements.All(requirement => requirement.IsSatisfied(build));
+        var allRequirementsSatisfied = true;
+
+        foreach (var requirement in _currentLevel.Requirements)
+        {
+            var satisfied = requirement.IsSatisfied(build);
+            allRequirementsSatisfied &= satisfied;
+
+            if (satisfied)
+                RequirementWasSatisfied(requirement);
+            else
+                RequirementWasUnsatisfied(requirement);
+        }
 
         Debug.Log(allRequirementsSatisfied);
         

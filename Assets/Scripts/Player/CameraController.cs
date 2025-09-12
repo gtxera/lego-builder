@@ -14,6 +14,9 @@ public class CameraController : ValidatedMonoBehaviour
 
     [Inject]
     private readonly SensitivitySettings _sensitivitySettings;
+    
+    [Inject]
+    private BuildEditor _buildEditor;
 
     [SerializeField]
     private float _velocityAggregationWindow;
@@ -121,5 +124,11 @@ public class CameraController : ValidatedMonoBehaviour
             _toolController.PickTool(_painterTool);
         if (Keyboard.current.vKey.wasReleasedThisFrame)
             _buildColorSelector.SetColor(Color.green);
+        
+        if (Keyboard.current.zKey.wasReleasedThisFrame)
+            _buildEditor.Undo();
+        
+        if (Keyboard.current.xKey.wasReleasedThisFrame)
+            _buildEditor.Redo();
     }
 }

@@ -23,28 +23,30 @@ public class BuildEditorCommandStack
         PublishRedoUnavailable();
     }
 
-    public void Undo()
+    public bool TryUndo()
     {
         if (!_undoStack.TryPop(out var command))
-            return;
+            return false;
         
         command.Undo();
         PublishUndoUnavailable();
         
         _redoStack.Push(command);
         PublishRedoAvailable();
+        return true;
     }
 
-    public void Redo()
+    public bool TryRedo()
     {
         if (!_redoStack.TryPop(out var command))
-            return;
+            return false;
         
         command.Redo();
         PublishRedoUnavailable();
         
         _undoStack.Push(command);
         PublishUndoAvailable();
+        return true;
     }
     
     public void Clear()

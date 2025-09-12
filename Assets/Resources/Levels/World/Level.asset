@@ -15,16 +15,13 @@ MonoBehaviour:
   <World>k__BackingField: {fileID: 11400000, guid: b39469ff9fffaa04487a663bace57d28, type: 2}
   _requiredLevelsToUnlock: []
   _requirements:
-  - rid: 6535569922643198020
+  - rid: 6535569954094186564
   <Name>k__BackingField: Construa uma casa!
   <Description>k__BackingField: "Fa\xE7a uma pequena e singela casa."
   references:
     version: 2
     RefIds:
-    - rid: 6535569922643198020
-      type: {class: ExactSizeRequirement, ns: , asm: Assembly-CSharp}
+    - rid: 6535569954094186564
+      type: {class: MaximumColorsRequirement, ns: , asm: Assembly-CSharp}
       data:
-        _size:
-          X: 2
-          Y: 2
-          Height: 1
+        _count: 2

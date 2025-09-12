@@ -4,6 +4,7 @@ using KBCore.Refs;
 using Reflex.Attributes;
 using UnityEngine;
 
+[RequireComponent(typeof(BoxCollider))]
 public class LevelStarter : ValidatedMonoBehaviour
 {
     [Inject]
@@ -24,11 +25,16 @@ public class LevelStarter : ValidatedMonoBehaviour
     [SerializeField, Scene]
     private CameraController _cameraController;
 
+    [SerializeField, Self]
+    private BoxCollider _collider;
+
     private void Start()
     {
         _ui.Initialize(_level, () => _levelController.Start(_level, _build));
         _inputContext.Enable();
         gameObject.layer = LayerMask.NameToLayer("Levels");
+        _levelController.LevelStarted += _ => _collider.enabled = false;
+        _levelController.LevelFinished += _ => _collider.enabled = true;
     }
 
     public void Select()

@@ -6,7 +6,6 @@ public class BuildSystemInstaller : MonoBehaviour, IInstaller
     public void InstallBindings(ContainerBuilder containerBuilder)
     {
         containerBuilder.AddScoped(typeof(BuildEditor));
-        containerBuilder.AddScoped(typeof(BuildEditorCommandStack));
         containerBuilder.AddScoped(typeof(BuildColorSelector));
         containerBuilder.AddScoped(typeof(CameraServices));
         

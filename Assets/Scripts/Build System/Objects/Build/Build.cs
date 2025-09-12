@@ -12,8 +12,6 @@ public class Build : MonoBehaviour
     [Inject]
     private BuildEditor _buildEditor;
 
-    [Inject]
-    private BuildEditorCommandStack _commandStack;
 
     public IReadOnlyCollection<Piece> Pieces => _pieces;
 
@@ -73,14 +71,5 @@ public class Build : MonoBehaviour
     {
         var pieces = _pieces.Select(piece => piece.GetData()).ToArray();
         return new BuildData(pieces);
-    }
-    
-    private void Update()
-    {
-        if (Keyboard.current.zKey.wasReleasedThisFrame)
-            _commandStack.Undo();
-        
-        if (Keyboard.current.xKey.wasReleasedThisFrame)
-            _commandStack.Redo();
     }
 }
