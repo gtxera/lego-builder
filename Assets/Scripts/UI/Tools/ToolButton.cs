@@ -10,6 +10,9 @@ public class ToolButton : ValidatedMonoBehaviour
 
     [SerializeField, Child(Flag.ExcludeSelf)]
     private Image _selectedBorder;
+
+    [SerializeField, Child(Flag.Editable)]
+    private Image _icon;
     
     private ToolController _toolController;
 
@@ -27,6 +30,7 @@ public class ToolButton : ValidatedMonoBehaviour
 
         _toolController.ToolSelected += OnToolSelected;
         _toolController.ToolDeselected += OnToolDeselected;
+        _icon.sprite = _tool.GetIcon();
     }
 
     private void OnToolSelected(ITool tool)

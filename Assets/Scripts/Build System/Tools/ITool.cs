@@ -9,4 +9,6 @@ public interface ITool
     void Drag(Vector2 pointerScreenPosition);
 
     void Tap();
+
+    Sprite GetIcon();
 }

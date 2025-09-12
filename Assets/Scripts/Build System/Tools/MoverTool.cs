@@ -61,4 +61,6 @@ public class MoverTool : ITool
         
         _movingPiece.RotateClockwise();
     }
+
+    public Sprite GetIcon() => Resources.Load<Sprite>("Icons/Mover");
 }

@@ -58,6 +58,7 @@ public class RemoverTool : ITool
     }
 
     public void Tap() { }
+    public Sprite GetIcon() => Resources.Load<Sprite>("Icons/Remove");
 
     private void RemovePiece(Piece piece)
     {

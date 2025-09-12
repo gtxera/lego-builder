@@ -57,7 +57,6 @@ public class CameraController : ValidatedMonoBehaviour
     
     private void Awake()
     {
-        _cameraControlInputContext.Enable();
         _cameraControlInputContext.CameraMoveRequested += OnMove;
         _cameraControlInputContext.CameraMoveFinished += OnMoveFinished;
     }

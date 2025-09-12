@@ -53,4 +53,6 @@ public class SpawnerTool : ITool
         
         _newPiece.RotateClockwise();
     }
+
+    public Sprite GetIcon() => Resources.Load<Sprite>("Icons/Add");
 }

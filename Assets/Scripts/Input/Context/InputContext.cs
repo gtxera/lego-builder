@@ -13,7 +13,6 @@ public abstract class InputContext
 
     public void Enable()
     {
-        Debug.Log($"habilitou {GetType().Name}");
         if (_enabled)
             return;
 

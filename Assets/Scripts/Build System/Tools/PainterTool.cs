@@ -77,4 +77,5 @@ public class PainterTool : ITool
     }
     
     public void Tap() { }
+    public Sprite GetIcon() => Resources.Load<Sprite>("Icons/Brush");
 }
