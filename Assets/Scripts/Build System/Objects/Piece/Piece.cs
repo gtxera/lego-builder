@@ -130,6 +130,8 @@ public class Piece : MonoBehaviour
             socket.Disconnect();
         foreach (var stud in _studs)
             stud.Disconnect();
+        foreach (var anchor in _anchors)
+            anchor.Disconnect();
         
         var gridPosition = GetGridPosition(position);
         _rigidbody.position = gridPosition;
@@ -141,6 +143,8 @@ public class Piece : MonoBehaviour
             socket.Connect();
         foreach (var stud in _studs)
             stud.Connect();
+        foreach (var anchor in _anchors)
+            anchor.Connect();
 
         return gridPosition;
     }

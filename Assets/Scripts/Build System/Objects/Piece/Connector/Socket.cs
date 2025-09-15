@@ -1,3 +1,6 @@
 using UnityEngine;
 
-public class Socket : PieceConnector<Socket, Stud> { }
+public class Socket : PieceConnector<Socket, Stud>
+{
+    protected override string Layer => "Connectors";
+}

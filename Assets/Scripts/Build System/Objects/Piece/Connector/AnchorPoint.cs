@@ -2,13 +2,7 @@ using UnityEngine;
 
 public class AnchorPoint : PieceConnector<AnchorPoint, AnchorPoint>
 {
-    protected override void Awake()
-    {
-        var collider = gameObject.AddComponent<BoxCollider>();
-        collider.isTrigger = true;
-        collider.size = new PieceVector(1, 1, 0.1f).ToWorld();
-        gameObject.layer = LayerMask.NameToLayer("Anchors");
-    }
+    protected override string Layer => "Anchors";
 
     public bool IsCompatible(AnchorPoint anchor) => anchor.transform.forward == -transform.forward;
 

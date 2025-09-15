@@ -9,18 +9,20 @@ public abstract class PieceConnector<TConnector, TConnecting> : PieceConnector
 
     private Collider[] _castResults = new Collider[2];
     
+    protected abstract string Layer { get; }
+    
     [SerializeField]
     private TConnecting _connecting;
     
     [field: SerializeField]
     public bool Connected { get; private set; }
     
-    protected virtual void Awake()
+    private void Awake()
     {
         var collider = gameObject.AddComponent<SphereCollider>();
         collider.isTrigger = true;
         collider.radius = 0.24f;
-        gameObject.layer = LayerMask.NameToLayer("Connectors");
+        gameObject.layer = LayerMask.NameToLayer(Layer);
     }
 
     public override void Initialize(Piece piece)
@@ -32,7 +34,7 @@ public abstract class PieceConnector<TConnector, TConnecting> : PieceConnector
 
     public void Connect()
     {
-        var size = Physics.OverlapSphereNonAlloc(transform.position - new Vector3(0, .01f, 0), .24f, _castResults, LayerMask.GetMask("Connectors"), QueryTriggerInteraction.Collide);
+        var size = Physics.OverlapSphereNonAlloc(transform.position - new Vector3(0, .01f, 0), .24f, _castResults, LayerMask.GetMask(Layer), QueryTriggerInteraction.Collide);
         for (int i = 0; i < size; i++)
         {
             var collider = _castResults[i];
