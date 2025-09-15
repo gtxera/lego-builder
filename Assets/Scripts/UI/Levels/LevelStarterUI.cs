@@ -26,6 +26,12 @@ public class LevelStarterUI : ValidatedMonoBehaviour
     [SerializeField, Child]
     private CanvasGroup _canvasGroup;
 
+    [SerializeField, Self]
+    private WorldSpaceCameraRelativeCanvas _cameraRelativeCanvas;
+
+    [SerializeField]
+    private float _expandedRelativeSize;
+
     public void Initialize(Level level, Action startLevelAction)
     {
         _levelName.SetText(level.Name);
@@ -38,13 +44,13 @@ public class LevelStarterUI : ValidatedMonoBehaviour
 
     public void SelectAnimation()
     {
-        Tween.Scale(transform, Vector3.one, .5f, Ease.OutBounce)
+        Tween.Custom(0f, _expandedRelativeSize, .5f, value => _cameraRelativeCanvas.SetRelativeSize(value), Ease.OutBounce)
             .OnComplete(() => _canvasGroup.interactable = true);
     }
 
     public void DeselectAnimation()
     {
         _canvasGroup.interactable = false;
-        Tween.Scale(transform, Vector3.zero, .5f, Ease.OutBounce);
+        Tween.Custom(_expandedRelativeSize, 0f, .5f, value => _cameraRelativeCanvas.SetRelativeSize(value), Ease.OutBounce);
     }
 }

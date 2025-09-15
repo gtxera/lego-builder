@@ -775,8 +775,8 @@ Camera:
   m_GameObject: {fileID: 330585543}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 1, g: 1, b: 1, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -2442,6 +2442,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36056c55d2da27b478a768c9f170c930, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _relativeSize: 0
 --- !u!114 &844522089
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2503,7 +2504,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!114 &844522092
 MonoBehaviour:
@@ -2522,6 +2523,8 @@ MonoBehaviour:
   _startLevelButton: {fileID: 318131254}
   _deselectButton: {fileID: 1112815107}
   _canvasGroup: {fileID: 1400720772}
+  _cameraRelativeCanvas: {fileID: 844522088}
+  _expandedRelativeSize: 0.005
 --- !u!1 &853631744
 GameObject:
   m_ObjectHideFlags: 0
@@ -2925,6 +2928,8 @@ MonoBehaviour:
   _startLevelButton: {fileID: 1510572577}
   _deselectButton: {fileID: 893063217}
   _canvasGroup: {fileID: 745468574}
+  _cameraRelativeCanvas: {fileID: 989220356}
+  _expandedRelativeSize: 0
 --- !u!224 &989220355
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2957,6 +2962,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36056c55d2da27b478a768c9f170c930, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _relativeSize: 0
 --- !u!114 &989220357
 MonoBehaviour:
   m_ObjectHideFlags: 0
