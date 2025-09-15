@@ -7,8 +7,10 @@ public class PiecePreview : MonoBehaviour
     private Transform _viewObject;
 
     private Camera _camera;
+
+    private Renderer _renderer;
     
-    public RenderTexture GetRenderTexture(IPieceTemplate template, PiecePreviewService piecePreviewService)
+    public RenderTexture GetRenderTexture(IPieceTemplate template, PiecePreviewService piecePreviewService, BuildColorSelector colorSelector)
     {
         _piecePreviewService = piecePreviewService;
         
@@ -29,8 +31,17 @@ public class PiecePreview : MonoBehaviour
         _camera.cullingMask = LayerMask.GetMask("ExamplePieces");
         _camera.clearFlags = CameraClearFlags.Color;
         _camera.backgroundColor = Color.clear;
+
+        _renderer = GetComponentInChildren<Renderer>();
+
+        colorSelector.ColorChanged += OnSelectedColorChanged;
         
         return renderTexture;
+    }
+
+    private void OnSelectedColorChanged(Color color)
+    {
+        _renderer.material.SetColor("_BaseColor", color);
     }
     
     private void Update()

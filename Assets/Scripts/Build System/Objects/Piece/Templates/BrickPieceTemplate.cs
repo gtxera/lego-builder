@@ -26,6 +26,7 @@ public class BrickPieceTemplate : IPieceTemplate
         brick.transform.localScale = size.ToWorld() - new Vector3(0.02f, 0.02f, 0.02f);
         brick.transform.SetParent(pieceObject.transform, false);
         Object.Destroy(brick.GetComponent<BoxCollider>());
+        brick.GetComponent<Renderer>().material = Resources.Load<Material>("Materials/Piece/DefaultPieceMaterial");
         var collider = pieceObject.AddComponent<BoxCollider>();
         collider.size = size.ToWorld();
     }
