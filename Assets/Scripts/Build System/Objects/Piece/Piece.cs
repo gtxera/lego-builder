@@ -116,6 +116,8 @@ public class Piece : MonoBehaviour
 
         for (int i = 0; i < transientData.Colors.Length; i++)
             TrySetColor(transientData.Colors[i], i);
+        
+        SetRotation(transientData.Rotation);
     }
 
     public void MoveDifference(Vector3 difference)

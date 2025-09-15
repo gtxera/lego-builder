@@ -11,6 +11,7 @@ public class InputInstaller : MonoBehaviour, IInstaller
         containerBuilder.AddScoped(typeof(CameraControlInputContext));
         containerBuilder.AddScoped(typeof(ToolInputContext));
         containerBuilder.AddScoped(typeof(LevelSelectorInputContext));
+        containerBuilder.AddScoped(typeof(TouchController));
         containerBuilder.AddSingleton(typeof(PointerUIController));
     }
 }

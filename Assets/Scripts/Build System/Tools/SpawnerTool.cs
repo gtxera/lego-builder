@@ -37,7 +37,7 @@ public class SpawnerTool : ITool
     public void Release(Vector2 pointerScreenPosition)
     {
         var command = new SpawnPieceCommand(_buildEditor.Build, _newPiece.GetData());
-        
+        _newPiece = null;
         _buildEditor.Commit(command);
     }
 

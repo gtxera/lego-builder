@@ -35,7 +35,7 @@ public class ToolController
         ToolSelected(_activeTool);
         
         _toolInputContext.Enable();
-        _cameraControlInputContext.Disable();
+        _cameraControlInputContext.DisableMoveControl();
     }
 
     public void DeselectTool()
@@ -43,7 +43,7 @@ public class ToolController
         ToolDeselected(_activeTool);
         _activeTool = null;
         
-        _cameraControlInputContext.Enable();
+        _cameraControlInputContext.EnableMoveControl();
         _toolInputContext.Disable();
     }
 
@@ -53,6 +53,7 @@ public class ToolController
             return;
         
         _activeTool.Press(pointerScreenPosition);
+        _cameraControlInputContext.Disable();
         ToolPressed();
     }
 
@@ -62,10 +63,11 @@ public class ToolController
             return;
         
         _activeTool.Release(pointerScreenPosition);
+        _cameraControlInputContext.Enable();
         ToolReleased();
     }
 
     private void OnDrag(Vector2 pointerScreenDelta) => _activeTool?.Drag(pointerScreenDelta);
 
-    private void OnTapped(Vector2 poitnerScreenPoisition) => _activeTool?.Tap(poitnerScreenPoisition);
+    private void OnTapped(Vector2 poitnerScreenPosition) => _activeTool?.Tap(poitnerScreenPosition);
 }

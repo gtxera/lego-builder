@@ -2,6 +2,9 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
+using UnityEngine.InputSystem.EnhancedTouch;
+using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
+using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
 public class CameraControlInputContext : InputContext
 {
@@ -11,11 +14,15 @@ public class CameraControlInputContext : InputContext
     private Vector2 _secondTouchDelta;
     private bool _touchBeganInUI;
 
+    private bool _moveControlEnabled = true;
+
     private readonly PointerUIController _pointerUIController;
+    private readonly TouchController _touchController;
     
-    public CameraControlInputContext(LegoBuilderInputActions inputActions, PointerUIController pointerUIController) : base(inputActions)
+    public CameraControlInputContext(LegoBuilderInputActions inputActions, PointerUIController pointerUIController, TouchController touchController) : base(inputActions)
     {
         _pointerUIController = pointerUIController;
+        _touchController = touchController;
     }
 
     public event Action CameraMoveStarted = delegate { };
@@ -23,16 +30,16 @@ public class CameraControlInputContext : InputContext
     public event Action CameraMoveFinished = delegate { };
     public event Action<float> CameraLookOrbitYRequested = delegate { };
     public event Action<float> CameraLookOrbitXRequested = delegate { };
-    public event Action<float> CameraZoomRequested = delegate { }; 
+    public event Action<float> CameraZoomRequested = delegate { };
+
+    public void EnableMoveControl() => _moveControlEnabled = true;
+
+    public void DisableMoveControl() => _moveControlEnabled = false;
 
     protected override void Enable(LegoBuilderInputActions inputActions)
     {
-        inputActions.Camera.FirstTouch.performed += OnFirstTouchPerformed;
-        inputActions.Camera.FirstTouch.canceled += OnFirstTouchCanceled;
-
-        inputActions.Camera.SecondTouch.performed += OnSecondTouchPerformed;
-        inputActions.Camera.SecondTouch.canceled += OnSecondTouchCanceled;
-
+        _touchController.SingleTouchMoved += OnSingleTouchMoved;
+        
         inputActions.Camera.Touch.performed += OnMoveStarted;
         inputActions.Camera.Move.performed += OnMovePerformed;
         inputActions.Camera.Touch.canceled += OnMoveCanceled;
@@ -43,12 +50,6 @@ public class CameraControlInputContext : InputContext
 
     protected override void Disable(LegoBuilderInputActions inputActions)
     {
-        inputActions.Camera.FirstTouch.performed -= OnFirstTouchPerformed;
-        inputActions.Camera.FirstTouch.canceled -= OnFirstTouchCanceled;
-
-        inputActions.Camera.SecondTouch.performed -= OnSecondTouchPerformed;
-        inputActions.Camera.SecondTouch.canceled -= OnSecondTouchCanceled;
-
         inputActions.Camera.Touch.performed -= OnMoveStarted;
         inputActions.Camera.Move.performed -= OnMovePerformed;
         inputActions.Camera.Touch.canceled -= OnMoveCanceled;
@@ -57,31 +58,9 @@ public class CameraControlInputContext : InputContext
         inputActions.Camera.Zoom.performed -= OnZoomPerformed;
     }
 
-    private void OnFirstTouchPerformed(InputAction.CallbackContext context)
+    private void OnSingleTouchMoved(Vector2 delta)
     {
-        if (!_secondTouchPerformed)
-            HandleCameraMoveRequest(_firstTouchDelta);
-    }
-
-    private void OnFirstTouchCanceled(InputAction.CallbackContext _)
-    {
-        _primaryTouchPerformed = false;
-    }
-
-    private void OnSecondTouchPerformed(InputAction.CallbackContext context)
-    {
-        if (context.control is not TouchControl)
-            throw new InvalidOperationException("Callback de touch precisa ter controle de touch");
-        
-        _secondTouchPerformed = true;
-        
-        if (!_primaryTouchPerformed)
-            return;
-    }
-
-    private void OnSecondTouchCanceled(InputAction.CallbackContext _)
-    {
-        _secondTouchPerformed = false;
+        HandleCameraMoveRequest(-delta);
     }
 
     private void OnMoveStarted(InputAction.CallbackContext context)
@@ -91,13 +70,13 @@ public class CameraControlInputContext : InputContext
 
         _touchBeganInUI = _pointerUIController.IsPointerOverUI(pointer.position.ReadValue());
 
-        if (!_touchBeganInUI)
+        if (CanMove())
             CameraMoveStarted();
     }
     
     private void OnMovePerformed(InputAction.CallbackContext context)
     {
-        if (_touchBeganInUI)
+        if (!CanMove())
             return;
         
         HandleCameraMoveRequest(context.ReadValue<Vector2>());
@@ -105,14 +84,15 @@ public class CameraControlInputContext : InputContext
 
     private void OnMoveCanceled(InputAction.CallbackContext _)
     {
-        var touchBeganInUI = _touchBeganInUI;
         _touchBeganInUI = false;
         
-        if (touchBeganInUI)
+        if (!CanMove())
             return;
 
         CameraMoveFinished();
     }
+
+    private bool CanMove() => !_touchBeganInUI && _moveControlEnabled;
 
     private void OnLookPerformed(InputAction.CallbackContext context)
     {

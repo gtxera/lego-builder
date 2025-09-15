@@ -31,7 +31,7 @@ public partial class @LegoBuilderInputActions: IInputActionCollection2, IDisposa
                     ""name"": ""First Touch"",
                     ""type"": ""Value"",
                     ""id"": ""4a3b2d91-f1af-42d8-8e2e-8c966bb2748b"",
-                    ""expectedControlType"": ""Vector2"",
+                    ""expectedControlType"": ""Touch"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
@@ -40,7 +40,7 @@ public partial class @LegoBuilderInputActions: IInputActionCollection2, IDisposa
                     ""name"": ""Second Touch"",
                     ""type"": ""Value"",
                     ""id"": ""285c683b-7aca-46f7-91b4-d1cd0b9e9c6d"",
-                    ""expectedControlType"": ""Vector2"",
+                    ""expectedControlType"": ""Touch"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
@@ -86,7 +86,7 @@ public partial class @LegoBuilderInputActions: IInputActionCollection2, IDisposa
                 {
                     ""name"": """",
                     ""id"": ""1b02f847-1144-43ac-a418-3c84015bef50"",
-                    ""path"": ""<Touchscreen>/touch0/delta"",
+                    ""path"": ""<Touchscreen>/touch0"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";Touch"",
@@ -97,7 +97,7 @@ public partial class @LegoBuilderInputActions: IInputActionCollection2, IDisposa
                 {
                     ""name"": """",
                     ""id"": ""b1e1fb1e-7176-4406-adb7-4da7ca31e286"",
-                    ""path"": ""<Touchscreen>/touch1/delta"",
+                    ""path"": ""<Touchscreen>/touch1"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";Touch"",
