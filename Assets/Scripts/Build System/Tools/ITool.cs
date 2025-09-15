@@ -8,7 +8,7 @@ public interface ITool
     
     void Drag(Vector2 pointerScreenPosition);
 
-    void Tap();
+    void Tap(Vector2 pointerScreenPosition);
 
     Sprite GetIcon();
 }

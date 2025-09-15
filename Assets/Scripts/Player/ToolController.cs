@@ -67,5 +67,5 @@ public class ToolController
 
     private void OnDrag(Vector2 pointerScreenDelta) => _activeTool?.Drag(pointerScreenDelta);
 
-    private void OnTapped() => _activeTool?.Tap();
+    private void OnTapped(Vector2 poitnerScreenPoisition) => _activeTool?.Tap(poitnerScreenPoisition);
 }

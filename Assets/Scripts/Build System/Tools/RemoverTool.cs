@@ -57,7 +57,7 @@ public class RemoverTool : ITool
         RemovePiece(piece);
     }
 
-    public void Tap() { }
+    public void Tap(Vector2 pointerScreenPosition) { }
     public Sprite GetIcon() => Resources.Load<Sprite>("Icons/Remove");
 
     private void RemovePiece(Piece piece)

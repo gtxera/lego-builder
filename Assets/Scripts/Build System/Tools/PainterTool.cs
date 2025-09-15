@@ -76,6 +76,6 @@ public class PainterTool : ITool
         piece.TrySetColor(selectedColor, 0);
     }
     
-    public void Tap() { }
+    public void Tap(Vector2 pointerScreenPosition) { }
     public Sprite GetIcon() => Resources.Load<Sprite>("Icons/Brush");
 }

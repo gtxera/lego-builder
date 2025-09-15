@@ -47,19 +47,29 @@ public class MoverTool : ITool
             return;
         
         var ray = _cameraServices.ScreenToWorldRay(pointerScreenPosition);
-        var newMovePosition = _movingPiece.GetSweepPosition(ray.origin, ray.direction);
-        if ((newMovePosition - _lastMovePosition).magnitude > 0.01f)
+        
+        if (!_movingPiece.TryGetAnchoredPosition(ray, out var position))
+            position = _movingPiece.GetSweepPosition(ray.origin, ray.direction);
+        
+        if ((position - _lastMovePosition).magnitude > 0.01f)
         {
-            _lastMovePosition = _movingPiece.MoveTo(newMovePosition);
+            _lastMovePosition = _movingPiece.MoveTo(position);
         }
     }
 
-    public void Tap()
+    public void Tap(Vector2 pointerScreenPosition)
     {
         if (_movingPiece == null)
             return;
         
         _movingPiece.RotateClockwise();
+        
+        var ray = _cameraServices.ScreenToWorldRay(pointerScreenPosition);
+        
+        if (!_movingPiece.TryGetAnchoredPosition(ray, out var position))
+            position = _movingPiece.GetSweepPosition(ray.origin, ray.direction);
+        
+        _lastMovePosition = _movingPiece.MoveTo(position);
     }
 
     public Sprite GetIcon() => Resources.Load<Sprite>("Icons/Mover");

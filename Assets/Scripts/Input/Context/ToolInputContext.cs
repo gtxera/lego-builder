@@ -16,7 +16,7 @@ public class ToolInputContext : InputContext
     public event Action<Vector2> Pressed = delegate { };
     public event Action<Vector2> Released = delegate { };
     public event Action<Vector2> Dragged = delegate { };
-    public event Action Tapped = delegate { };
+    public event Action<Vector2> Tapped = delegate { };
 
     protected override void Enable(LegoBuilderInputActions inputActions)
     {
@@ -97,9 +97,14 @@ public class ToolInputContext : InputContext
 
     private void OnSecondaryTapPerformed(InputAction.CallbackContext context)
     {
-        if (_pointerUIController.IsPointerOverUI(Pointer.current.position.ReadValue()))
+        if (context.control.device is not Pointer pointer)
+            throw new InvalidOperationException("Press deve ser pointer");
+        
+        var pointerPosition = pointer.position.ReadValue();
+        
+        if (_pointerUIController.IsPointerOverUI(pointerPosition))
             return;
         
-        Tapped();
+        Tapped(pointerPosition);
     }
 }

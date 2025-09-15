@@ -9,6 +9,7 @@ public class SpawnerTool : ITool
 
     private Piece _newPiece;
     private Vector3 _lastMovePosition;
+    private PieceRotation _rotation;
 
     public SpawnerTool(BuildEditor buildEditor, CameraServices cameraServices, BuildColorSelector buildColorSelector, BuildTemplateSelector buildTemplateSelector)
     {
@@ -22,7 +23,12 @@ public class SpawnerTool : ITool
     {
         _newPiece = _buildEditor.Build.Add(_buildTemplateSelector.SelectedTemplate);
         var ray = _cameraServices.ScreenToWorldRay(pointerScreenPosition);
-        var position = _newPiece.GetSweepPosition(ray.origin, ray.direction);
+        
+        _newPiece.SetRotation(_rotation);
+        
+        if (!_newPiece.TryGetAnchoredPosition(ray, out var position))
+            position = _newPiece.GetSweepPosition(ray.origin, ray.direction);
+        
         _lastMovePosition = _newPiece.MoveTo(position);
 
         _newPiece.TrySetColor(_buildColorSelector.GetSelectedColorFor(0), 0);
@@ -41,19 +47,31 @@ public class SpawnerTool : ITool
             return;
         
         var ray = _cameraServices.ScreenToWorldRay(pointerScreenPosition);
-        var newMovePosition = _newPiece.GetSweepPosition(ray.origin, ray.direction);
-        if ((newMovePosition - _lastMovePosition).magnitude > 0.01f)
+        
+        if (!_newPiece.TryGetAnchoredPosition(ray, out var position))
+            position = _newPiece.GetSweepPosition(ray.origin, ray.direction);
+        
+        if ((position - _lastMovePosition).magnitude > 0.01f)
         {
-            _lastMovePosition = _newPiece.MoveTo(newMovePosition);
+            _lastMovePosition = _newPiece.MoveTo(position);
         }
     }
 
-    public void Tap()
+    public void Tap(Vector2 pointerScreenPosition)
     {
         if (_newPiece == null)
             return;
+
+        _rotation = PieceRotationExtensions.Add(_rotation, PieceRotation.East);
         
         _newPiece.RotateClockwise();
+        
+        var ray = _cameraServices.ScreenToWorldRay(pointerScreenPosition);
+        
+        if (!_newPiece.TryGetAnchoredPosition(ray, out var position))
+            position = _newPiece.GetSweepPosition(ray.origin, ray.direction);
+        
+        _lastMovePosition = _newPiece.MoveTo(position);
     }
 
     public Sprite GetIcon() => Resources.Load<Sprite>("Icons/Add");

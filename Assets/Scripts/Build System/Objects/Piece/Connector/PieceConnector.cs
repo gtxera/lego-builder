@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 
-[RequireComponent(typeof(SphereCollider))]
 public abstract class PieceConnector<TConnector, TConnecting> : PieceConnector 
     where TConnector : PieceConnector<TConnector, TConnecting>
     where TConnecting : PieceConnector<TConnecting, TConnector>
@@ -16,15 +15,15 @@ public abstract class PieceConnector<TConnector, TConnecting> : PieceConnector
     [field: SerializeField]
     public bool Connected { get; private set; }
     
-    private void Awake()
+    protected virtual void Awake()
     {
-        var collider = GetComponent<SphereCollider>();
+        var collider = gameObject.AddComponent<SphereCollider>();
         collider.isTrigger = true;
         collider.radius = 0.24f;
         gameObject.layer = LayerMask.NameToLayer("Connectors");
     }
 
-    public void Initialize(Piece piece)
+    public override void Initialize(Piece piece)
     {
         _ownerPiece = piece;
     }
@@ -47,7 +46,7 @@ public abstract class PieceConnector<TConnector, TConnecting> : PieceConnector
     
     private void Connect(TConnecting connecting)
     {
-        if (Connected || _ownerPiece?.Id == connecting._ownerPiece?.Id)
+        if (Connected || _ownerPiece?.Id == connecting._ownerPiece?.Id || !CanConnect(connecting))
             return;
         
         _connecting = connecting;
@@ -60,6 +59,8 @@ public abstract class PieceConnector<TConnector, TConnecting> : PieceConnector
             _ownerPiece.MoveDifference(difference);
         }
     }
+
+    protected virtual bool CanConnect(TConnecting connecting) => true;
 
     public void Disconnect()
     {
@@ -75,4 +76,6 @@ public abstract class PieceConnector<TConnector, TConnecting> : PieceConnector
 public abstract class PieceConnector : MonoBehaviour
 {
     public abstract bool IsOwnedBy(Piece piece);
+
+    public abstract void Initialize(Piece piece);
 }
