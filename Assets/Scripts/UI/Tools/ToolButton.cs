@@ -21,6 +21,7 @@ public class ToolButton : ValidatedMonoBehaviour
     private void Awake()
     {
         _button.onClick.AddListener(OnClick);
+        _icon.preserveAspect = true;
     }
 
     public void Initialize(ToolController toolController, ITool tool)

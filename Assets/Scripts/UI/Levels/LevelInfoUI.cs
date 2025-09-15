@@ -44,6 +44,8 @@ public class LevelInfoUI : MonoBehaviour
             _takenRequirementTexts.Add(requirementText);
             requirementText.Initialize(requirement, _levelController);
         }
+
+        _completeButton.transform.SetAsLastSibling();
     }
 
     private void OnLevelFinished(Level _)

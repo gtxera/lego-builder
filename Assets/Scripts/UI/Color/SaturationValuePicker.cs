@@ -29,7 +29,7 @@ public class SaturationValuePicker : ValidatedMonoBehaviour, IPointerDownHandler
 
     private void Start()
     {
-        MoveReticle(_rectTransform.position + (Vector3)(_rectTransform.rect.size / 2 * new Vector2(-1, 1)));
+        MoveReticle(_rectTransform.position + (Vector3)(_rectTransform.rect.size / 2 * new Vector2(-1, 1) * 3));
     }
 
     public void SetHue(float hue)

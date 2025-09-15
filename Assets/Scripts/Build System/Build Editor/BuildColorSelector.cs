@@ -7,7 +7,6 @@ public class BuildColorSelector
 
     public BuildColorSelector()
     {
-        _colors = new();
         _colors.Add(new SimpleColor(Color.white));
     }
 
