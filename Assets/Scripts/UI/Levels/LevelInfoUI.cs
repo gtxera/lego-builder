@@ -27,7 +27,11 @@ public class LevelInfoUI : MonoBehaviour
     {
         _levelController.LevelStarted += OnLevelStarted;
         _levelController.LevelFinished += OnLevelFinished;
-        _levelController.LevelBecameCompletable += () => _completeButton.interactable = true;
+        _levelController.LevelBecameCompletable += () =>
+        {
+            _completeButton.interactable = true;
+            Debug.Log("opa");
+        };
         _levelController.LevelBecameUncompletable += () => _completeButton.interactable = false;
         
         _completeButton.onClick.AddListener(() => _levelController.Complete());

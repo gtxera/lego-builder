@@ -17,6 +17,7 @@ MonoBehaviour:
   _requirements:
   - rid: 6535569954094186564
   - rid: 6535569965930512450
+  - rid: 6535570062124253252
   <Name>k__BackingField: Construa uma casa!
   <Description>k__BackingField: "Fa\xE7a uma pequena e singela casa."
   references:
@@ -33,3 +34,8 @@ MonoBehaviour:
           X: 2
           Y: 2
           Height: 0.5
+    - rid: 6535570062124253252
+      type: {class: MinimumTagRequirement, ns: , asm: Assembly-CSharp}
+      data:
+        _count: 1
+        _tag: {fileID: 11400000, guid: 398c34365cbfd854f9b5988e2081f572, type: 2}

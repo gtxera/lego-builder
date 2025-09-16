@@ -35,5 +35,11 @@ public class PieceSelectorArea : MonoBehaviour
             var button = Instantiate(_pieceSelectorButtonPrefab, transform);
             button.Initialize(template, _buildTemplateSelector, _piecePreviewService);
         }
+        
+        foreach (var template in _pieceTemplateDatabase.GetTemplates<MeshPieceTemplate>())
+        {
+            var button = Instantiate(_pieceSelectorButtonPrefab, transform);
+            button.Initialize(template, _buildTemplateSelector, _piecePreviewService);
+        }
     }
 }
