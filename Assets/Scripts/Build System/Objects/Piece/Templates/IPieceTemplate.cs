@@ -14,4 +14,6 @@ public interface IPieceTemplate
     IEnumerable<Vector3> GetSocketPositions();
 
     IEnumerable<Vector3> GetStudPositions();
+
+    IEnumerable<PieceTag> GetTags();
 }

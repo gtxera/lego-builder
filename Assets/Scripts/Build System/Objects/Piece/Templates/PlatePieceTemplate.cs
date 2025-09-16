@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Reflex.Extensions;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -73,4 +74,6 @@ public class PlatePieceTemplate : IPieceTemplate
             for (var y = 0; y < _length; y++) 
                 yield return new PieceVector(x, y, halfHeight).ToWorld() - offset;
     }
+    
+    public IEnumerable<PieceTag> GetTags() => Enumerable.Empty<PieceTag>();
 }

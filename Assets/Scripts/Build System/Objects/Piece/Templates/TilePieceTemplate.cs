@@ -62,4 +62,6 @@ public class TilePieceTemplate : IPieceTemplate
     {
         return Enumerable.Empty<Vector3>();
     }
+    
+    public IEnumerable<PieceTag> GetTags() => Enumerable.Empty<PieceTag>();
 }
