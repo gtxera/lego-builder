@@ -72,7 +72,7 @@ public class Piece : MonoBehaviour
             CreateConnector("Front Anchor", rootTransform, frontPosition, _anchors, Quaternion.LookRotation(Vector3.forward));
         }
         
-        for (var y = 0; y < size.X; y++)
+        for (var y = 0; y < size.Y; y++)
         {
             var rightPosition = new Vector3(halfSize.x, -halfSize.y, Conversions.ToWorld(y) + Conversions.PieceToWorld / 2f - halfSize.z);
             var leftPosition = new Vector3(-halfSize.x, -halfSize.y, Conversions.ToWorld(y) + Conversions.PieceToWorld / 2f - halfSize.z);
@@ -112,7 +112,7 @@ public class Piece : MonoBehaviour
         if (transientData.Id != default)
             Id = transientData.Id;
         
-        transform.localPosition = transientData.Position;
+        MoveTo(transientData.Position);
 
         for (int i = 0; i < transientData.Colors.Length; i++)
             TrySetColor(transientData.Colors[i], i);
@@ -169,21 +169,6 @@ public class Piece : MonoBehaviour
         var size = Template.GetSize().ToWorld();
 
         var halfSize = size / 2f;
-
-        var hitPiece = hit.transform.GetComponentInParent<Piece>();
-        if (hitPiece != null)
-        {
-            var anchor = hitPiece._anchors
-                .Where(anchor => !anchor.Connected && anchor.PointsTo(hit.normal))
-                .OrderBy(anchor => (anchor.transform.position - hit.point).magnitude)
-                .FirstOrDefault();
-
-            if (anchor != null)
-            {
-                halfSize -= new Vector3(0.01f, 0.01f, 0.01f);
-                return TryConnectToAnchor(anchor, out anchoredPosition);
-            }
-        }
         
         var centerPosition = GetGridPosition(position + GetPushOutFromNormal(normal, halfSize));
 
@@ -198,7 +183,7 @@ public class Piece : MonoBehaviour
             return true;
         }
 
-        halfSize += new Vector3(0.02f, 0.02f, 0.02f);
+        halfSize += new Vector3(0.1f, 0.1f, 0.1f);
 
         hits = Physics.OverlapBoxNonAlloc(centerPosition, halfSize, _overlaps, transform.rotation,
             LayerMask.GetMask("Anchors"));
@@ -207,12 +192,13 @@ public class Piece : MonoBehaviour
         for (var i = 0; i < hits; i++)
         {
             var anchor = _overlaps[i].GetComponent<AnchorPoint>();
-            if (!anchor.PointsTo(normal))
-                continue;
 
             var distance = (anchor.transform.position - position).magnitude;
             if (distance < closestDistance)
+            {
                 closestAnchor = anchor;
+                closestDistance = distance;
+            }
         }
 
         if (closestAnchor == null)
@@ -222,14 +208,13 @@ public class Piece : MonoBehaviour
             return false;
         }
         
-        halfSize -= new Vector3(0.02f, 0.02f, 0.02f);
+        halfSize -= new Vector3(0.11f, 0.11f, 0.11f);
         return TryConnectToAnchor(closestAnchor, out anchoredPosition);
 
         bool TryConnectToAnchor(AnchorPoint targetAnchor, out Vector3 anchoredPosition)
         {
             var anchors = _anchors
-                .Where(anchor => anchor.IsCompatible(targetAnchor))
-                .OrderBy(anchor => anchor.GetDistanceToCenter().magnitude);
+                .Where(anchor => anchor.IsCompatible(targetAnchor));
         
             foreach (var anchor in anchors)
             {
@@ -362,5 +347,12 @@ public class Piece : MonoBehaviour
                 if (_onColorChangedCallbacks.TryGetValue(i, out var callback))
                     swatchColor.ColorChanged -= callback;
         }
+        
+        foreach (var socket in _sockets)
+            socket.Disconnect();
+        foreach (var stud in _studs)
+            stud.Disconnect();
+        foreach (var anchor in _anchors)
+            anchor.Disconnect();
     }
 }
