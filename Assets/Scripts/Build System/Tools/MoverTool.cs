@@ -53,10 +53,7 @@ public class MoverTool : ITool
         if (!_movingPiece.TryGetAnchoredPosition(ray, out var position))
             position = _movingPiece.GetSweepPosition(ray.origin, ray.direction);
         
-        if ((position - _lastMovePosition).magnitude > 0.01f)
-        {
-            _lastMovePosition = _movingPiece.MoveTo(position);
-        }
+        _lastMovePosition = _movingPiece.MoveTo(position);
     }
 
     public void Tap(Vector2 pointerScreenPosition)

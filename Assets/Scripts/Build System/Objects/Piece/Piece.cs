@@ -126,12 +126,6 @@ public class Piece : MonoBehaviour
         
         SetRotation(transientData.Rotation);
     }
-
-    public void MoveDifference(Vector3 difference)
-    {
-        _rigidbody.position += difference;
-        _rigidbody.PublishTransform();
-    }
     
     public Vector3 MoveTo(Vector3 position)
     {
@@ -143,6 +137,7 @@ public class Piece : MonoBehaviour
             anchor.Disconnect();
         
         var gridPosition = GetGridPosition(position);
+        Debug.Log(gridPosition);
         _rigidbody.position = gridPosition;
         _rigidbody.PublishTransform();
         
@@ -183,15 +178,16 @@ public class Piece : MonoBehaviour
             (pushHalfSize.x, pushHalfSize.z) = (pushHalfSize.z, pushHalfSize.x);
         
         var centerPosition = GetGridPosition(position + GetPushOutFromNormal(normal, pushHalfSize));
-        
+        Debug.Log(centerPosition);
         Debug.DrawLine(position, centerPosition, Color.red, 10f);
         
-        halfSize -= new Vector3(0.005f, 0.005f, 0.005f);
+        halfSize -= new Vector3(0.002f, 0.002f, 0.002f);
         
         var hits = Physics.OverlapBoxNonAlloc(centerPosition, halfSize, _overlaps, _rigidbody.rotation,
             ~LayerMask.GetMask("Connectors", "Anchors"));
         if (hits == 0)
         {
+            Debug.Log("sem colisao");
             _rigidbody.position = originalPosition;
             anchoredPosition = centerPosition;
             return true;
@@ -254,11 +250,13 @@ public class Piece : MonoBehaviour
 
         if (foundNoCollisions)
         {
+            Debug.Log("com ancora");
             _rigidbody.position = originalPosition;
             anchoredPosition = bestPosition;
             return true;
         }
         
+        Debug.Log("colisao");
         _rigidbody.position = originalPosition;
         anchoredPosition = Vector3.zero;
         return false;

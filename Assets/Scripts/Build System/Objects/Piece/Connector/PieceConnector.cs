@@ -56,12 +56,6 @@ public abstract class PieceConnector<TConnector, TConnecting> : PieceConnector
         _connecting = connecting;
         Connected = true;
         _connecting.Connect((TConnector)this);
-
-        if (_ownerPiece != null && (_connecting._ownerPiece == null || _ownerPiece.MovedMoreRecentlyThan(_connecting._ownerPiece)))
-        {
-            var difference = _connecting.transform.position - transform.position;
-            _ownerPiece.MoveDifference(difference);
-        }
     }
 
     protected virtual bool CanConnect(TConnecting connecting) => true;
