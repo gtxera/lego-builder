@@ -23,7 +23,7 @@ public class Piece : MonoBehaviour
 
     private PieceRotation _rotation;
 
-    private IEnumerable<Renderer> _renderers;
+    private IEnumerable<PieceColoredPart> _coloredParts;
     
     [SerializeField]
     private float _lastMovementTime;
@@ -47,7 +47,7 @@ public class Piece : MonoBehaviour
         Template = template;
         Template.Configure(gameObject);
 
-        _renderers = GetComponentsInChildren<Renderer>();
+        _coloredParts = GetComponentsInChildren<PieceColoredPart>();
         
         _colors = new PieceColor[Template.GetColorCount()];
 
@@ -342,11 +342,8 @@ public class Piece : MonoBehaviour
 
     private void OnColorChanged(Color color, int index)
     {
-        var propertyBlock = new MaterialPropertyBlock();
-        propertyBlock.SetColor(BaseColorPropertyId, color);
-
-        foreach (var renderer in _renderers)
-            renderer.SetPropertyBlock(propertyBlock);
+        foreach (var coloredPart in _coloredParts)
+            coloredPart.SetColor(color);
     }
 
     public bool MovedMoreRecentlyThan(Piece piece)

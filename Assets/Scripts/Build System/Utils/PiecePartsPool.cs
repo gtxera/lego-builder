@@ -70,6 +70,7 @@ public class PiecePartsPool : IDisposable
         Object.Destroy(body.GetComponent<BoxCollider>());
         body.GetComponent<Renderer>().sharedMaterial = _pieceMaterial;
         body.AddComponent<BodyMarker>();
+        body.AddComponent<PieceColoredPart>();
         
         return body;
     }
@@ -81,7 +82,8 @@ public class PiecePartsPool : IDisposable
         Object.Destroy(stud.GetComponent<CapsuleCollider>());
         stud.GetComponent<Renderer>().sharedMaterial = _pieceMaterial;
         stud.AddComponent<StudMarker>();
-
+        stud.AddComponent<PieceColoredPart>();
+        
         return stud;
     }
 }
