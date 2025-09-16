@@ -12,6 +12,9 @@ public class PieceSelectorButton : ValidatedMonoBehaviour
 
     [SerializeField, Child]
     private RawImage _image;
+
+    [SerializeField]
+    private Image _selectedImage;
     
     private IPieceTemplate _template;
 
@@ -27,10 +30,23 @@ public class PieceSelectorButton : ValidatedMonoBehaviour
         _buildTemplateSelector = buildTemplateSelector;
         _template = pieceTemplate;
         _image.texture = piecePreviewService.GetPreviewTexture(_template);
+
+        _selectedImage.enabled = _buildTemplateSelector.SelectedTemplate == pieceTemplate;
+
+        _buildTemplateSelector.TemplateDeselected += OnTemplateDeselected;
     }
 
     private void OnClick()
     {
         _buildTemplateSelector.SetTemplate(_template);
+        _selectedImage.enabled = true;
+    }
+
+    private void OnTemplateDeselected(IPieceTemplate template)
+    {
+        if (template != _template)
+            return;
+
+        _selectedImage.enabled = false;
     }
 }

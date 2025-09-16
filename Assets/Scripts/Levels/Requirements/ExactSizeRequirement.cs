@@ -15,7 +15,7 @@ public class ExactSizeRequirement : SizeRequirement
 
         var maximumMagnitudeDifference = new Vector3(0.05f, 0.05f, 0.05f).sqrMagnitude;
 
-        return centerDifference.sqrMagnitude < maximumMagnitudeDifference ||
+        return centerDifference.sqrMagnitude < maximumMagnitudeDifference &&
                extentsDifference.sqrMagnitude < maximumMagnitudeDifference;
     }
 }
