@@ -21,10 +21,14 @@ public class Piece : MonoBehaviour
     private readonly Collider[] _overlaps = new Collider[32];
 
     private PieceRotation _rotation;
+
+    private IEnumerable<Renderer> _renderers;
     
     [SerializeField]
     private float _lastMovementTime;
-    
+
+    private static readonly int BaseColorPropertyId = Shader.PropertyToID("_BaseColor");
+
     public IPieceTemplate Template { get; private set; }
 
     public Guid Id { get; private set; }
@@ -42,6 +46,8 @@ public class Piece : MonoBehaviour
         Template = template;
         Template.Configure(gameObject);
 
+        _renderers = GetComponentsInChildren<Renderer>();
+        
         _colors = new PieceColor[Template.GetColorCount()];
 
         Id = Guid.NewGuid();
@@ -172,7 +178,7 @@ public class Piece : MonoBehaviour
         
         var centerPosition = GetGridPosition(position + GetPushOutFromNormal(normal, halfSize));
 
-        halfSize -= new Vector3(0.01f, 0.01f, 0.01f);
+        halfSize -= new Vector3(0.005f, 0.005f, 0.005f);
         
         var hits = Physics.OverlapBoxNonAlloc(centerPosition, halfSize, _overlaps, transform.rotation,
             ~LayerMask.GetMask("Connectors", "Anchors"));
@@ -314,7 +320,11 @@ public class Piece : MonoBehaviour
 
     private void OnColorChanged(Color color, int index)
     {
-        GetComponentInChildren<Renderer>().material.SetColor("_BaseColor", color);
+        var propertyBlock = new MaterialPropertyBlock();
+        propertyBlock.SetColor(BaseColorPropertyId, color);
+
+        foreach (var renderer in _renderers)
+            renderer.SetPropertyBlock(propertyBlock);
     }
 
     public bool MovedMoreRecentlyThan(Piece piece)

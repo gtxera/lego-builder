@@ -10,9 +10,10 @@ public class Circle : Shape
     {
         var step = Mathf.PI * 2 * (1f / resolution);
 
-        var verticesArray = new Vector3[resolution];
-
-        for (var i = 0; i < resolution; i++)
+        var verticesArray = new Vector3[resolution + 1];
+        verticesArray[0] = center;
+        
+        for (var i = 1; i < verticesArray.Length; i++)
         {
             var angle = step * i;
             verticesArray[i] = new Vector3(Mathf.Cos(angle) * radius, 0, Mathf.Sin(angle) * radius) + center;
@@ -21,7 +22,7 @@ public class Circle : Shape
         Vertices = verticesArray;
 
         _triangles = new List<int>();
-        var triangleCount = resolution - 2;
+        var triangleCount = resolution - 1;
 
         for (var i = 0; i < triangleCount; i++)
         {
@@ -29,10 +30,14 @@ public class Circle : Shape
             _triangles.Add(i + 2);
             _triangles.Add(i + 1);
         }
+        
+        _triangles.Add(0);
+        _triangles.Add(1);
+        _triangles.Add(resolution );
 
         Triangles = _triangles;
 
-        var normalsArray = new Vector3[resolution];
+        var normalsArray = new Vector3[resolution + 1];
         Array.Fill(normalsArray, Vector3.up);
 
         Normals = normalsArray;

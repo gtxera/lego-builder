@@ -4,16 +4,16 @@ using UnityEngine;
 using Object = UnityEngine.Object;
 
 [Serializable]
-public class BrickPieceTemplate : IPieceTemplate
+public class PlatePieceTemplate : IPieceTemplate
 {
     [SerializeField]
     private int _width = 2;
     [SerializeField]
     private int _length = 2;
     
-    private const float Height = .96f;
+    private const float Height = .32f;
 
-    public BrickPieceTemplate(int width, int length)
+    public PlatePieceTemplate(int width, int length)
     {
         _width = width;
         _length = length;

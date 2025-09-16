@@ -37,6 +37,8 @@ public class MoverTool : ITool
         
         var command = new MovePieceCommand(_buildEditor.Build, _movingPiece.Id, _pieceInitialPosition,
             _movingPiece.transform.position);
+
+        _movingPiece = null;
         
         _buildEditor.Commit(command);
     }

@@ -25,7 +25,6 @@ public class Cylinder : Shape
             var rotation = Quaternion.AngleAxis(step * Mathf.Rad2Deg, up);
             var offset = rotation * size;
             position += offset;
-            //normal = rotation * normal;
             _finalShape = _finalShape.Combine(new Face(position, normal, size));
         }
     }

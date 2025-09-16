@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PiecePreview : MonoBehaviour
@@ -8,8 +9,9 @@ public class PiecePreview : MonoBehaviour
 
     private Camera _camera;
 
-    private Renderer _renderer;
-    
+    private IEnumerable<Renderer> _renderers;
+    private static readonly int BaseColor = Shader.PropertyToID("_BaseColor");
+
     public RenderTexture GetRenderTexture(IPieceTemplate template, PiecePreviewService piecePreviewService, BuildColorSelector colorSelector)
     {
         _piecePreviewService = piecePreviewService;
@@ -32,7 +34,7 @@ public class PiecePreview : MonoBehaviour
         _camera.clearFlags = CameraClearFlags.Color;
         _camera.backgroundColor = Color.clear;
 
-        _renderer = GetComponentInChildren<Renderer>();
+        _renderers = GetComponentsInChildren<Renderer>();
 
         colorSelector.ColorChanged += OnSelectedColorChanged;
         
@@ -41,7 +43,11 @@ public class PiecePreview : MonoBehaviour
 
     private void OnSelectedColorChanged(Color color)
     {
-        _renderer.material.SetColor("_BaseColor", color);
+        var propertyBlock = new MaterialPropertyBlock();
+        propertyBlock.SetColor(BaseColor, color);
+
+        foreach (var renderer in _renderers)
+            renderer.SetPropertyBlock(propertyBlock);
     }
     
     private void Update()

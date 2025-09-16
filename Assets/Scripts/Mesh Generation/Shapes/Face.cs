@@ -20,7 +20,7 @@ public class Face : Shape
         Triangles = new int[]
         {
             0, 3, 1,
-            3, 2, 1
+            2, 1, 3
         };
 
         Normals = new Vector3[]
