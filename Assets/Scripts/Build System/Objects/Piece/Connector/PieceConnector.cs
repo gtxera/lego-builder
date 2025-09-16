@@ -32,6 +32,8 @@ public abstract class PieceConnector<TConnector, TConnecting> : PieceConnector
 
     public sealed override bool IsOwnedBy(Piece piece) => _ownerPiece.Id == piece.Id;
 
+    public sealed override bool IsConnectedTo(Piece piece) => _connecting?._ownerPiece.Id == piece.Id;
+
     public void Connect()
     {
         var size = Physics.OverlapSphereNonAlloc(transform.position - new Vector3(0, .01f, 0), .24f, _castResults, LayerMask.GetMask(Layer), QueryTriggerInteraction.Collide);
@@ -78,6 +80,7 @@ public abstract class PieceConnector<TConnector, TConnecting> : PieceConnector
 public abstract class PieceConnector : MonoBehaviour
 {
     public abstract bool IsOwnedBy(Piece piece);
+    public abstract bool IsConnectedTo(Piece piece);
 
     public abstract void Initialize(Piece piece);
 }

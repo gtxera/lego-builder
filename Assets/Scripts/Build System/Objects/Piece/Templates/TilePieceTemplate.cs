@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Reflex.Extensions;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -24,11 +25,23 @@ public class TilePieceTemplate : IPieceTemplate
     {
         var size = GetSize();
 
-        var body = PieceCreationHelper.MakeBody(size);
+        var piecePartsPool = pieceObject.scene.GetSceneContainer().Resolve<PiecePartsPool>();
+
+        var body = piecePartsPool.GetBody(size);
         body.transform.SetParent(pieceObject.transform, false);
         
         var collider = pieceObject.AddComponent<BoxCollider>();
         collider.size = size.ToWorld();
+    }
+    
+    public void OnDestroy(GameObject pieceObject)
+    {
+        var piecePartsPool = pieceObject.scene.GetSceneContainer().Resolve<PiecePartsPool>();
+        
+        piecePartsPool.ReturnBody(pieceObject.GetComponentInChildren<BodyMarker>());
+
+        foreach (var stud in pieceObject.GetComponentsInChildren<StudMarker>())
+            piecePartsPool.ReturnStud(stud);
     }
 
     public PieceVector GetSize() => new(_width, _length, Height);

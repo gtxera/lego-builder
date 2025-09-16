@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Utils;
 
 [RequireComponent(typeof(Rigidbody))]
 public class Piece : MonoBehaviour
@@ -102,7 +103,7 @@ public class Piece : MonoBehaviour
         var connectorTransform = connectorObject.transform;
         connectorTransform.SetParent(parent);
         connectorTransform.localPosition = position;
-        connectorTransform.rotation = rotation;
+        connectorTransform.localRotation = rotation;
         
         var connector = connectorObject.AddComponent<TConnector>();
         connector.Initialize(this);
@@ -172,15 +173,22 @@ public class Piece : MonoBehaviour
         var position = hit.point;
         var normal = hit.normal;
         
+        Debug.Log(position);
+        
         var size = Template.GetSize().ToWorld();
 
         var halfSize = size / 2f;
+        var pushHalfSize = halfSize;
+        if (_rotation is PieceRotation.East or PieceRotation.West)
+            (pushHalfSize.x, pushHalfSize.z) = (pushHalfSize.z, pushHalfSize.x);
         
-        var centerPosition = GetGridPosition(position + GetPushOutFromNormal(normal, halfSize));
-
+        var centerPosition = GetGridPosition(position + GetPushOutFromNormal(normal, pushHalfSize));
+        
+        Debug.DrawLine(position, centerPosition, Color.red, 10f);
+        
         halfSize -= new Vector3(0.005f, 0.005f, 0.005f);
         
-        var hits = Physics.OverlapBoxNonAlloc(centerPosition, halfSize, _overlaps, transform.rotation,
+        var hits = Physics.OverlapBoxNonAlloc(centerPosition, halfSize, _overlaps, _rigidbody.rotation,
             ~LayerMask.GetMask("Connectors", "Anchors"));
         if (hits == 0)
         {
@@ -189,17 +197,23 @@ public class Piece : MonoBehaviour
             return true;
         }
 
-        halfSize += new Vector3(0.1f, 0.1f, 0.1f);
+        var bottomPosition = centerPosition;
+        bottomPosition.y -= halfSize.y;
 
-        hits = Physics.OverlapBoxNonAlloc(centerPosition, halfSize, _overlaps, transform.rotation,
+        //halfSize += new Vector3(0.055f, 0.055f, 0.055f);
+        hits = Physics.OverlapBoxNonAlloc(bottomPosition, halfSize, _overlaps, _rigidbody.rotation,
             LayerMask.GetMask("Anchors"));
+        //halfSize -= new Vector3(0.055f, 0.055f, 0.055f);
+
         AnchorPoint closestAnchor = null;
         var closestDistance = float.MaxValue;
         for (var i = 0; i < hits; i++)
         {
             var anchor = _overlaps[i].GetComponent<AnchorPoint>();
+            if (anchor.Connected && !anchor.IsConnectedTo(this))
+                continue;
 
-            var distance = (anchor.transform.position - position).magnitude;
+            var distance = Vector3.Distance(anchor.transform.position, position);
             if (distance < closestDistance)
             {
                 closestAnchor = anchor;
@@ -214,31 +228,40 @@ public class Piece : MonoBehaviour
             return false;
         }
         
-        halfSize -= new Vector3(0.11f, 0.11f, 0.11f);
-        return TryConnectToAnchor(closestAnchor, out anchoredPosition);
-
-        bool TryConnectToAnchor(AnchorPoint targetAnchor, out Vector3 anchoredPosition)
-        {
-            var anchors = _anchors
-                .Where(anchor => anchor.IsCompatible(targetAnchor));
+        Debug.Log(closestAnchor);
         
-            foreach (var anchor in anchors)
-            {
-                var anchorRelativeCenter = GetGridPosition(targetAnchor.transform.position - anchor.GetDistanceToCenter());
-                hits = Physics.OverlapBoxNonAlloc(anchorRelativeCenter, halfSize, _overlaps, transform.rotation,
-                    ~LayerMask.GetMask("Anchors", "Connectors"));
-                if (hits == 0)
-                {
-                    _rigidbody.position = originalPosition;
-                    anchoredPosition = anchorRelativeCenter;
-                    return true;
-                }
-            }
+        var anchors = _anchors
+            .Where(anchor => anchor.IsCompatible(closestAnchor));
 
-            _rigidbody.position = originalPosition;
-            anchoredPosition = Vector3.zero;
-            return false;
+        closestDistance = float.MaxValue;
+        var bestPosition = Vector3.zero;
+        var foundNoCollisions = false;
+        foreach (var anchor in anchors)
+        {
+            var anchorRelativeCenter = GetGridPosition(closestAnchor.transform.position - anchor.GetDistanceToCenter().Rotated(_rigidbody.rotation));
+            hits = Physics.OverlapBoxNonAlloc(anchorRelativeCenter, halfSize, _overlaps, _rigidbody.rotation,
+                ~LayerMask.GetMask("Anchors", "Connectors"));
+
+            var distance = Vector3.Distance(anchorRelativeCenter, position);
+            
+            if (hits == 0 && distance < closestDistance)
+            {
+                foundNoCollisions = true;
+                closestDistance = distance;
+                bestPosition = anchorRelativeCenter;
+            }
         }
+
+        if (foundNoCollisions)
+        {
+            _rigidbody.position = originalPosition;
+            anchoredPosition = bestPosition;
+            return true;
+        }
+        
+        _rigidbody.position = originalPosition;
+        anchoredPosition = Vector3.zero;
+        return false;
     }
 
     private Vector3 GetPushOutFromNormal(Vector3 normal, Vector3 size)
@@ -283,6 +306,7 @@ public class Piece : MonoBehaviour
         _rotation = rotation;
         var quaternion = Quaternion.AngleAxis(_rotation.ToAngle(), Vector3.up);
         _rigidbody.rotation = quaternion;
+        _rigidbody.PublishTransform();
     }
 
     public void RotateClockwise()
@@ -351,6 +375,8 @@ public class Piece : MonoBehaviour
 
     private void OnDestroy()
     {
+        Template.OnDestroy(gameObject);
+        
         for (int i = 0; i < _colors.Length; i++)
         {
             if (_colors[i] is SwatchColor swatchColor)

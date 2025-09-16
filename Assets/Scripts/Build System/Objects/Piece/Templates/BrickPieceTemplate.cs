@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Reflex.Extensions;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 [Serializable]
 public class BrickPieceTemplate : IPieceTemplate
@@ -23,7 +23,9 @@ public class BrickPieceTemplate : IPieceTemplate
     {
         var size = GetSize();
 
-        var body = PieceCreationHelper.MakeBody(size);
+        var piecePartsPool = pieceObject.scene.GetSceneContainer().Resolve<PiecePartsPool>();
+
+        var body = piecePartsPool.GetBody(size);
         body.transform.SetParent(pieceObject.transform, false);
         
         var collider = pieceObject.AddComponent<BoxCollider>();
@@ -31,10 +33,20 @@ public class BrickPieceTemplate : IPieceTemplate
 
         foreach (var studPosition in GetStudPositions())
         {
-            var stud = PieceCreationHelper.MakeStud(studPosition);
+            var stud = piecePartsPool.GetStud();
             stud.transform.SetParent(pieceObject.transform, false);
             stud.transform.localPosition = studPosition;
         }
+    }
+
+    public void OnDestroy(GameObject pieceObject)
+    {
+        var piecePartsPool = pieceObject.scene.GetSceneContainer().Resolve<PiecePartsPool>();
+        
+        piecePartsPool.ReturnBody(pieceObject.GetComponentInChildren<BodyMarker>());
+
+        foreach (var stud in pieceObject.GetComponentsInChildren<StudMarker>())
+            piecePartsPool.ReturnStud(stud);
     }
 
     public PieceVector GetSize() => new(_width, _length, Height);

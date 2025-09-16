@@ -5,6 +5,8 @@ public interface IPieceTemplate
 {
     void Configure(GameObject pieceObject);
 
+    void OnDestroy(GameObject pieceObject);
+
     PieceVector GetSize();
 
     int GetColorCount();

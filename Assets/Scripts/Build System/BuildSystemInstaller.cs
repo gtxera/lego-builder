@@ -12,6 +12,8 @@ public class BuildSystemInstaller : MonoBehaviour, IInstaller
         containerBuilder.AddScoped(typeof(CameraServices));
 
         containerBuilder.AddScoped(typeof(PiecePreviewService));
+
+        containerBuilder.AddScoped(typeof(PiecePartsPool));
         
         RegisterTools(containerBuilder);
     }

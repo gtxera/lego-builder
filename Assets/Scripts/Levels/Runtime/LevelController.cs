@@ -72,8 +72,6 @@ public class LevelController
             else
                 RequirementWasUnsatisfied(requirement);
         }
-
-        Debug.Log(allRequirementsSatisfied);
         
         if (_canComplete == allRequirementsSatisfied)
             return;

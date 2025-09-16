@@ -12,9 +12,6 @@ public abstract class SizeRequirement : IBuildRequirement
     public bool IsSatisfied(Build build)
     {
         var buildBounds = build.GetBounds();
-        
-        Debug.Log(SizeBounds);
-        Debug.Log(buildBounds);
 
         return SizeCondition(SizeBounds, buildBounds);
     }

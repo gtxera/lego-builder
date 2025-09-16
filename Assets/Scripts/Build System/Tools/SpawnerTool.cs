@@ -51,10 +51,7 @@ public class SpawnerTool : ITool
         if (!_newPiece.TryGetAnchoredPosition(ray, out var position))
             position = _newPiece.GetSweepPosition(ray.origin, ray.direction);
         
-        if ((position - _lastMovePosition).magnitude > 0.01f)
-        {
-            _lastMovePosition = _newPiece.MoveTo(position);
-        }
+        _lastMovePosition = _newPiece.MoveTo(position);
     }
 
     public void Tap(Vector2 pointerScreenPosition)
