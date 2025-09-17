@@ -1,4 +1,3 @@
-using System;
 using Reflex.Attributes;
 using UnityEngine;
 using UnityEngine.UI;
@@ -57,24 +56,28 @@ public class PieceSelectorArea : MonoBehaviour
             _activePanel.gameObject.SetActive(false);
             _activePanel = _bricksRoot;
             _activePanel.gameObject.SetActive(true);
+            _piecePreviewService.EnablePreview<BrickPieceTemplate>();
         });
         _platesButton.onClick.AddListener(() =>
         {
             _activePanel.gameObject.SetActive(false);
             _activePanel = _platesRoot;
             _activePanel.gameObject.SetActive(true);
+            _piecePreviewService.EnablePreview<PlatePieceTemplate>();
         });
         _tilesButton.onClick.AddListener(() =>
         {
             _activePanel.gameObject.SetActive(false);
             _activePanel = _tilesRoot;
             _activePanel.gameObject.SetActive(true);
+            _piecePreviewService.EnablePreview<TilePieceTemplate>();
         });
         _meshesButton.onClick.AddListener(() =>
         {
             _activePanel.gameObject.SetActive(false);
             _activePanel = _meshesRoot;
             _activePanel.gameObject.SetActive(true);
+            _piecePreviewService.EnablePreview<MeshPieceTemplate>();
         });
         
         foreach (var template in _pieceTemplateDatabase.GetTemplates<BrickPieceTemplate>())
@@ -100,5 +103,7 @@ public class PieceSelectorArea : MonoBehaviour
             var button = Instantiate(_pieceSelectorButtonPrefab, _meshesRoot);
             button.Initialize(template, _buildTemplateSelector, _piecePreviewService);
         }
+        
+        _piecePreviewService.EnablePreview<BrickPieceTemplate>();
     }
 }

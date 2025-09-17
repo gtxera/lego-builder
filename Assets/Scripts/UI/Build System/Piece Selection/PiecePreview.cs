@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class PiecePreview : MonoBehaviour
 {
@@ -12,11 +13,15 @@ public class PiecePreview : MonoBehaviour
     private IEnumerable<Renderer> _renderers;
     private static readonly int BaseColor = Shader.PropertyToID("_BaseColor");
 
-    public RenderTexture GetRenderTexture(IPieceTemplate template, PiecePreviewService piecePreviewService, BuildColorSelector colorSelector)
+    public RenderTexture GetRenderTexture(
+        IPieceTemplate template,
+        PiecePreviewService piecePreviewService,
+        BuildColorSelector colorSelector,
+        Vector2Int size)
     {
         _piecePreviewService = piecePreviewService;
         
-        var renderTexture = new RenderTexture(128, 128, 24);
+        var renderTexture = new RenderTexture(size.x, size.y, 24);
 
         _viewObject = new GameObject("View").transform;
         _viewObject.SetParent(transform, false);
@@ -35,6 +40,8 @@ public class PiecePreview : MonoBehaviour
         _camera.backgroundColor = Color.clear;
 
         _renderers = GetComponentsInChildren<Renderer>();
+        foreach (var renderer in _renderers)
+            renderer.shadowCastingMode = ShadowCastingMode.Off;
 
         colorSelector.ColorChanged += OnSelectedColorChanged;
         

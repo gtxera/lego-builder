@@ -85,8 +85,6 @@ public class MeshGenerator
         
         
         var mesh = shape.ToMesh();
-
-        AssetDatabase.CreateAsset(mesh, "Assets/Resources/mesh.asset");
         
         return mesh;
     }

@@ -29,7 +29,7 @@ public class PieceSelectorButton : ValidatedMonoBehaviour
     {
         _buildTemplateSelector = buildTemplateSelector;
         _template = pieceTemplate;
-        _image.texture = piecePreviewService.GetPreviewTexture(_template);
+        _image.texture = piecePreviewService.GetPreviewTexture(_template, new Vector2Int(256, 256));
 
         _selectedImage.enabled = _buildTemplateSelector.SelectedTemplate == pieceTemplate;
 
