@@ -44,7 +44,7 @@ public class LevelBuildReplicator : MonoBehaviour
                         {
                             pieceHolder.Piece.transform.localPosition = value;
                         })));
-            delay += 0.2f;
+            delay += 0.05f;
             Debug.Log(delay);
         }
     }

@@ -38,6 +38,7 @@ public class SpawnerTool : ITool
     {
         var command = new SpawnPieceCommand(_buildEditor.Build, _newPiece.GetData());
         _newPiece = null;
+        _cameraServices.Shake();
         _buildEditor.Commit(command);
     }
 
