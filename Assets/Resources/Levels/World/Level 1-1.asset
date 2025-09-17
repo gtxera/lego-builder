@@ -15,27 +15,33 @@ MonoBehaviour:
   <World>k__BackingField: {fileID: 11400000, guid: b39469ff9fffaa04487a663bace57d28, type: 2}
   _requiredLevelsToUnlock: []
   _requirements:
-  - rid: 6535569954094186564
-  - rid: 6535569965930512450
+  - rid: 6535570084452892738
   - rid: 6535570062124253252
+  - rid: 6535570084452892740
+  - rid: 6535570084452892742
   <Name>k__BackingField: Construa uma casa!
   <Description>k__BackingField: "Fa\xE7a uma pequena e singela casa."
   references:
     version: 2
     RefIds:
-    - rid: 6535569954094186564
-      type: {class: MaximumColorsRequirement, ns: , asm: Assembly-CSharp}
-      data:
-        _count: 2
-    - rid: 6535569965930512450
-      type: {class: ExactSizeRequirement, ns: , asm: Assembly-CSharp}
-      data:
-        _size:
-          X: 2
-          Y: 2
-          Height: 2.88
     - rid: 6535570062124253252
       type: {class: MinimumTagRequirement, ns: , asm: Assembly-CSharp}
       data:
         _count: 1
         _tag: {fileID: 11400000, guid: 398c34365cbfd854f9b5988e2081f572, type: 2}
+    - rid: 6535570084452892738
+      type: {class: MaximumSizeRequirement, ns: , asm: Assembly-CSharp}
+      data:
+        _size:
+          X: 10
+          Y: 10
+          Height: 9.6
+    - rid: 6535570084452892740
+      type: {class: MinimumTagRequirement, ns: , asm: Assembly-CSharp}
+      data:
+        _count: 2
+        _tag: {fileID: 11400000, guid: 40a53cc467855744585eed7db70e539d, type: 2}
+    - rid: 6535570084452892742
+      type: {class: MinimumPieceCountRequirement, ns: , asm: Assembly-CSharp}
+      data:
+        _count: 20
