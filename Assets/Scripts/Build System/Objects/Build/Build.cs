@@ -68,7 +68,7 @@ public class Build : MonoBehaviour
 
     public BuildData GetBuildData()
     {
-        var pieces = _pieces.Select(piece => piece.GetData()).ToArray();
+        var pieces = _pieces.Select(piece => piece.GetData()).OrderBy(data => data.TransientData.CreationTime).ToArray();
         return new BuildData(pieces);
     }
 

@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d04fbbf192aeeb047a4fa61111ff39ec, type: 3}
-  m_Name: 1x2
+  m_Script: {fileID: 11500000, guid: 1072deea3e509954a8601950ca7be851, type: 3}
+  m_Name: 4x2
   m_EditorClassIdentifier: 
   _pieceTemplate:
-    _width: 1
+    _width: 4
     _length: 2

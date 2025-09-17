@@ -33,7 +33,7 @@ MonoBehaviour:
         _size:
           X: 2
           Y: 2
-          Height: 0.5
+          Height: 2.88
     - rid: 6535570062124253252
       type: {class: MinimumTagRequirement, ns: , asm: Assembly-CSharp}
       data:

@@ -9,9 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1072deea3e509954a8601950ca7be851, type: 3}
-  m_Name: 1x2
+  m_Script: {fileID: 11500000, guid: 8a1791661c1a06649aed2caaa0d45a90, type: 3}
+  m_Name: WindowTag
   m_EditorClassIdentifier: 
-  _pieceTemplate:
-    _width: 1
-    _length: 2
+  _singularName: Janela
+  _pluralName: Janelas

@@ -45,12 +45,12 @@ public class ProgressManager
         GetLevelProgress(level).Unlocked -= onLevelUnlocked;
     }
     
-    public void SubscribeOnLevelCompleted(Level level, Action onLevelCompleted)
+    public void SubscribeOnLevelCompleted(Level level, Action<BuildData> onLevelCompleted)
     {
         GetLevelProgress(level).Completed += onLevelCompleted;
     }
 
-    public void UnsubscribeOnLevelCompleted(Level level, Action onLevelCompleted)
+    public void UnsubscribeOnLevelCompleted(Level level, Action<BuildData> onLevelCompleted)
     {
         GetLevelProgress(level).Completed -= onLevelCompleted;
     }

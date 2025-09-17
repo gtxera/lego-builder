@@ -130,7 +130,7 @@ public class LevelStarter : ValidatedMonoBehaviour
         Tween.Custom(_materialPropertyBlock.GetColor(ColorId), Color.blue, 1f, SetColor);
     }
     
-    private void OnLevelCompleted()
+    private void OnLevelCompleted(BuildData _)
     {
         Tween.Custom(_materialPropertyBlock.GetColor(ColorId), Color.green, 1f, SetColor);
     }

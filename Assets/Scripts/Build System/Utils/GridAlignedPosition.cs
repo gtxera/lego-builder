@@ -6,8 +6,11 @@ public class GridAlignedPosition : MonoBehaviour
     [SerializeField]
     private PieceVector _position;
 
+    [SerializeField]
+    private bool _offsetByHalf;
+
     private void OnValidate()
     {
-        transform.position = _position.ToWorld();
+        transform.localPosition = _position.ToWorld() + (_offsetByHalf ? new PieceVector(1, 1).ToWorld() / 2f : Vector3.zero);
     }
 }

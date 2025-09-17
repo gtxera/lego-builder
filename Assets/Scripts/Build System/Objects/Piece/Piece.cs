@@ -24,6 +24,8 @@ public class Piece : MonoBehaviour
     private PieceRotation _rotation;
 
     private IEnumerable<PieceColoredPart> _coloredParts;
+
+    private float _creationTime;
     
     [SerializeField]
     private float _lastMovementTime;
@@ -87,6 +89,8 @@ public class Piece : MonoBehaviour
             CreateConnector("Right Anchor", rootTransform, rightPosition, _anchors, Quaternion.LookRotation(Vector3.right));
             CreateConnector("Left Anchor", rootTransform, leftPosition, _anchors, Quaternion.LookRotation(Vector3.left));
         }
+
+        _creationTime = Time.time;
     }
 
     private void CreateConnector<TConnector>(
@@ -119,12 +123,14 @@ public class Piece : MonoBehaviour
         if (transientData.Id != default)
             Id = transientData.Id;
         
-        MoveTo(transientData.Position);
+        SetRotation(transientData.Rotation);
+        MoveTo(transientData.WorldPosition);
 
         for (int i = 0; i < transientData.Colors.Length; i++)
             TrySetColor(transientData.Colors[i], i);
         
-        SetRotation(transientData.Rotation);
+
+        _creationTime = transientData.CreationTime;
     }
     
     public Vector3 MoveTo(Vector3 position)
@@ -351,7 +357,7 @@ public class Piece : MonoBehaviour
         return _lastMovementTime > piece._lastMovementTime;
     }
 
-    public PieceTransientData GetTransientData() => new(Id, transform.localPosition, _colors, _rotation);
+    public PieceTransientData GetTransientData() => new(Id, transform.localPosition, _colors, _rotation, _creationTime, _rigidbody.position);
 
     public PieceData GetData() => new(Template, GetTransientData());
 

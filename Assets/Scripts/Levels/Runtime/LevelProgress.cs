@@ -19,7 +19,7 @@ public class LevelProgress
     }
 
     public event Action Unlocked = delegate { };
-    public event Action Completed = delegate { };
+    public event Action<BuildData> Completed = delegate { };
     
     public Level Level { get; }
     public bool IsUnlocked { get; private set; }
@@ -28,12 +28,14 @@ public class LevelProgress
     
     public void Complete(BuildData buildData)
     {
-        if (IsCompleted)
-            return;
-
+        var wasCompletedBefore = IsCompleted;
+        
         IsCompleted = true;
         BuildData = buildData;
-        Completed();
+        Completed(buildData);
+
+        if (wasCompletedBefore)
+            return;
 
         foreach (var level in _unlockingLevels)
             level.TryUnlock();
