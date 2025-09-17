@@ -28,7 +28,10 @@ public class ToolController
 
     public void PickTool(ITool tool)
     {
-        if (_activeTool != tool)
+        if (_activeTool == tool)
+            return;
+        
+        if (_activeTool != null)
             ToolDeselected(_activeTool);
         
         _activeTool = tool;

@@ -8,7 +8,7 @@ using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
 
 public class TouchController : IDisposable
 {
-    private readonly Dictionary<int, (float time, Touch touch)> _touches = new();
+    private readonly Dictionary<int, (float time, Touch touch, Vector2 delta)> _touches = new();
 
     private Vector2 _lastFirstTouchPosition;
     private Vector2 _lastSecondTouchPosition;
@@ -33,8 +33,8 @@ public class TouchController : IDisposable
 
     public event Action<Vector2> SingleTouchMoved = delegate { };
     public event Action<float> TouchesAngleChanged = delegate { };
-    public event Action<float> TouchedMagnitudeChanged = delegate { };
-    public event Action<float> TouchedHeightChanged = delegate { }; 
+    public event Action<float> TouchesMagnitudeChanged = delegate { };
+    public event Action<float> TouchesHeightChanged = delegate { }; 
     
     private void OnFingerDown(Finger finger)
     {
@@ -43,7 +43,7 @@ public class TouchController : IDisposable
         if (Touch.activeTouches.Count < 3)
         {
             var currentTouch = finger.currentTouch;
-            _touches.Add(currentTouch.touchId, (Time.time, currentTouch));
+            _touches.Add(currentTouch.touchId, (Time.time, currentTouch, Vector2.zero));
             switch (finger.index)
             {
                 case 0:
@@ -79,7 +79,7 @@ public class TouchController : IDisposable
             return;
 
         var currentTime = Time.time;
-        _touches[touchId] = new ValueTuple<float, Touch>(currentTime, currentTouch);
+        _touches[touchId] = new ValueTuple<float, Touch, Vector2>(currentTime, currentTouch, movedTouchDelta);
 
         if (!_touches.TryGetValue(_firstTouchId, out var first))
             return;
@@ -92,8 +92,8 @@ public class TouchController : IDisposable
         var firstPosition = first.touch.screenPosition;
         var secondPosition = second.touch.screenPosition;
 
-        var firstDelta = firstPosition - _lastFirstTouchPosition;
-        var secondDelta = secondPosition - _lastSecondTouchPosition;
+        var firstDelta = first.delta;
+        var secondDelta = second.delta;
 
         var touchesVector = secondPosition - firstPosition;
         Debug.Log($"Primeira : {firstDelta.normalized}");
@@ -105,6 +105,10 @@ public class TouchController : IDisposable
         var heightDifference = ((firstPosition.y + secondPosition.y) / 2 -
                                (_lastFirstTouchPosition.y + _lastSecondTouchPosition.y) / 2) * Vector2.Dot(firstDelta.normalized, secondDelta.normalized);
 
+        TouchesAngleChanged(angleDifference);
+        TouchesMagnitudeChanged(magnitudeDifference);
+        TouchesHeightChanged(heightDifference);
+        
         var angleAbs = Mathf.Abs(angleDifference);
         var magnitudeAbs = Mathf.Abs(magnitudeDifference);
         var heightAbs = Mathf.Abs(heightDifference);

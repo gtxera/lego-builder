@@ -39,6 +39,11 @@ public class CameraControlInputContext : InputContext
     protected override void Enable(LegoBuilderInputActions inputActions)
     {
         _touchController.SingleTouchMoved += OnSingleTouchMoved;
+
+        _touchController.TouchesAngleChanged += HandleCameraLookOrbitXRequested;
+        _touchController.TouchesMagnitudeChanged += HandleCameraZoomRequested;
+        _touchController.TouchesHeightChanged += HandleCameraLookOrbitYRequested;
+
         
         inputActions.Camera.Touch.performed += OnMoveStarted;
         inputActions.Camera.Move.performed += OnMovePerformed;
@@ -60,6 +65,9 @@ public class CameraControlInputContext : InputContext
 
     private void OnSingleTouchMoved(Vector2 delta)
     {
+        if (!CanMove())
+            return;
+        
         HandleCameraMoveRequest(-delta);
     }
 

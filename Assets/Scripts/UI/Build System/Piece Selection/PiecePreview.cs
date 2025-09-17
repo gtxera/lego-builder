@@ -55,16 +55,19 @@ public class PiecePreview : MonoBehaviour
         var rotation = _viewObject.eulerAngles;
         rotation.y = _piecePreviewService.GetRotation(Time.time);
         _viewObject.eulerAngles = rotation;
-
-        foreach (Transform child in _viewObject)
-        {
-            child.gameObject.layer = LayerMask.NameToLayer("ExamplePieces");
-
-        }
+        
+        SetLayerRecursive(transform, LayerMask.NameToLayer("ExamplePieces"));
         _camera.Render();
-        foreach (Transform child in _viewObject)
+        SetLayerRecursive(transform, 0);
+
+    }
+
+    private void SetLayerRecursive(Transform rootTransform, int layer)
+    {
+        foreach (Transform child in rootTransform)
         {
-            child.gameObject.layer = 0;
+            child.gameObject.layer = layer;
+            SetLayerRecursive(child, layer);
         }
     }
 }
