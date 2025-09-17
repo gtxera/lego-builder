@@ -15,7 +15,7 @@ MonoBehaviour:
   <World>k__BackingField: {fileID: 11400000, guid: b39469ff9fffaa04487a663bace57d28, type: 2}
   _requiredLevelsToUnlock: []
   _requirements:
-  - rid: 6535570084452892738
+  - rid: 6679227879345094725
   - rid: 6535570062124253252
   - rid: 6535570084452892740
   - rid: 6535570084452892742
@@ -29,13 +29,6 @@ MonoBehaviour:
       data:
         _count: 1
         _tag: {fileID: 11400000, guid: 398c34365cbfd854f9b5988e2081f572, type: 2}
-    - rid: 6535570084452892738
-      type: {class: MaximumSizeRequirement, ns: , asm: Assembly-CSharp}
-      data:
-        _size:
-          X: 10
-          Y: 10
-          Height: 9.6
     - rid: 6535570084452892740
       type: {class: MinimumTagRequirement, ns: , asm: Assembly-CSharp}
       data:
@@ -45,3 +38,10 @@ MonoBehaviour:
       type: {class: MinimumPieceCountRequirement, ns: , asm: Assembly-CSharp}
       data:
         _count: 20
+    - rid: 6679227879345094725
+      type: {class: MaximumSizeRequirement, ns: , asm: Assembly-CSharp}
+      data:
+        _size:
+          X: 10
+          Y: 10
+          Height: 9.6
