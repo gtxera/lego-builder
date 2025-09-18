@@ -12,22 +12,25 @@ public class RemovePiecesCommand : ICommand
         _removedPieces = removedPieces;
     }
 
-    public void Commit()
-    {
-        
-    }
+    public void Commit() { }
 
     public void Redo()
     {
         var pieces = _build.GetPieces(_removedPieces.Select(data => data.TransientData.Id)).ToArray();
 
         foreach (var piece in pieces)
+        {
             _build.Remove(piece);
+            EventBus<PieceRemovedEvent>.Raise(new PieceRemovedEvent(piece));
+        }
     }
 
     public void Undo()
     {
         foreach (var removedPiece in _removedPieces)
-            _build.Add(removedPiece);
+        {
+            var piece = _build.Add(removedPiece);
+            EventBus<PieceCreatedEvent>.Raise(new PieceCreatedEvent(piece));
+        }
     }
 }

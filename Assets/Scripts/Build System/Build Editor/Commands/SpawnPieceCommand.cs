@@ -14,17 +14,19 @@ public class SpawnPieceCommand : ICommand
 
     public void Commit()
     {
+        EventBus<PieceCreatedEvent>.Raise(new PieceCreatedEvent(_build.GetPiece(_pieceData.TransientData.Id)));
     }
 
     public void Redo()
     {
-        _build.Add(_pieceData);
+        var piece = _build.Add(_pieceData);
+        EventBus<PieceCreatedEvent>.Raise(new PieceCreatedEvent(piece));
     }
 
     public void Undo()
     {
         var piece = _build.GetPiece(_pieceData.TransientData.Id);
-        
+        EventBus<PieceRemovedEvent>.Raise(new PieceRemovedEvent(piece));
         _build.Remove(piece);
     }
 }

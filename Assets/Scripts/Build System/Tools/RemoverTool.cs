@@ -63,6 +63,7 @@ public class RemoverTool : ITool
     private void RemovePiece(Piece piece)
     {
         _removedPieces.Add(piece.GetData());
+        EventBus<PieceRemovedEvent>.Raise(new PieceRemovedEvent(piece));
         _buildEditor.Build.Remove(piece);
     }
 }

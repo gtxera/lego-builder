@@ -3,27 +3,29 @@ using UnityEngine;
 
 public class BuildSystemInstaller : MonoBehaviour, IInstaller
 {
+    [SerializeField]
+    private PieceParticleEmitter _pieceParticleEmitter;
+    
     public void InstallBindings(ContainerBuilder containerBuilder)
     {
-        containerBuilder.AddScoped(typeof(BuildEditor));
-        containerBuilder.AddScoped(typeof(BuildColorSelector));
-        containerBuilder.AddScoped(typeof(BuildTemplateSelector));
-        containerBuilder.AddSingleton(typeof(PieceTemplateDatabase));
-        containerBuilder.AddScoped(typeof(CameraServices));
-
-        containerBuilder.AddScoped(typeof(PiecePreviewService));
-
-        containerBuilder.AddScoped(typeof(PiecePartsPool));
+        containerBuilder.AddScoped(typeof(BuildEditor))
+            .AddScoped(typeof(BuildColorSelector))
+            .AddScoped(typeof(BuildTemplateSelector))
+            .AddSingleton(typeof(PieceTemplateDatabase))
+            .AddScoped(typeof(CameraServices))
+            .AddScoped(typeof(PiecePreviewService))
+            .AddScoped(typeof(PiecePartsPool))
+            .AddScoped(_ => _pieceParticleEmitter, typeof(PieceParticleEmitter));
         
         RegisterTools(containerBuilder);
     }
 
     private static void RegisterTools(ContainerBuilder containerBuilder)
     {
-        containerBuilder.AddScoped(typeof(ToolController));
-        containerBuilder.AddScoped(typeof(SpawnerTool), typeof(SpawnerTool), typeof(ITool));
-        containerBuilder.AddScoped(typeof(MoverTool), typeof(MoverTool), typeof(ITool));
-        containerBuilder.AddScoped(typeof(PainterTool), typeof(PainterTool), typeof(ITool));
-        containerBuilder.AddScoped(typeof(RemoverTool), typeof(RemoverTool), typeof(ITool));
+        containerBuilder.AddScoped(typeof(ToolController))
+            .AddScoped(typeof(SpawnerTool), typeof(SpawnerTool), typeof(ITool))
+            .AddScoped(typeof(MoverTool), typeof(MoverTool), typeof(ITool))
+            .AddScoped(typeof(PainterTool), typeof(PainterTool), typeof(ITool))
+            .AddScoped(typeof(RemoverTool), typeof(RemoverTool), typeof(ITool));
     }
 }
