@@ -64,7 +64,7 @@ public class CameraInputAxisController : InputAxisControllerBase<CameraInputAxis
             
             var val = _value;
             _value = 0;
-            return val * _sensitivityGetter();
+            return val * _sensitivityGetter() * Time.deltaTime;
         }
     }
 }

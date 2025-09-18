@@ -9,7 +9,7 @@
                     "name": "First Touch",
                     "type": "Value",
                     "id": "4a3b2d91-f1af-42d8-8e2e-8c966bb2748b",
-                    "expectedControlType": "Touch",
+                    "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
@@ -18,7 +18,7 @@
                     "name": "Second Touch",
                     "type": "Value",
                     "id": "285c683b-7aca-46f7-91b4-d1cd0b9e9c6d",
-                    "expectedControlType": "Touch",
+                    "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
@@ -58,13 +58,31 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "First Touch Contact",
+                    "type": "Button",
+                    "id": "108e554b-9218-4ea1-9386-ffb3d37f9f0a",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Second Touch Contact",
+                    "type": "Button",
+                    "id": "130d9d49-65b2-4687-9833-508e569b734e",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
                 {
                     "name": "",
                     "id": "1b02f847-1144-43ac-a418-3c84015bef50",
-                    "path": "<Touchscreen>/touch0",
+                    "path": "<Touchscreen>/touch0/position",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Touch",
@@ -75,7 +93,7 @@
                 {
                     "name": "",
                     "id": "b1e1fb1e-7176-4406-adb7-4da7ca31e286",
-                    "path": "<Touchscreen>/touch1",
+                    "path": "<Touchscreen>/touch1/position",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Touch",
@@ -179,6 +197,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Touch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7d87a49b-b7ed-4eac-97c0-6e916e586073",
+                    "path": "<Touchscreen>/touch0/press",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Touch",
+                    "action": "First Touch Contact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e49782d0-7806-4006-8a86-76a402baab97",
+                    "path": "<Touchscreen>/touch1/press",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Touch",
+                    "action": "Second Touch Contact",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

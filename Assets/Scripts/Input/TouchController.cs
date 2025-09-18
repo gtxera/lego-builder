@@ -19,12 +19,7 @@ public class TouchController : IDisposable
     
     public TouchController()
     {
-        if (!EnhancedTouchSupport.enabled)
-            EnhancedTouchSupport.Enable();
         
-        Touch.onFingerDown += OnFingerDown;
-        Touch.onFingerMove += OnFingerMove;
-        Touch.onFingerUp += OnFingerUp;
     }
 
     public event Action<Touch> TouchedDown = delegate { };

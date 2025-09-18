@@ -31,7 +31,7 @@ public partial class @LegoBuilderInputActions: IInputActionCollection2, IDisposa
                     ""name"": ""First Touch"",
                     ""type"": ""Value"",
                     ""id"": ""4a3b2d91-f1af-42d8-8e2e-8c966bb2748b"",
-                    ""expectedControlType"": ""Touch"",
+                    ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
@@ -40,7 +40,7 @@ public partial class @LegoBuilderInputActions: IInputActionCollection2, IDisposa
                     ""name"": ""Second Touch"",
                     ""type"": ""Value"",
                     ""id"": ""285c683b-7aca-46f7-91b4-d1cd0b9e9c6d"",
-                    ""expectedControlType"": ""Touch"",
+                    ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
@@ -80,13 +80,31 @@ public partial class @LegoBuilderInputActions: IInputActionCollection2, IDisposa
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""First Touch Contact"",
+                    ""type"": ""Button"",
+                    ""id"": ""108e554b-9218-4ea1-9386-ffb3d37f9f0a"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Second Touch Contact"",
+                    ""type"": ""Button"",
+                    ""id"": ""130d9d49-65b2-4687-9833-508e569b734e"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
                 {
                     ""name"": """",
                     ""id"": ""1b02f847-1144-43ac-a418-3c84015bef50"",
-                    ""path"": ""<Touchscreen>/touch0"",
+                    ""path"": ""<Touchscreen>/touch0/position"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";Touch"",
@@ -97,7 +115,7 @@ public partial class @LegoBuilderInputActions: IInputActionCollection2, IDisposa
                 {
                     ""name"": """",
                     ""id"": ""b1e1fb1e-7176-4406-adb7-4da7ca31e286"",
-                    ""path"": ""<Touchscreen>/touch1"",
+                    ""path"": ""<Touchscreen>/touch1/position"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";Touch"",
@@ -201,6 +219,28 @@ public partial class @LegoBuilderInputActions: IInputActionCollection2, IDisposa
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Touch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7d87a49b-b7ed-4eac-97c0-6e916e586073"",
+                    ""path"": ""<Touchscreen>/touch0/press"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Touch"",
+                    ""action"": ""First Touch Contact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e49782d0-7806-4006-8a86-76a402baab97"",
+                    ""path"": ""<Touchscreen>/touch1/press"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Touch"",
+                    ""action"": ""Second Touch Contact"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1015,6 +1055,8 @@ public partial class @LegoBuilderInputActions: IInputActionCollection2, IDisposa
         m_Camera_Look = m_Camera.FindAction("Look", throwIfNotFound: true);
         m_Camera_Zoom = m_Camera.FindAction("Zoom", throwIfNotFound: true);
         m_Camera_Touch = m_Camera.FindAction("Touch", throwIfNotFound: true);
+        m_Camera_FirstTouchContact = m_Camera.FindAction("First Touch Contact", throwIfNotFound: true);
+        m_Camera_SecondTouchContact = m_Camera.FindAction("Second Touch Contact", throwIfNotFound: true);
         // Tool
         m_Tool = asset.FindActionMap("Tool", throwIfNotFound: true);
         m_Tool_Press = m_Tool.FindAction("Press", throwIfNotFound: true);
@@ -1115,6 +1157,8 @@ public partial class @LegoBuilderInputActions: IInputActionCollection2, IDisposa
     private readonly InputAction m_Camera_Look;
     private readonly InputAction m_Camera_Zoom;
     private readonly InputAction m_Camera_Touch;
+    private readonly InputAction m_Camera_FirstTouchContact;
+    private readonly InputAction m_Camera_SecondTouchContact;
     public struct CameraActions
     {
         private @LegoBuilderInputActions m_Wrapper;
@@ -1125,6 +1169,8 @@ public partial class @LegoBuilderInputActions: IInputActionCollection2, IDisposa
         public InputAction @Look => m_Wrapper.m_Camera_Look;
         public InputAction @Zoom => m_Wrapper.m_Camera_Zoom;
         public InputAction @Touch => m_Wrapper.m_Camera_Touch;
+        public InputAction @FirstTouchContact => m_Wrapper.m_Camera_FirstTouchContact;
+        public InputAction @SecondTouchContact => m_Wrapper.m_Camera_SecondTouchContact;
         public InputActionMap Get() { return m_Wrapper.m_Camera; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1152,6 +1198,12 @@ public partial class @LegoBuilderInputActions: IInputActionCollection2, IDisposa
             @Touch.started += instance.OnTouch;
             @Touch.performed += instance.OnTouch;
             @Touch.canceled += instance.OnTouch;
+            @FirstTouchContact.started += instance.OnFirstTouchContact;
+            @FirstTouchContact.performed += instance.OnFirstTouchContact;
+            @FirstTouchContact.canceled += instance.OnFirstTouchContact;
+            @SecondTouchContact.started += instance.OnSecondTouchContact;
+            @SecondTouchContact.performed += instance.OnSecondTouchContact;
+            @SecondTouchContact.canceled += instance.OnSecondTouchContact;
         }
 
         private void UnregisterCallbacks(ICameraActions instance)
@@ -1174,6 +1226,12 @@ public partial class @LegoBuilderInputActions: IInputActionCollection2, IDisposa
             @Touch.started -= instance.OnTouch;
             @Touch.performed -= instance.OnTouch;
             @Touch.canceled -= instance.OnTouch;
+            @FirstTouchContact.started -= instance.OnFirstTouchContact;
+            @FirstTouchContact.performed -= instance.OnFirstTouchContact;
+            @FirstTouchContact.canceled -= instance.OnFirstTouchContact;
+            @SecondTouchContact.started -= instance.OnSecondTouchContact;
+            @SecondTouchContact.performed -= instance.OnSecondTouchContact;
+            @SecondTouchContact.canceled -= instance.OnSecondTouchContact;
         }
 
         public void RemoveCallbacks(ICameraActions instance)
@@ -1524,6 +1582,8 @@ public partial class @LegoBuilderInputActions: IInputActionCollection2, IDisposa
         void OnLook(InputAction.CallbackContext context);
         void OnZoom(InputAction.CallbackContext context);
         void OnTouch(InputAction.CallbackContext context);
+        void OnFirstTouchContact(InputAction.CallbackContext context);
+        void OnSecondTouchContact(InputAction.CallbackContext context);
     }
     public interface IToolActions
     {
