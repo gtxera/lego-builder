@@ -7,10 +7,22 @@ public class BuildEditor
     public event Action<Build> CommandUndone = delegate { };
     public event Action<Build> CommandRedone = delegate { }; 
     public event Action<Build> FinishedEditing = delegate { };
+    public event Action UndoBecameAvailable = delegate { };
+    public event Action UndoBecameUnavailable = delegate { };
+    public event Action RedoBecameAvailable = delegate { };
+    public event Action RedoBecameUnavailable = delegate { };
     
     public Build Build { get; private set; }
 
     private BuildEditorCommandStack _commandStack = new();
+
+    public BuildEditor()
+    {
+        _commandStack.UndoBecameAvailable += () => UndoBecameAvailable();
+        _commandStack.UndoBecameUnavailable += () => UndoBecameUnavailable();
+        _commandStack.RedoBecameAvailable += () => RedoBecameAvailable();
+        _commandStack.RedoBecameUnavailable += () => RedoBecameUnavailable();
+    }
 
     public void StartEditing(Build build)
     {
