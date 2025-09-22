@@ -26,6 +26,8 @@ public class Piece : MonoBehaviour
     private IEnumerable<PieceColoredPart> _coloredParts;
 
     private float _creationTime;
+
+    private IEnumerable<PieceConnector> Connectors => _anchors.Concat<PieceConnector>(_sockets).Concat(_studs);
     
     [SerializeField]
     private float _lastMovementTime;
@@ -37,6 +39,11 @@ public class Piece : MonoBehaviour
     public Guid Id { get; private set; }
 
     public IReadOnlyList<PieceColor> Colors => _colors;
+
+    public IEnumerable<Piece> ConnectedPieces => Connectors
+        .Where(connector => connector.ConnectedPiece != null)
+        .Select(connector => connector.ConnectedPiece)
+        .Distinct();
     
     private void Awake()
     {
@@ -135,12 +142,8 @@ public class Piece : MonoBehaviour
     
     public Vector3 MoveTo(Vector3 position)
     {
-        foreach (var socket in _sockets)
-            socket.Disconnect();
-        foreach (var stud in _studs)
-            stud.Disconnect();
-        foreach (var anchor in _anchors)
-            anchor.Disconnect();
+        foreach (var connector in Connectors)
+            connector.Disconnect();
         
         var gridPosition = GetGridPosition(position);
         Debug.Log(gridPosition);
@@ -149,12 +152,8 @@ public class Piece : MonoBehaviour
         
         _lastMovementTime = Time.time;
         
-        foreach (var socket in _sockets)
-            socket.Connect();
-        foreach (var stud in _studs)
-            stud.Connect();
-        foreach (var anchor in _anchors)
-            anchor.Connect();
+        foreach (var connector in Connectors)
+            connector.Connect();
 
         return gridPosition;
     }
@@ -189,21 +188,12 @@ public class Piece : MonoBehaviour
         
         halfSize -= new Vector3(0.002f, 0.002f, 0.002f);
         
-        var hits = Physics.OverlapBoxNonAlloc(centerPosition, halfSize, _overlaps, _rigidbody.rotation,
-            ~LayerMask.GetMask("Connectors", "Anchors"));
-        if (hits == 0)
-        {
-            Debug.Log("sem colisao");
-            _rigidbody.position = originalPosition;
-            anchoredPosition = centerPosition;
-            return true;
-        }
-
+        
         var bottomPosition = centerPosition;
         bottomPosition.y -= halfSize.y;
 
         //halfSize += new Vector3(0.055f, 0.055f, 0.055f);
-        hits = Physics.OverlapBoxNonAlloc(bottomPosition, halfSize, _overlaps, _rigidbody.rotation,
+        var hits = Physics.OverlapBoxNonAlloc(bottomPosition, halfSize, _overlaps, _rigidbody.rotation,
             LayerMask.GetMask("Anchors"));
         //halfSize -= new Vector3(0.055f, 0.055f, 0.055f);
 
@@ -225,6 +215,16 @@ public class Piece : MonoBehaviour
 
         if (closestAnchor == null)
         {
+            hits = Physics.OverlapBoxNonAlloc(centerPosition, halfSize, _overlaps, _rigidbody.rotation,
+                ~LayerMask.GetMask("Connectors", "Anchors"));
+            if (hits == 0)
+            {
+                Debug.Log("sem colisao");
+                _rigidbody.position = originalPosition;
+                anchoredPosition = centerPosition;
+                return true;
+            }
+            
             _rigidbody.position = originalPosition;
             anchoredPosition = Vector3.zero;
             return false;

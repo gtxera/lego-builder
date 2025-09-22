@@ -127,7 +127,8 @@ public class CameraControlInputContext : InputContext, ITickable
     private void OnFirstTouchLifted(InputAction.CallbackContext context)
     {
         _touchBeganInUI = false;
-        _touchCount--;
+        if (_touchCount > 0)
+            _touchCount--; 
         _lastFirstTouchPosition = Vector2.zero;
         _doubleTapMode = false;
         Debug.Log($"toque 1 up");
@@ -149,7 +150,8 @@ public class CameraControlInputContext : InputContext, ITickable
 
     private void OnSecondTouchLifted(InputAction.CallbackContext context)
     {
-        _touchCount--;
+        if (_touchCount > 0)
+            _touchCount--;
         Debug.Log($"toque 2 up");
     }
 
@@ -169,7 +171,7 @@ public class CameraControlInputContext : InputContext, ITickable
         if (!CanMove())
             return;
         
-        HandleCameraMoveRequest(context.ReadValue<Vector2>());
+        HandleCameraMoveRequest(context.ReadValue<Vector2>()*1000);
     }
 
     private void OnMoveCanceled(InputAction.CallbackContext _)
@@ -195,10 +197,10 @@ public class CameraControlInputContext : InputContext, ITickable
         var delta = NormalizeToScreen(context.ReadValue<Vector2>());
         
         if (delta.x != 0)
-            HandleCameraLookOrbitXRequested(delta.x * 1000);
+            HandleCameraLookOrbitXRequested(delta.x * 100000);
         
         if (delta.y != 0)
-            HandleCameraLookOrbitYRequested(delta.y * 1000);
+            HandleCameraLookOrbitYRequested(delta.y * 100000);
     }
 
     private void OnZoomPerformed(InputAction.CallbackContext context)

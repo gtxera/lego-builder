@@ -1,3 +1,4 @@
+using System;
 using KBCore.Refs;
 using PrimeTween;
 using TMPro;
@@ -9,12 +10,23 @@ public class LevelRequirementText : MonoBehaviour
     [SerializeField, Self]
     private TextMeshProUGUI _text;
 
+    [SerializeField]
+    private Color _satisfiedColor;
+
+    [SerializeField]
+    private Color _unsatisfiedColor;
+
     private bool _wasSatisfied;
 
     private LevelController _levelController;
 
     private IBuildRequirement _requirement;
-    
+
+    private void Awake()
+    {
+        _text.color = _unsatisfiedColor;
+    }
+
     public void Initialize(IBuildRequirement requirement, LevelController levelController)
     {
         _text.SetText(requirement.GetText());
@@ -35,7 +47,7 @@ public class LevelRequirementText : MonoBehaviour
         if (_wasSatisfied || _requirement != requirement)
             return;
 
-        Tween.Color(_text, Color.green, .4f);
+        Tween.Color(_text, _satisfiedColor, .4f);
         _wasSatisfied = true;
     }
 
@@ -44,7 +56,7 @@ public class LevelRequirementText : MonoBehaviour
         if (!_wasSatisfied || _requirement != requirement)
             return;
 
-        Tween.Color(_text, Color.red, .4f);
+        Tween.Color(_text, _unsatisfiedColor, .4f);
         _wasSatisfied = false;
     }
 }

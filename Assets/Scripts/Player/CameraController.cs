@@ -34,6 +34,8 @@ public class CameraController : ValidatedMonoBehaviour
     private readonly Dictionary<float, Vector3> _aggregatedVelocities = new();
     private readonly List<float> _oldVelocities = new();
 
+    private List<Bounds> _limitingBounds = new();
+
     private Vector3 _velocity;
     private Tween _moveToTargetTween;
 
@@ -59,6 +61,8 @@ public class CameraController : ValidatedMonoBehaviour
     {
         _cameraControlInputContext.CameraMoveRequested += OnMove;
         _cameraControlInputContext.CameraMoveFinished += OnMoveFinished;
+        
+        _limitingBounds.Add(new Bounds(Vector3.zero, Vector3.one * 120f));
     }
 
     public void SetTargetPosition(Vector2 position)
@@ -74,9 +78,9 @@ public class CameraController : ValidatedMonoBehaviour
             return;
         
         var scaledDelta = delta * _sensitivitySettings.MoveSensitivity;
-        var movement = Quaternion.AngleAxis(_orbitalFollow.HorizontalAxis.Value, Vector3.up) * new Vector3(scaledDelta.x, 0, scaledDelta.y);
-        transform.position += movement;
-        _aggregatedVelocities.TryAdd(Time.time, movement);
+        var velocity = Quaternion.AngleAxis(_orbitalFollow.HorizontalAxis.Value, Vector3.up) * new Vector3(scaledDelta.x, 0, scaledDelta.y);
+        Move(velocity);
+        _aggregatedVelocities.TryAdd(Time.time, velocity * Time.deltaTime);
 
         foreach (var timestamp in _aggregatedVelocities.Keys.Where(timestamp => Time.time - timestamp > _velocityAggregationWindow))
             _oldVelocities.Add(timestamp);
@@ -107,8 +111,23 @@ public class CameraController : ValidatedMonoBehaviour
         if (_velocity == Vector3.zero || _moveToTargetTween.isAlive)
             return;
 
-        transform.position += _velocity * Time.deltaTime;
+        Move(_velocity);
         _velocity = Math.ExponentialDecay(_velocity, Vector3.zero, _decelerationFactor, Time.deltaTime);
+    }
+
+    private void Move(Vector3 velocity)
+    {
+        var newPosition = transform.position + velocity * Time.deltaTime;
+
+        foreach (var limitingBounds in _limitingBounds)
+        {
+            if (!limitingBounds.Contains(newPosition))
+            {
+                newPosition = limitingBounds.ClosestPoint(newPosition);
+            }
+        }
+
+        transform.position = newPosition;
     }
 
     private void Update()

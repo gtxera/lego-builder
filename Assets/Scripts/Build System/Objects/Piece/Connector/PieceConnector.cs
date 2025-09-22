@@ -7,7 +7,7 @@ public abstract class PieceConnector<TConnector, TConnecting> : PieceConnector
 {
     private Piece _ownerPiece;
 
-    private Collider[] _castResults = new Collider[2];
+    private Collider[] _castResults = new Collider[4];
     
     protected abstract string Layer { get; }
     
@@ -16,6 +16,8 @@ public abstract class PieceConnector<TConnector, TConnecting> : PieceConnector
     
     [field: SerializeField]
     public bool Connected { get; private set; }
+
+    public override Piece ConnectedPiece => _connecting?._ownerPiece;
     
     private void Awake()
     {
@@ -34,7 +36,7 @@ public abstract class PieceConnector<TConnector, TConnecting> : PieceConnector
 
     public sealed override bool IsConnectedTo(Piece piece) => _connecting?._ownerPiece.Id == piece.Id;
 
-    public void Connect()
+    public override void Connect()
     {
         var size = Physics.OverlapSphereNonAlloc(transform.position - new Vector3(0, .01f, 0), .24f, _castResults, LayerMask.GetMask(Layer), QueryTriggerInteraction.Collide);
         for (int i = 0; i < size; i++)
@@ -60,7 +62,7 @@ public abstract class PieceConnector<TConnector, TConnecting> : PieceConnector
 
     protected virtual bool CanConnect(TConnecting connecting) => true;
 
-    public void Disconnect()
+    public override void Disconnect()
     {
         if (!Connected)
             return;
@@ -77,4 +79,10 @@ public abstract class PieceConnector : MonoBehaviour
     public abstract bool IsConnectedTo(Piece piece);
 
     public abstract void Initialize(Piece piece);
+
+    public abstract void Connect();
+
+    public abstract void Disconnect();
+    
+    public abstract Piece ConnectedPiece { get; }
 }
