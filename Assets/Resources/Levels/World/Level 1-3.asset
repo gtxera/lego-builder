@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: Level 1-3
   m_EditorClassIdentifier: 
   <World>k__BackingField: {fileID: 11400000, guid: b39469ff9fffaa04487a663bace57d28, type: 2}
-  _requiredLevelsToUnlock: []
+  _requiredLevelsToUnlock:
+  - {fileID: 11400000, guid: cb315a7f0bfe7654b983b4554dd1f124, type: 2}
   _requirements:
   - rid: 6535570196191510597
+  - rid: 6535570200700649552
   <Name>k__BackingField: Construa uma ponte!
   <Description>k__BackingField: Parece uma boa ideia chegar nessa pequena ilha.
   references:
@@ -26,3 +28,10 @@ MonoBehaviour:
       data:
         _requirementText: Conectar as duas ilhas.
         _bridgeDistance: 4
+    - rid: 6535570200700649552
+      type: {class: MaximumSizeRequirement, ns: , asm: Assembly-CSharp}
+      data:
+        _size:
+          X: 9
+          Y: 9
+          Height: 4.8

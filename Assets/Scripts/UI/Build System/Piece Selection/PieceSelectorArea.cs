@@ -40,6 +40,14 @@ public class PieceSelectorArea : MonoBehaviour
     [SerializeField]
     private Button _meshesButton;
 
+    [SerializeField]
+    private Color _selectedCategoryColor;
+
+    [SerializeField]
+    private Color _normalCategoryColor;
+
+    private Button _selectedCategoryButton;
+    
     private RectTransform _activePanel;
     
     private void Awake()
@@ -56,6 +64,11 @@ public class PieceSelectorArea : MonoBehaviour
             _activePanel.gameObject.SetActive(false);
             _activePanel = _bricksRoot;
             _activePanel.gameObject.SetActive(true);
+
+            _selectedCategoryButton.targetGraphic.color = _normalCategoryColor;
+            _selectedCategoryButton = _bricksButton;
+            _selectedCategoryButton.targetGraphic.color = _selectedCategoryColor;
+            
             _piecePreviewService.EnablePreview<BrickPieceTemplate>();
         });
         _platesButton.onClick.AddListener(() =>
@@ -63,6 +76,11 @@ public class PieceSelectorArea : MonoBehaviour
             _activePanel.gameObject.SetActive(false);
             _activePanel = _platesRoot;
             _activePanel.gameObject.SetActive(true);
+            
+            _selectedCategoryButton.targetGraphic.color = _normalCategoryColor;
+            _selectedCategoryButton = _platesButton;
+            _selectedCategoryButton.targetGraphic.color = _selectedCategoryColor;
+            
             _piecePreviewService.EnablePreview<PlatePieceTemplate>();
         });
         _tilesButton.onClick.AddListener(() =>
@@ -70,6 +88,11 @@ public class PieceSelectorArea : MonoBehaviour
             _activePanel.gameObject.SetActive(false);
             _activePanel = _tilesRoot;
             _activePanel.gameObject.SetActive(true);
+            
+            _selectedCategoryButton.targetGraphic.color = _normalCategoryColor;
+            _selectedCategoryButton = _tilesButton;
+            _selectedCategoryButton.targetGraphic.color = _selectedCategoryColor;
+            
             _piecePreviewService.EnablePreview<TilePieceTemplate>();
         });
         _meshesButton.onClick.AddListener(() =>
@@ -77,8 +100,15 @@ public class PieceSelectorArea : MonoBehaviour
             _activePanel.gameObject.SetActive(false);
             _activePanel = _meshesRoot;
             _activePanel.gameObject.SetActive(true);
+            
+            _selectedCategoryButton.targetGraphic.color = _normalCategoryColor;
+            _selectedCategoryButton = _meshesButton;
+            _selectedCategoryButton.targetGraphic.color = _selectedCategoryColor;
+            
             _piecePreviewService.EnablePreview<MeshPieceTemplate>();
         });
+
+        _selectedCategoryButton = _bricksButton;
         
         foreach (var template in _pieceTemplateDatabase.GetTemplates<BrickPieceTemplate>())
         {

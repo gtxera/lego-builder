@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Scripting;
 
 public abstract class PieceConnector<TConnector, TConnecting> : PieceConnector 
     where TConnector : PieceConnector<TConnector, TConnecting>
@@ -46,18 +47,25 @@ public abstract class PieceConnector<TConnector, TConnecting> : PieceConnector
                 continue;
 
             if (collider.gameObject.TryGetComponent<TConnecting>(out var connecting))
+            {
+                Debug.Log(GetType().Name);
+                Debug.Log(connecting.GetType().Name);
                 Connect(connecting);
+            }
         }
     }
     
     private void Connect(TConnecting connecting)
     {
-        if (Connected || _ownerPiece?.Id == connecting._ownerPiece?.Id || !CanConnect(connecting))
+        if (Connected || 
+            _ownerPiece?.Id == connecting._ownerPiece?.Id ||
+            !CanConnect(connecting))
             return;
         
         _connecting = connecting;
         Connected = true;
-        _connecting.Connect((TConnector)this);
+        if (!_connecting.Connected)
+            _connecting.Connect((TConnector)this);
     }
 
     protected virtual bool CanConnect(TConnecting connecting) => true;
@@ -70,6 +78,16 @@ public abstract class PieceConnector<TConnector, TConnecting> : PieceConnector
         Connected = false;
         _connecting.Disconnect();
         _connecting = null;
+    }
+
+    [Preserve] private static void UsedOnlyForAOTCodeGeneration()
+    {
+        var a = new Socket();
+        var b = new Stud();
+        var c = new AnchorPoint();
+        a.Connect(b);
+        b.Connect(a);
+        c.Connect(c);
     }
 }
 

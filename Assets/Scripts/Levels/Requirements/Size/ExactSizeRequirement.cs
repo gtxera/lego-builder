@@ -14,6 +14,13 @@ public class ExactSizeRequirement : SizeRequirement
         var extentsDifference = buildBounds.extents - sizeBounds.extents;
 
         var maximumMagnitudeDifference = new Vector3(0.005f, 0.005f, 0.005f).sqrMagnitude;
+        
+        Debug.Log("Center");
+        Debug.Log(buildBounds.center);
+        Debug.Log(sizeBounds.center);
+        Debug.Log("Extents");
+        Debug.Log(buildBounds.extents);
+        Debug.Log(sizeBounds.extents);
 
         return centerDifference.sqrMagnitude < maximumMagnitudeDifference &&
                extentsDifference.sqrMagnitude < maximumMagnitudeDifference;

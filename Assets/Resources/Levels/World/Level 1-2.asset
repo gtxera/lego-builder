@@ -27,11 +27,11 @@ MonoBehaviour:
     - rid: 6535569954094186564
       type: {class: MaximumColorsRequirement, ns: , asm: Assembly-CSharp}
       data:
-        _count: 2
+        _count: 3
     - rid: 6535569965930512450
       type: {class: ExactSizeRequirement, ns: , asm: Assembly-CSharp}
       data:
         _size:
-          X: 2
-          Y: 2
-          Height: 0.5
+          X: 4
+          Y: 8
+          Height: 0.64

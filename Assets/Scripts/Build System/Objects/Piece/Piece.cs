@@ -188,12 +188,21 @@ public class Piece : MonoBehaviour
         
         halfSize -= new Vector3(0.002f, 0.002f, 0.002f);
         
+        var hits = Physics.OverlapBoxNonAlloc(centerPosition, halfSize, _overlaps, _rigidbody.rotation,
+            ~LayerMask.GetMask("Connectors", "Anchors"));
+        if (hits == 0)
+        {
+            Debug.Log("sem colisao");
+            _rigidbody.position = originalPosition;
+            anchoredPosition = centerPosition;
+            return true;
+        }
         
         var bottomPosition = centerPosition;
         bottomPosition.y -= halfSize.y;
 
         //halfSize += new Vector3(0.055f, 0.055f, 0.055f);
-        var hits = Physics.OverlapBoxNonAlloc(bottomPosition, halfSize, _overlaps, _rigidbody.rotation,
+        hits = Physics.OverlapBoxNonAlloc(bottomPosition, halfSize, _overlaps, _rigidbody.rotation,
             LayerMask.GetMask("Anchors"));
         //halfSize -= new Vector3(0.055f, 0.055f, 0.055f);
 
@@ -215,16 +224,6 @@ public class Piece : MonoBehaviour
 
         if (closestAnchor == null)
         {
-            hits = Physics.OverlapBoxNonAlloc(centerPosition, halfSize, _overlaps, _rigidbody.rotation,
-                ~LayerMask.GetMask("Connectors", "Anchors"));
-            if (hits == 0)
-            {
-                Debug.Log("sem colisao");
-                _rigidbody.position = originalPosition;
-                anchoredPosition = centerPosition;
-                return true;
-            }
-            
             _rigidbody.position = originalPosition;
             anchoredPosition = Vector3.zero;
             return false;
@@ -391,5 +390,11 @@ public class Piece : MonoBehaviour
             stud.Disconnect();
         foreach (var anchor in _anchors)
             anchor.Disconnect();
+    }
+
+    private void OnDrawGizmos()
+    {
+        var bounds = GetBounds();
+        Gizmos.DrawCube(transform.localPosition, bounds.size);
     }
 }

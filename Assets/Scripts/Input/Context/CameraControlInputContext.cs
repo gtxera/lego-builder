@@ -115,7 +115,7 @@ public class CameraControlInputContext : InputContext, ITickable
         var delta = lastTouchPosition - position;
 
         if (!_doubleTapMode)
-            HandleCameraMoveRequest(delta * 10);
+            HandleCameraMoveRequest(NormalizeToScreen(delta * 100000));
         else
         {
             var normalized = NormalizeToScreen(-delta);
@@ -197,10 +197,10 @@ public class CameraControlInputContext : InputContext, ITickable
         var delta = NormalizeToScreen(context.ReadValue<Vector2>());
         
         if (delta.x != 0)
-            HandleCameraLookOrbitXRequested(delta.x * 100000);
+            HandleCameraLookOrbitXRequested(delta.x * 160000);
         
         if (delta.y != 0)
-            HandleCameraLookOrbitYRequested(delta.y * 100000);
+            HandleCameraLookOrbitYRequested(delta.y * 190000);
     }
 
     private void OnZoomPerformed(InputAction.CallbackContext context)

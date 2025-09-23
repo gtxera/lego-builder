@@ -12,7 +12,7 @@ public class WorldSpaceCameraRelativeCanvas : MonoBehaviour
     [SerializeField]
     private float _relativeSize;
 
-    private void Update()
+    private void LateUpdate()
     {
         transform.rotation = _cameraServices.GetInverseCameraLookRotation();
         transform.localScale = Vector3.one * _cameraServices.GetCameraRelativeSize(_relativeSize, transform.position);

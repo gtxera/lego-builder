@@ -57,6 +57,13 @@ public class Build : MonoBehaviour
             bounds.Encapsulate(pieceBounds);
         }
 
+        var angle = transform.eulerAngles.y;
+        if (Mathf.Approximately(angle, 90) || Mathf.Approximately(angle, 270))
+        {
+            var size = bounds.size;
+            (size.x, size.z) = (size.z, size.x);
+        }
+
         return bounds;
     }
 
@@ -73,4 +80,10 @@ public class Build : MonoBehaviour
     }
 
     public bool IsPartOfBuild(Piece piece) => _pieces.Contains(piece);
+
+    private void OnDrawGizmos()
+    {
+        var bounds = GetBounds();
+        Gizmos.DrawCube(transform.TransformPoint(bounds.center), bounds.size);
+    }
 }

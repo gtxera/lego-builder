@@ -63,10 +63,13 @@ public class CameraController : ValidatedMonoBehaviour
         _cameraControlInputContext.CameraMoveFinished += OnMoveFinished;
         
         _limitingBounds.Add(new Bounds(Vector3.zero, Vector3.one * 120f));
+
+        Application.targetFrameRate = 60;
     }
 
     public void SetTargetPosition(Vector2 position)
     {
+        _velocity = Vector3.zero;
         var worldPosition = new Vector3(position.x, 0, position.y);
         if (transform.position != worldPosition)
             _moveToTargetTween = Tween.Position(transform, new Vector3(position.x, 0, position.y), _moveToTargetTweenSettings);
