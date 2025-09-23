@@ -52,6 +52,9 @@ public class ToolInputContext : InputContext
 
     private void OnPressPerformed(InputAction.CallbackContext context)
     {
+        if (!CanPerformToolAction(context))
+            return;
+
         if (context.control.device is not Pointer pointer)
             throw new InvalidOperationException("Press deve ser pointer");
 
@@ -67,6 +70,9 @@ public class ToolInputContext : InputContext
 
     private void OnPressCanceled(InputAction.CallbackContext context)
     {
+        if (!CanPerformToolAction(context))
+            return;
+
         if (context.control.device is not Pointer pointer)
             throw new InvalidOperationException("Press deve ser pointer");
         
@@ -84,6 +90,9 @@ public class ToolInputContext : InputContext
 
     private void OnDragPerformed(InputAction.CallbackContext context)
     {
+        if (!CanPerformToolAction(context))
+            return;
+
         if (context.control.device is not Pointer pointer)
             throw new InvalidOperationException("Press deve ser pointer");
         
@@ -106,5 +115,13 @@ public class ToolInputContext : InputContext
             return;
         
         Tapped(pointerPosition);
+    }
+
+    private bool CanPerformToolAction(InputAction.CallbackContext context)
+    {
+        if (context.control.device is not Touchscreen touchscreen)
+            return true;
+
+        return touchscreen.touches.Count >= 2;
     }
 }

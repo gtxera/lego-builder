@@ -24,7 +24,7 @@ public class SpawnerTool : ITool
         _newPiece = _buildEditor.Build.Add(_buildTemplateSelector.SelectedTemplate);
         var ray = _cameraServices.ScreenToWorldRay(pointerScreenPosition);
         
-        _newPiece.SetRotation(_rotation);
+        _newPiece.SetWorldRotation(_rotation.ToAngle());
         
         if (!_newPiece.TryGetAnchoredPosition(ray, out var position))
             position = _newPiece.GetSweepPosition(ray.origin, ray.direction);

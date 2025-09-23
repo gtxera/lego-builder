@@ -304,10 +304,19 @@ public class Piece : MonoBehaviour
         return gridSnappedPosition + _rigidbody.rotation * halfSize;
     }
 
-    public void SetRotation(PieceRotation rotation)
+    private void SetRotation(PieceRotation rotation)
     {
         _rotation = rotation;
         var quaternion = Quaternion.AngleAxis(_rotation.ToAngle(), Vector3.up);
+        _rigidbody.rotation = Quaternion.Inverse(transform.parent.rotation) * quaternion;
+        _rigidbody.PublishTransform();
+    }
+
+    public void SetWorldRotation(float angle)
+    {
+        var quaternion = Quaternion.AngleAxis(angle, Vector3.up);
+        var localRotation = Quaternion.Inverse(transform.localRotation) * quaternion;
+        _rotation = PieceRotationExtensions.FromAngle(localRotation.eulerAngles.y);
         _rigidbody.rotation = quaternion;
         _rigidbody.PublishTransform();
     }

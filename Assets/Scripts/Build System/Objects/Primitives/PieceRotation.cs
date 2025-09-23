@@ -44,4 +44,16 @@ public static class PieceRotationExtensions
             _ => throw new ArgumentOutOfRangeException(nameof(rotation), rotation, null)
         };
     }
+
+    public static PieceRotation FromAngle(float angle)
+    {
+        return angle switch
+        {
+            0f => PieceRotation.North,
+            90f => PieceRotation.East,
+            180f => PieceRotation.South,
+            270f => PieceRotation.West,
+            _ => throw new ArgumentOutOfRangeException(nameof(angle), angle, null)
+        };
+    }
 }
