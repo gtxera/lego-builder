@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: Level 1-2
   m_EditorClassIdentifier: 
   <World>k__BackingField: {fileID: 11400000, guid: b39469ff9fffaa04487a663bace57d28, type: 2}
-  _requiredLevelsToUnlock:
-  - {fileID: 11400000, guid: 69790ebbb66e57749a4ea718efc1504c, type: 2}
+  _requiredLevelsToUnlock: []
   _requirements:
   - rid: 6535569954094186564
   - rid: 6535569965930512450

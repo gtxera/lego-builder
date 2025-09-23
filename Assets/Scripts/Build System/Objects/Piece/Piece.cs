@@ -365,7 +365,8 @@ public class Piece : MonoBehaviour
     public Bounds GetBounds()
     {
         var size = Template.GetSize().ToWorld();
-        if (_rotation is PieceRotation.East or PieceRotation.West)
+        var angle = _rigidbody.rotation.eulerAngles.y;
+        if (Mathf.Approximately(angle, 90) || Mathf.Approximately(angle, 270))
         {
             (size.x, size.z) = (size.z, size.x);
         }
@@ -390,11 +391,5 @@ public class Piece : MonoBehaviour
             stud.Disconnect();
         foreach (var anchor in _anchors)
             anchor.Disconnect();
-    }
-
-    private void OnDrawGizmos()
-    {
-        var bounds = GetBounds();
-        Gizmos.DrawCube(transform.localPosition, bounds.size);
     }
 }

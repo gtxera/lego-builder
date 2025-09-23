@@ -53,7 +53,7 @@ public class Build : MonoBehaviour
         foreach (var piece in _pieces)
         {
             var pieceBounds = piece.GetBounds();
-            pieceBounds.center = piece.transform.localPosition;
+            pieceBounds.center = piece.transform.position - transform.position;
             bounds.Encapsulate(pieceBounds);
         }
 
@@ -62,6 +62,7 @@ public class Build : MonoBehaviour
         {
             var size = bounds.size;
             (size.x, size.z) = (size.z, size.x);
+            bounds.size = size;
         }
 
         return bounds;
@@ -84,6 +85,14 @@ public class Build : MonoBehaviour
     private void OnDrawGizmos()
     {
         var bounds = GetBounds();
+        var color = Gizmos.color;
+
+        var angle = transform.eulerAngles.y;
+        if (Mathf.Approximately(angle, 90) || Mathf.Approximately(angle, 270))
+            Gizmos.color = Color.red;
+
         Gizmos.DrawCube(transform.TransformPoint(bounds.center), bounds.size);
+
+        Gizmos.color = color;
     }
 }
