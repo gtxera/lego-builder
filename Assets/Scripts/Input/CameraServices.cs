@@ -31,6 +31,8 @@ public class CameraServices : IDisposable
         var distance = (_mainCamera.transform.position - position).magnitude;
         return distance * relativeSize * _mainCamera.fieldOfView;
     }
+
+    public Vector2 WorldPositionInScreen(Vector3 position) => _mainCamera.WorldToScreenPoint(position) - new Vector3(Screen.currentResolution.width / 2f, Screen.currentResolution.height/ 2f, 0f);
     
     private void Shake()
     {

@@ -11,6 +11,9 @@ public class LevelStarter : ValidatedMonoBehaviour
 {
     [Inject]
     private readonly LevelController _levelController;
+    
+    [Inject]
+    private readonly CameraServices _cameraServices;
 
     [Inject]
     private readonly LevelSelectorInputContext _inputContext;
@@ -24,7 +27,7 @@ public class LevelStarter : ValidatedMonoBehaviour
     [SerializeField, Child]
     private Build _build;
 
-    [SerializeField, Child]
+    [SerializeField]
     private LevelStarterUI _ui;
 
     [SerializeField, Scene]
@@ -39,6 +42,8 @@ public class LevelStarter : ValidatedMonoBehaviour
     [SerializeField, Self]
     private BoxCollider _collider;
 
+    private RectTransform _uiTransform;
+    
     private readonly List<SizeRequirementIndicator> _sizeRequirementIndicators = new();
 
     private MaterialPropertyBlock _materialPropertyBlock;
@@ -48,6 +53,8 @@ public class LevelStarter : ValidatedMonoBehaviour
     
     private void Awake()
     {
+        _uiTransform = (RectTransform)_ui.transform;
+        
         foreach (var requirement in _level.Requirements)
         {
             if (requirement is not SizeRequirement sizeRequirement)
@@ -145,5 +152,10 @@ public class LevelStarter : ValidatedMonoBehaviour
     {
         _materialPropertyBlock.SetColor(ColorId, color);
         _indicatorRenderer.SetPropertyBlock(_materialPropertyBlock);
+    }
+    
+    private void LateUpdate()
+    {
+        _uiTransform.anchoredPosition = _cameraServices.WorldPositionInScreen(transform.position) - new Vector2(_uiTransform.rect.size.x / 2, 0);
     }
 }

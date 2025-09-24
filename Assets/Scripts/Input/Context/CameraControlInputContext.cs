@@ -115,12 +115,12 @@ public class CameraControlInputContext : InputContext, ITickable
         var delta = lastTouchPosition - position;
 
         if (!_doubleTapMode)
-            HandleCameraMoveRequest(NormalizeToScreen(delta * 100000));
+            HandleCameraMoveRequest(NormalizeToScreen(delta * 1000000));
         else
         {
             var normalized = NormalizeToScreen(-delta);
-            HandleCameraLookOrbitXRequested(normalized.x * 100000);
-            HandleCameraLookOrbitYRequested(normalized.y * 100000);
+            HandleCameraLookOrbitXRequested(normalized.x * 1000000);
+            HandleCameraLookOrbitYRequested(normalized.y * 1000000);
         }
     }
     
@@ -257,8 +257,8 @@ public class CameraControlInputContext : InputContext, ITickable
         var distanceDelta = touchesDistance - _lastTouchesDistance;
         var angle = Vector2.SignedAngle(_lastTouchesDirection, touchesDirection);
         
-        HandleCameraZoomRequested(-distanceDelta * 500);
-        HandleCameraLookOrbitXRequested(angle * 500);
+        HandleCameraZoomRequested(-distanceDelta * 5000);
+        HandleCameraLookOrbitXRequested(angle * 5000);
 
         _lastTouchesDistance = touchesDistance;
         _lastTouchesDirection = touchesDirection;

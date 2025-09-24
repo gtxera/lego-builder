@@ -4,13 +4,14 @@ using Reflex.Attributes;
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class LevelStarterUI : ValidatedMonoBehaviour
 {
     [Inject]
     private readonly LevelSelector _levelSelector;
-
+    
     [SerializeField]
     private TextMeshProUGUI _levelName;
 
@@ -26,11 +27,13 @@ public class LevelStarterUI : ValidatedMonoBehaviour
     [SerializeField, Child]
     private CanvasGroup _canvasGroup;
 
-    [SerializeField, Self]
-    private WorldSpaceCameraRelativeCanvas _cameraRelativeCanvas;
-
     [SerializeField]
-    private float _expandedRelativeSize;
+    private RectTransform _uiRoot;
+
+    private void Awake()
+    {
+        transform.localScale = Vector3.zero;
+    }
 
     public void Initialize(Level level, Action startLevelAction)
     {
@@ -44,13 +47,13 @@ public class LevelStarterUI : ValidatedMonoBehaviour
 
     public void SelectAnimation()
     {
-        Tween.Custom(0f, _expandedRelativeSize, .5f, value => _cameraRelativeCanvas.SetRelativeSize(value), Ease.OutBounce)
+        Tween.Scale(_uiRoot, Vector3.one, .5f, Ease.OutBounce)
             .OnComplete(() => _canvasGroup.interactable = true);
     }
 
     public void DeselectAnimation()
     {
         _canvasGroup.interactable = false;
-        Tween.Custom(_expandedRelativeSize, 0f, .5f, value => _cameraRelativeCanvas.SetRelativeSize(value), Ease.OutBounce);
+        Tween.Scale(_uiRoot, Vector3.zero, .5f, Ease.OutBounce);
     }
 }
