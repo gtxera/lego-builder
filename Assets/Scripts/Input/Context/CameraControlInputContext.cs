@@ -50,6 +50,8 @@ public class CameraControlInputContext : InputContext, ITickable
 
     protected override void Enable(LegoBuilderInputActions inputActions)
     {
+        _moveControlEnabled = true;
+
         inputActions.Camera.FirstTouchContact.performed += OnFirstTouchContact;
         inputActions.Camera.FirstTouch.performed += OnFirstTouchMoved;
         inputActions.Camera.FirstTouchContact.canceled += OnFirstTouchLifted;
@@ -67,6 +69,15 @@ public class CameraControlInputContext : InputContext, ITickable
 
     protected override void Disable(LegoBuilderInputActions inputActions)
     {
+        _moveControlEnabled = false;
+
+        inputActions.Camera.FirstTouchContact.performed -= OnFirstTouchContact;
+        inputActions.Camera.FirstTouch.performed -= OnFirstTouchMoved;
+        inputActions.Camera.FirstTouchContact.canceled -= OnFirstTouchLifted;
+
+        inputActions.Camera.SecondTouchContact.performed -= OnSecondTouchContact;
+        inputActions.Camera.SecondTouchContact.canceled -= OnSecondTouchLifted;
+
         inputActions.Camera.Touch.performed -= OnMoveStarted;
         inputActions.Camera.Move.performed -= OnMovePerformed;
         inputActions.Camera.Touch.canceled -= OnMoveCanceled;
@@ -96,7 +107,7 @@ public class CameraControlInputContext : InputContext, ITickable
 
     private void OnFirstTouchMoved(InputAction.CallbackContext context)
     {
-        if (_lastFirstTouchPosition == Vector2.zero)
+        if (_lastFirstTouchPosition == Vector2.zero || _touchCount >= 2)
             return;
 
         if (_doubleTapDelay.isAlive)
@@ -250,17 +261,39 @@ public class CameraControlInputContext : InputContext, ITickable
 
         Debug.Log($"primeiro {firstTouchPosition}");
         Debug.Log($"segundo {secondTouchPosition}");
-        
+
         var touchesDistance = Vector2.Distance(NormalizeToScreen(firstTouchPosition), NormalizeToScreen(secondTouchPosition));
         var touchesDirection = (secondTouchPosition - firstTouchPosition).normalized;
 
         var distanceDelta = touchesDistance - _lastTouchesDistance;
         var angle = Vector2.SignedAngle(_lastTouchesDirection, touchesDirection);
-        
-        HandleCameraZoomRequested(-distanceDelta * 5000);
-        HandleCameraLookOrbitXRequested(angle * 5000);
+
+        HandleCameraZoomRequested(-distanceDelta * 10000);
+        HandleCameraLookOrbitXRequested(angle * 10000);
+
+        var firstTouchDelta = NormalizeToScreen(firstTouchPosition - _lastFirstTouchPosition);
+        var secondTouchDelta = NormalizeToScreen(secondTouchPosition - _lastSecondTouchPosition);
+
+        var firstSign = Mathf.Sign(firstTouchDelta.y);
+        var secondSign = Mathf.Sign(secondTouchDelta.y);
+
+        Debug.Log($"first delta {firstTouchDelta.y}");
+        Debug.Log($"second delta {secondTouchDelta.y}");
+
+        if (firstSign == secondSign)
+        {
+            var absoluteFirstDelta = Mathf.Abs(firstTouchDelta.y);
+            var absoluteSecondDelta = Mathf.Abs(secondTouchDelta.y);
+
+            var delta = Mathf.Max(absoluteFirstDelta, absoluteSecondDelta) * firstSign;
+            Debug.Log($"delta altura {delta}");
+            HandleCameraLookOrbitYRequested(delta * 200000);
+        }
+
 
         _lastTouchesDistance = touchesDistance;
         _lastTouchesDirection = touchesDirection;
+        _lastFirstTouchPosition = firstTouchPosition;
+        _lastSecondTouchPosition = secondTouchPosition;
     }
 }

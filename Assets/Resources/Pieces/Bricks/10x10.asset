@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 94707062fc29a374a93c36cf42b4ec05, type: 3}
-  m_Name: 11x11
+  m_Name: 10x10
   m_EditorClassIdentifier: 
   _pieceTemplate:
-    _width: 11
-    _length: 11
+    _width: 10
+    _length: 10

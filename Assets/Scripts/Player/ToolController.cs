@@ -38,7 +38,7 @@ public class ToolController
         ToolSelected(_activeTool);
         
         _toolInputContext.Enable();
-        _cameraControlInputContext.DisableMoveControl();
+        _cameraControlInputContext.Disable();
     }
 
     public void DeselectTool()
@@ -46,7 +46,7 @@ public class ToolController
         ToolDeselected(_activeTool);
         _activeTool = null;
         
-        _cameraControlInputContext.EnableMoveControl();
+        _cameraControlInputContext.Enable();
         _toolInputContext.Disable();
     }
 

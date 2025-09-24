@@ -156,6 +156,6 @@ public class LevelStarter : ValidatedMonoBehaviour
     
     private void LateUpdate()
     {
-        _uiTransform.anchoredPosition = _cameraServices.WorldPositionInScreen(transform.position) - new Vector2(_uiTransform.rect.size.x / 2, 0);
+        _uiTransform.anchoredPosition = _cameraServices.WorldPositionInScreen(transform.position);
     }
 }

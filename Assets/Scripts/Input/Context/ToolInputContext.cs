@@ -119,9 +119,6 @@ public class ToolInputContext : InputContext
 
     private bool CanPerformToolAction(InputAction.CallbackContext context)
     {
-        if (context.control.device is not Touchscreen touchscreen)
-            return true;
-
-        return touchscreen.touches.Count >= 2;
+        return true;
     }
 }
