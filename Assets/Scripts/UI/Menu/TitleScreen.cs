@@ -23,6 +23,17 @@ public class TitleScreen : MonoBehaviour
 
     private void Start()
     {
+        Show();
+    }
+
+    public void Show()
+    {
+        _rootGroup.alpha = 1f;
+        _titleImage.color = new Color(1, 1, 1, 0);
+        _startText.color = new Color(1, 1, 1, 0);
+        gameObject.SetActive(true);
+        _playing = true;
+        
         Sequence.Create()
             .Chain(Tween.Alpha(_titleImage, 1f, 2f, Ease.InCirc))
             .Chain(Tween.Alpha(_startText, 1f, 2f, Ease.InCirc))
