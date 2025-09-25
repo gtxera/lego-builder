@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="AudioFile" id="{20730579-044b-4ad8-a0e4-d55396a58e21}">
+		<property name="assetPath">
+			<value>SFX/UI/UI_construction_slide.mp3</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>1.5151020408163265</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{e08b5d34-dd54-49d4-82cc-7464c0bba9cc}</destination>
+		</relationship>
+	</object>
+</objects>
