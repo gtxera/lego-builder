@@ -47,12 +47,14 @@ public static class PieceRotationExtensions
 
     public static PieceRotation FromAngle(float angle)
     {
-        return angle switch
+        var nearestAngle = Mathf.RoundToInt(Mathf.Abs(angle) / 90f) % 4;
+        
+        return nearestAngle switch
         {
-            0f => PieceRotation.North,
-            90f => PieceRotation.East,
-            180f => PieceRotation.South,
-            270f => PieceRotation.West,
+            0 => PieceRotation.North,
+            1 => PieceRotation.East,
+            2 => PieceRotation.South,
+            3 => PieceRotation.West,
             _ => throw new ArgumentOutOfRangeException(nameof(angle), angle, null)
         };
     }
