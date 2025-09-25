@@ -35,6 +35,8 @@ public class ProgressManager
 
     public bool IsCompleted(Level level) => GetLevelProgress(level).IsCompleted;
 
+    public BuildData GetBuildData(Level level) => GetLevelProgress(level).BuildData;
+
     public void SubscribeOnLevelUnlocked(Level level, Action onLevelUnlocked)
     {
         GetLevelProgress(level).Unlocked += onLevelUnlocked;

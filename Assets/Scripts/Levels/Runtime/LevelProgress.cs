@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 
@@ -16,6 +17,14 @@ public class LevelProgress
 
         if (!level.RequiredLevelsToUnlock.Any())
             IsUnlocked = true;
+
+        if (File.Exists(SaveFilePath))
+        {
+            var levelData = JsonUtility.FromJson<LevelData>(File.ReadAllText(SaveFilePath));
+            BuildData = levelData.BuildData;
+            IsCompleted = levelData.Completed;
+            IsUnlocked = levelData.Unlocked;
+        }
     }
 
     public event Action Unlocked = delegate { };
@@ -25,6 +34,8 @@ public class LevelProgress
     public bool IsUnlocked { get; private set; }
     public bool IsCompleted { get;  private set; }
     public BuildData BuildData { get; private set; }
+
+    private string SaveFilePath => Path.Combine(Application.persistentDataPath, $"{Level.name}.lbi");
     
     public void Complete(BuildData buildData)
     {
@@ -39,6 +50,8 @@ public class LevelProgress
 
         foreach (var level in _unlockingLevels)
             level.TryUnlock();
+        
+        SaveLevelData();
     }
 
     public void AddUnlocking(LevelProgress levelProgress) => _unlockingLevels.Add(levelProgress);
@@ -53,5 +66,14 @@ public class LevelProgress
 
         IsUnlocked = true;
         Unlocked();
+        SaveLevelData();
+    }
+
+    private void SaveLevelData()
+    {
+        Debug.Log(SaveFilePath);
+        var levelData = new LevelData(BuildData, IsUnlocked, IsCompleted);
+        var levelDataJson = JsonUtility.ToJson(levelData);
+        File.WriteAllText(SaveFilePath, levelDataJson);
     }
 }

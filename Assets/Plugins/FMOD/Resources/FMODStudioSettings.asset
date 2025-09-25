@@ -682,8 +682,8 @@ MonoBehaviour:
   switchSettingsMigration: 1
   HasSourceProject: 1
   HasPlatforms: 1
-  sourceProjectPath: ../Lego Builder Fmod Project/Lego Builder Fmod Project.fspro
-  sourceBankPath: ../Lego Builder Fmod Project/Build
+  sourceProjectPath: Lego Builder Fmod Project/Lego Builder Fmod Project.fspro
+  sourceBankPath: Lego Builder Fmod Project/Build
   sourceBankPathUnformatted: 
   BankRefreshCooldown: 5
   ShowBankRefreshWindow: 1
@@ -713,7 +713,7 @@ MonoBehaviour:
   LiveUpdatePort: 9264
   EnableMemoryTracking: 0
   AndroidUseOBB: 0
-  AndroidPatchBuild: 1
+  AndroidPatchBuild: 0
   MeterChannelOrdering: 0
   StopEventsOutsideMaxDistance: 0
   BoltUnitOptionsBuildPending: 0

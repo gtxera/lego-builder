@@ -268,8 +268,8 @@ public class CameraControlInputContext : InputContext, ITickable
         var distanceDelta = touchesDistance - _lastTouchesDistance;
         var angle = Vector2.SignedAngle(_lastTouchesDirection, touchesDirection);
 
-        HandleCameraZoomRequested(-distanceDelta * 10000);
-        HandleCameraLookOrbitXRequested(angle * 10000);
+        HandleCameraZoomRequested(-distanceDelta * 8000);
+        HandleCameraLookOrbitXRequested(angle * 5000);
 
         var firstTouchDelta = NormalizeToScreen(firstTouchPosition - _lastFirstTouchPosition);
         var secondTouchDelta = NormalizeToScreen(secondTouchPosition - _lastSecondTouchPosition);

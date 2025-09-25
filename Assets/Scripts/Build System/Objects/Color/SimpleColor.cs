@@ -1,7 +1,10 @@
+using System;
 using UnityEngine;
 
+[Serializable]
 public class SimpleColor : PieceColor
 {
+    [SerializeField]
     private Color _color;
     
     public SimpleColor(Color color)

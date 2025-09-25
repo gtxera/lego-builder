@@ -7,10 +7,10 @@ using Object = UnityEngine.Object;
 [Serializable]
 public class MeshPieceTemplate : IPieceTemplate
 {
-    [SerializeField]
+    [SerializeReference]
     private MeshPiece _meshPiecePrefab;
 
-    [SerializeField]
+    [SerializeReference]
     private PieceTag[] _pieceTags;
     
     public void Configure(GameObject pieceObject)

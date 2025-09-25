@@ -14,6 +14,13 @@ public class LevelBuildReplicator : MonoBehaviour
     private void Awake()
     {
         _progressManager.SubscribeOnLevelCompleted(_replicatedBuildLevel, ReplicateLevelBuild);
+        
+        if (_progressManager.IsCompleted(_replicatedBuildLevel))
+            ReplicateLevelBuildNoAnimation(_progressManager.GetBuildData(_replicatedBuildLevel));
+        else
+        {
+            Debug.Log("buuu");
+        }
     }
 
     private void ReplicateLevelBuild(BuildData data)
@@ -46,6 +53,18 @@ public class LevelBuildReplicator : MonoBehaviour
                         })));
             delay += 0.05f;
             Debug.Log(delay);
+        }
+    }
+
+    private void ReplicateLevelBuildNoAnimation(BuildData data)
+    {
+        Debug.Log("aqui");
+        foreach (var pieceData in data.Pieces)
+        {
+            var piece = new GameObject("Piece").AddComponent<Piece>();
+            piece.transform.SetParent(transform, false);
+            piece.Initialize(pieceData);
+            piece.transform.localPosition = pieceData.TransientData.LocalPosition;
         }
     }
 

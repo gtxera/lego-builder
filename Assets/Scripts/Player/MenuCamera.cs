@@ -4,6 +4,7 @@ using PrimeTween;
 using Reflex.Attributes;
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class MenuCamera : ValidatedMonoBehaviour
@@ -23,9 +24,15 @@ public class MenuCamera : ValidatedMonoBehaviour
     [SerializeField, Scene]
     private CinemachineOrbitalFollow _orbitalFollow;
 
-    [SerializeField, Self]
-    private FMODUnity.StudioEventEmitter _musicEmitter;
+    [SerializeField]
+    private FMODUnity.StudioEventEmitter _gameplayMusicEmitter;
 
+    [SerializeField]
+    private FMODUnity.StudioEventEmitter _menuMusicEmitter;
+
+    [SerializeField]
+    private FMODUnity.StudioEventEmitter _cameraSwingEmitter;
+    
     [SerializeField]
     private float _menuRotationSpeed;
     
@@ -64,6 +71,8 @@ public class MenuCamera : ValidatedMonoBehaviour
     {
         _orbitalFollow.VerticalAxis.Value = _orbitalFollow.VerticalAxis.Range.y;
         _orbitalFollow.RadialAxis.Value = _orbitalFollow.RadialAxis.Range.y;
+        
+        _menuMusicEmitter.Play();
     }
 
     private void LateUpdate()
@@ -77,6 +86,8 @@ public class MenuCamera : ValidatedMonoBehaviour
     public void PlayStartAnimation()
     {
         _playing = false;
+
+        _cameraSwingEmitter.Play();
         
         var rotation = _orbitalFollow.HorizontalAxis.Value;
         var targetAngle = 360f * _animationRotations;
@@ -86,6 +97,8 @@ public class MenuCamera : ValidatedMonoBehaviour
 
         var radial = _orbitalFollow.RadialAxis.Value;
         var radialTarget = _orbitalFollow.RadialAxis.Center;
+        
+        _menuMusicEmitter.Stop();
             
         Sequence.Create(sequenceEase: Ease.InOutSine)
             .Group(Tween.Custom(rotation, targetAngle, 5f, value =>
@@ -105,14 +118,18 @@ public class MenuCamera : ValidatedMonoBehaviour
                     _cameraControlInputContext.Enable();
                     _levelSelectorInputContext.Enable();
                     Show();
-                    if (!_musicEmitter.IsPlaying())
-                        _musicEmitter.Play();
+                    if (!_gameplayMusicEmitter.IsPlaying())
+                        _gameplayMusicEmitter.Play();
                 }));
     }
 
     private void PlayReturnAnimation()
     {
         Hide();
+        
+        _cameraSwingEmitter.Play();
+        
+        _gameplayMusicEmitter.Stop();
         
         _cameraControlInputContext.Disable();
         _levelSelectorInputContext.Disable();
@@ -143,6 +160,7 @@ public class MenuCamera : ValidatedMonoBehaviour
                 {
                     _playing = true;
                     _titleScreen.Show();
+                    _menuMusicEmitter.Play();
                 }));
     }
 

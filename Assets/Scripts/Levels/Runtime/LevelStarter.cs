@@ -70,9 +70,12 @@ public class LevelStarter : ValidatedMonoBehaviour
 
         _materialPropertyBlock = new MaterialPropertyBlock();
         _indicatorRenderer.GetPropertyBlock(_materialPropertyBlock);
-        
+
         if (_progressManager.IsCompleted(_level))
+        {
             SetColor(Color.green);
+            _build.Create(_progressManager.GetBuildData(_level));
+        }
         else if (_progressManager.IsUnlocked(_level))
             SetColor(Color.blue);
         else

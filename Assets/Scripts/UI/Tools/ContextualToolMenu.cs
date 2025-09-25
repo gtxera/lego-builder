@@ -13,6 +13,9 @@ public abstract class ContextualToolMenu<TTool> : MonoBehaviour where TTool : IT
     [SerializeField]
     private TweenSettings<Vector2> _hideTween;
 
+    [SerializeField]
+    private FMODUnity.EventReference _slideEvent;
+
     private RectTransform _rectTransform;
 
     private void Awake()
@@ -31,6 +34,7 @@ public abstract class ContextualToolMenu<TTool> : MonoBehaviour where TTool : IT
 
         transform.SetAsLastSibling();
         Tween.UIAnchoredPosition(_rectTransform, _showTween);
+        FMODUnity.RuntimeManager.PlayOneShot(_slideEvent);
     }
 
     private void OnToolDeselected(ITool tool)

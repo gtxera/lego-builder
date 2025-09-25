@@ -1,9 +1,12 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
 public class BuildData
 {
-    private readonly PieceData[] _pieces;
+    [SerializeReference]
+    private PieceData[] _pieces;
 
     public BuildData(PieceData[] pieces)
     {

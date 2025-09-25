@@ -1,5 +1,7 @@
+using System;
 using UnityEngine;
 
+[Serializable]
 public class PieceData
 {
     public PieceData(IPieceTemplate template, PieceTransientData transientData)
@@ -8,8 +10,10 @@ public class PieceData
         TransientData = transientData;
     }
 
-    public IPieceTemplate Template { get; }
-    public PieceTransientData TransientData { get; }
+    [field: SerializeReference]
+    public IPieceTemplate Template { get; private set; }
+    [field: SerializeReference]
+    public PieceTransientData TransientData { get; private set; }
 
     public override bool Equals(object obj)
     {
