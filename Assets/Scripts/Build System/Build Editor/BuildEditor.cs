@@ -24,6 +24,9 @@ public class BuildEditor
         _commandStack.RedoBecameUnavailable += () => RedoBecameUnavailable();
     }
 
+    public bool UndoIsAvailable => _commandStack.UndoIsAvailable;
+    public bool RedoIsAvailable => _commandStack.RedoIsAvailable;
+
     public void StartEditing(Build build)
     {
         Build = build;

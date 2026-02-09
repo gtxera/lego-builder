@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Door
   m_EditorClassIdentifier: 
   _pieceTemplate:
-    _meshPiecePrefab: {fileID: 2132683236658603540, guid: 02d5b68a899f21e4b922a0fdda4a6d5d, type: 3}
-    _pieceTags:
-    - {fileID: 11400000, guid: 398c34365cbfd854f9b5988e2081f572, type: 2}
+    _meshPieceName: Door
+    _pieceTagNames:
+    - DoorTag

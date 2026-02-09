@@ -1,3 +1,4 @@
+using System;
 using KBCore.Refs;
 using UnityEngine;
 
@@ -7,6 +8,9 @@ public class MeshPiece : MonoBehaviour
     [field: SerializeField]
     public PieceVector Size { get; private set; }
 
+    [SerializeField]
+    private PieceTag[] _tags;
+    
     [SerializeField]
     private Transform _meshesPositionRoot;
 

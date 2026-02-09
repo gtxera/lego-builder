@@ -350,6 +350,7 @@ public class Piece : MonoBehaviour
         }
         
         OnColorChanged(color.Color, index);
+        Debug.Log(color.NamedColor);
 
         return true;
     }
@@ -365,7 +366,7 @@ public class Piece : MonoBehaviour
         return _lastMovementTime > piece._lastMovementTime;
     }
 
-    public PieceTransientData GetTransientData() => new(Id, transform.localPosition, _colors, _rotation, _creationTime, _rigidbody.position);
+    public PieceTransientData GetTransientData() => new(Id, transform.localPosition, _colors.ToArray(), _rotation, _creationTime, _rigidbody.position);
 
     public PieceData GetData() => new(Template, GetTransientData());
 

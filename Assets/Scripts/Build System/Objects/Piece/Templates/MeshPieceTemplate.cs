@@ -1,26 +1,66 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Reflex.Extensions;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
 [Serializable]
 public class MeshPieceTemplate : IPieceTemplate
 {
-    [SerializeReference]
-    private MeshPiece _meshPiecePrefab;
+    [SerializeField]
+    private string _meshPieceName;
 
-    [SerializeReference]
+    [SerializeField]
+    private string[] _pieceTagNames;
+
+    private MeshPiece _meshPiece;
+    private MeshPiece MeshPiece
+    {
+        get
+        {
+            if (_meshPiece == null)
+            {
+                var scene = SceneManager.GetActiveScene();
+                var container = scene.GetSceneContainer();
+                var loader = container.Resolve<PieceResourceLoader<MeshPiece>>();
+                _meshPiece = loader.Get(_meshPieceName);
+            }
+
+            return _meshPiece;
+        }
+    }
+    
     private PieceTag[] _pieceTags;
+    private IEnumerable<PieceTag> PieceTags
+    {
+        get
+        {
+            if (_pieceTags == null)
+            {
+                var scene = SceneManager.GetActiveScene();
+                var container = scene.GetSceneContainer();
+                var loader = container.Resolve<PieceResourceLoader<PieceTag>>();
+                _pieceTags = loader.Get(_pieceTagNames).ToArray();
+            }
+
+            return _pieceTags;
+        }
+    }
     
     public void Configure(GameObject pieceObject)
     {
-        Object.Instantiate(_meshPiecePrefab, pieceObject.transform);
+        var resourceLoader = pieceObject.scene.GetSceneContainer().Resolve<PieceResourceLoader<MeshPiece>>();
+
+        var prefab = resourceLoader.Get(_meshPieceName);
+        
+        Object.Instantiate(prefab, pieceObject.transform);
     }
 
     public void OnDestroy(GameObject pieceObject) { }
 
-    public PieceVector GetSize() => _meshPiecePrefab.Size;
+    public PieceVector GetSize() => MeshPiece.Size;
 
     public int GetColorCount() => 1;
 
@@ -37,5 +77,5 @@ public class MeshPieceTemplate : IPieceTemplate
 
     public IEnumerable<Vector3> GetStudPositions() => Enumerable.Empty<Vector3>();
 
-    public IEnumerable<PieceTag> GetTags() => _pieceTags ?? Enumerable.Empty<PieceTag>();
+    public IEnumerable<PieceTag> GetTags() => PieceTags;
 }

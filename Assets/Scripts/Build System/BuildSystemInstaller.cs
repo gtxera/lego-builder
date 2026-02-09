@@ -15,6 +15,8 @@ public class BuildSystemInstaller : MonoBehaviour, IInstaller
             .AddScoped(typeof(CameraServices))
             .AddScoped(typeof(PiecePreviewService))
             .AddScoped(typeof(PiecePartsPool))
+            .AddScoped(typeof(PieceResourceLoader<MeshPiece>))
+            .AddScoped(typeof(PieceResourceLoader<PieceTag>))
             .AddScoped(_ => _pieceParticleEmitter, typeof(PieceParticleEmitter));
         
         RegisterTools(containerBuilder);
@@ -29,3 +31,4 @@ public class BuildSystemInstaller : MonoBehaviour, IInstaller
             .AddScoped(typeof(RemoverTool), typeof(RemoverTool), typeof(ITool));
     }
 }
+

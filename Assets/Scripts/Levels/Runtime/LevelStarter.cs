@@ -83,10 +83,7 @@ public class LevelStarter : ValidatedMonoBehaviour
             SetAlpha(0f);
             _collider.enabled = false;
         }
-    }
-
-    private void Start()
-    {
+        
         _ui.Initialize(_level, () => _levelController.Start(_level, _build));
         gameObject.layer = LayerMask.NameToLayer("Levels");
         _levelController.LevelStarted += OnLevelStarted;

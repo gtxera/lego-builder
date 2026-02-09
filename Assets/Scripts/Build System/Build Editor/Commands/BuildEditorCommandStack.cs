@@ -11,6 +11,9 @@ public class BuildEditorCommandStack
     public event Action UndoBecameUnavailable = delegate { };
     public event Action RedoBecameAvailable = delegate { };
     public event Action RedoBecameUnavailable = delegate { };
+
+    public bool UndoIsAvailable => _undoStack.Count > 0;
+    public bool RedoIsAvailable => _redoStack.Count > 0;
         
     public void Push(ICommand command)
     {

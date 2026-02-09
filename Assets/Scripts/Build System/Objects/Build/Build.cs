@@ -42,7 +42,7 @@ public class Build : MonoBehaviour
         Destroy(piece.gameObject);
     }
 
-    public Piece GetPiece(Guid id) => _pieces.Single(piece => piece.Id == id);
+    public Piece GetPiece(Guid id) => _pieces.SingleOrDefault(piece => piece.Id == id);
 
     public IEnumerable<Piece> GetPieces(IEnumerable<Guid> ids) => _pieces.Where(piece => ids.Contains(piece.Id));
 

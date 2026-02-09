@@ -20,7 +20,9 @@ public class LevelProgress
 
         if (File.Exists(SaveFilePath))
         {
-            var levelData = JsonUtility.FromJson<LevelData>(File.ReadAllText(SaveFilePath));
+            var file = File.ReadAllText(SaveFilePath);
+            var levelData = JsonUtility.FromJson<LevelData>(file);
+            Debug.Log(file);
             BuildData = levelData.BuildData;
             IsCompleted = levelData.Completed;
             IsUnlocked = levelData.Unlocked;
