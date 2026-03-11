@@ -48,7 +48,7 @@ public class TitleScreen : MonoBehaviour
         if (_playing)
             return;
 
-        if (Pointer.current.press.wasReleasedThisFrame)
+        if (Pointer.current.press.wasReleasedThisFrame && !_playing)
         {
             Tween.Alpha(_rootGroup, 0f, 1f)
                 .OnComplete(target: this, screen => screen.gameObject.SetActive(false));

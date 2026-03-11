@@ -6,6 +6,7 @@ using Object = UnityEngine.Object;
 public class PiecePartsPool : IDisposable
 {
     private readonly ObjectPool<GameObject> _bodiesPool;
+    private readonly ObjectPool<GameObject> _rampsPool;
     private readonly ObjectPool<GameObject> _studsPool;
 
     private readonly Material _pieceMaterial;
@@ -33,6 +34,19 @@ public class PiecePartsPool : IDisposable
                 gameObject.transform.localRotation = Quaternion.identity;
                 gameObject.SetActive(false);
             });
+        
+        _rampsPool = new ObjectPool<GameObject>(CreateRamp,
+            gameObject =>
+            {
+                gameObject.SetActive(true);
+                gameObject.transform.position = Vector3.zero;
+            },
+            gameObject =>
+            {
+                gameObject.transform.SetParent(null);
+                gameObject.transform.localRotation = Quaternion.identity;
+                gameObject.SetActive(false);
+            });
 
         _pieceMaterial = Resources.Load<Material>("Materials/Piece/DefaultPieceMaterial");
     }
@@ -47,6 +61,14 @@ public class PiecePartsPool : IDisposable
 
     public GameObject GetStud() => _studsPool.Get();
 
+    public GameObject GetRamp(PieceVector size)
+    {
+        var ramp = _rampsPool.Get();
+        ramp.transform.localScale = size.ToWorld() - new Vector3(0.02f, 0, 0.02f);
+        
+        return ramp;
+    }
+
     public void ReturnBody(BodyMarker body)
     {
         _bodiesPool.Release(body.gameObject);
@@ -55,6 +77,11 @@ public class PiecePartsPool : IDisposable
     public void ReturnStud(StudMarker stud)
     {
         _studsPool.Release(stud.gameObject);
+    }
+
+    public void ReturnRamp(RampMarker ramp)
+    {
+        _rampsPool.Release(ramp.gameObject);
     }
     
     public void Dispose()
@@ -73,6 +100,17 @@ public class PiecePartsPool : IDisposable
         body.AddComponent<PieceColoredPart>();
         
         return body;
+    }
+
+    private GameObject CreateRamp()
+    {
+        var ramp = new GameObject("Ramp");
+        ramp.AddComponent<MeshFilter>().sharedMesh = Resources.Load<Mesh>("Pieces/Primitives/ramp");
+        ramp.AddComponent<MeshRenderer>().sharedMaterial = _pieceMaterial;
+        ramp.AddComponent<PieceColoredPart>();
+        ramp.AddComponent<RampMarker>();
+        
+        return ramp;
     }
     
     private GameObject CreateStud()

@@ -22,11 +22,12 @@ public class MoverTool : ITool
         if (!Physics.Raycast(ray, out var hit))
             return;
 
-        _movingPiece = hit.transform.GetComponentInParent<Piece>();
-        
-        if (_movingPiece == null || !_buildEditor.Build.IsPartOfBuild(_movingPiece))
+        var piece = hit.transform.GetComponentInParent<Piece>();
+
+        if (piece == null || !_buildEditor.Build.IsPartOfBuild(piece))
             return;
 
+        _movingPiece = piece;
         _pieceInitialPosition = _lastMovePosition = _movingPiece.transform.position;
     }
 

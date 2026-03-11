@@ -1,3 +1,4 @@
+using System;
 using KBCore.Refs;
 using PrimeTween;
 using Reflex.Attributes;
@@ -13,6 +14,8 @@ public class UIViewController : MonoBehaviour
 
     [SerializeField, Self]
     private CanvasGroup _canvasGroup;
+
+    private bool _destroying;
 
     private void Awake()
     {
@@ -31,6 +34,13 @@ public class UIViewController : MonoBehaviour
 
     private void Show()
     {
-        Tween.Alpha(_canvasGroup, 1f, .3f).OnComplete(() => _canvasGroup.blocksRaycasts = true);
+        if (!_destroying)
+            Tween.Alpha(_canvasGroup, 1f, .3f).OnComplete(() => _canvasGroup.blocksRaycasts = true);
+    }
+
+    private void OnDestroy()
+    {
+        Tween.StopAll(_canvasGroup);
+        _destroying = true;
     }
 }

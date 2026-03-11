@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public struct PieceVector
+public struct PieceVector : IEquatable<PieceVector>
 {
     public int X;
     public int Y;
@@ -23,5 +23,20 @@ public struct PieceVector
     public Vector3 ToWorld()
     {
         return new Vector3(Conversions.ToWorld(X), Height, Conversions.ToWorld(Y));
+    }
+
+    public bool Equals(PieceVector other)
+    {
+        return X == other.X && Y == other.Y && Mathf.Approximately(Height, other.Height);
+    }
+
+    public override bool Equals(object obj)
+    {
+        return obj is PieceVector other && Equals(other);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(X, Y, Height);
     }
 }

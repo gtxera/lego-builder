@@ -26,6 +26,9 @@ public class PieceSelectorArea : MonoBehaviour
     private RectTransform _tilesRoot;
 
     [SerializeField]
+    private RectTransform _rampsRoot;
+
+    [SerializeField]
     private RectTransform _meshesRoot;
 
     [SerializeField]
@@ -36,6 +39,9 @@ public class PieceSelectorArea : MonoBehaviour
     
     [SerializeField]
     private Button _tilesButton;
+    
+    [SerializeField]
+    private Button _rampsButton;
     
     [SerializeField]
     private Button _meshesButton;
@@ -95,6 +101,18 @@ public class PieceSelectorArea : MonoBehaviour
             
             _piecePreviewService.EnablePreview<TilePieceTemplate>();
         });
+        _rampsButton.onClick.AddListener(() =>
+        {
+            _activePanel.gameObject.SetActive(false);
+            _activePanel = _rampsRoot;
+            _activePanel.gameObject.SetActive(true);
+            
+            _selectedCategoryButton.targetGraphic.color = _normalCategoryColor;
+            _selectedCategoryButton = _rampsButton;
+            _selectedCategoryButton.targetGraphic.color = _selectedCategoryColor;
+            
+            _piecePreviewService.EnablePreview<RampPieceTemplate>();
+        });
         _meshesButton.onClick.AddListener(() =>
         {
             _activePanel.gameObject.SetActive(false);
@@ -125,6 +143,12 @@ public class PieceSelectorArea : MonoBehaviour
         foreach (var template in _pieceTemplateDatabase.GetTemplates<TilePieceTemplate>())
         {
             var button = Instantiate(_pieceSelectorButtonPrefab, _tilesRoot);
+            button.Initialize(template, _buildTemplateSelector, _piecePreviewService);
+        }
+        
+        foreach (var template in _pieceTemplateDatabase.GetTemplates<RampPieceTemplate>())
+        {
+            var button = Instantiate(_pieceSelectorButtonPrefab, _rampsRoot);
             button.Initialize(template, _buildTemplateSelector, _piecePreviewService);
         }
         
