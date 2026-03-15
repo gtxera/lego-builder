@@ -11,13 +11,13 @@ public class BuildColorSelector
         _colors.Add(new SimpleColor(Color.white));
     }
 
-    public event Action<Color> ColorChanged = delegate { }; 
+    public event Action<PieceColor> ColorChanged = delegate { }; 
 
     public PieceColor GetSelectedColorFor(int index) => _colors[index];
 
-    public void SetColor(Color color)
+    public void SetColor(Color color, bool transparent)
     {
-        _colors[0] = new SimpleColor(color);
-        ColorChanged(_colors[0].Color);
+        _colors[0] = new SimpleColor(color, transparent);
+        ColorChanged(_colors[0]);
     }
 }

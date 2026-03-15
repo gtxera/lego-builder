@@ -1,4 +1,6 @@
 using System;
+using Reflex.Extensions;
+using Reflex.Injectors;
 using UnityEngine;
 using UnityEngine.Pool;
 using Object = UnityEngine.Object;
@@ -99,6 +101,8 @@ public class PiecePartsPool : IDisposable
         body.AddComponent<BodyMarker>();
         body.AddComponent<PieceColoredPart>();
         
+        GameObjectInjector.InjectObject(body, body.scene.GetSceneContainer());
+        
         return body;
     }
 
@@ -109,6 +113,9 @@ public class PiecePartsPool : IDisposable
         ramp.AddComponent<MeshRenderer>().sharedMaterial = _pieceMaterial;
         ramp.AddComponent<PieceColoredPart>();
         ramp.AddComponent<RampMarker>();
+        
+        GameObjectInjector.InjectObject(ramp, ramp.scene.GetSceneContainer());
+
         
         return ramp;
     }
@@ -121,6 +128,9 @@ public class PiecePartsPool : IDisposable
         stud.GetComponent<Renderer>().sharedMaterial = _pieceMaterial;
         stud.AddComponent<StudMarker>();
         stud.AddComponent<PieceColoredPart>();
+        
+        GameObjectInjector.InjectObject(stud, stud.scene.GetSceneContainer());
+
         
         return stud;
     }

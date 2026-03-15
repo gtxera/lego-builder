@@ -19,7 +19,7 @@ public class ColorNameIndicator : MonoBehaviour
         _colorSelector.ColorChanged += OnColorChanged;
     }
 
-    private void OnColorChanged(Color color)
+    private void OnColorChanged(Color color, bool _)
     {
         var newColor = new NamedColor(color);
 

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Reflex.Attributes;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -12,6 +13,9 @@ public class PiecePreview : MonoBehaviour
 
     private IEnumerable<Renderer> _renderers;
     private static readonly int BaseColor = Shader.PropertyToID("_BaseColor");
+
+    [Inject]
+    private readonly PieceMaterials _pieceMaterials;
 
     public RenderTexture GetRenderTexture(
         IPieceTemplate template,
@@ -48,25 +52,20 @@ public class PiecePreview : MonoBehaviour
         return renderTexture;
     }
 
-    private void OnSelectedColorChanged(Color color)
+    private void OnSelectedColorChanged(PieceColor color)
     {
         var propertyBlock = new MaterialPropertyBlock();
-        propertyBlock.SetColor(BaseColor, color);
+        propertyBlock.SetColor(BaseColor, color.Color);
 
         foreach (var renderer in _renderers)
+        {
+            renderer.sharedMaterial = _pieceMaterials.GetMaterial(color.Transparent);
             renderer.SetPropertyBlock(propertyBlock);
-    }
-    
-    private void Update()
-    {
-        var rotation = _viewObject.eulerAngles;
-        rotation.y = _piecePreviewService.GetRotation(Time.time);
-        _viewObject.eulerAngles = rotation;
+        }
         
         SetLayerRecursive(transform, LayerMask.NameToLayer("ExamplePieces"));
         _camera.Render();
         SetLayerRecursive(transform, 0);
-
     }
 
     private void SetLayerRecursive(Transform rootTransform, int layer)

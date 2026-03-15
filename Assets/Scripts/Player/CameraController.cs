@@ -143,8 +143,6 @@ public class CameraController : ValidatedMonoBehaviour
             _toolController.PickTool(_moverTool);
         if (Keyboard.current.pKey.wasReleasedThisFrame)
             _toolController.PickTool(_painterTool);
-        if (Keyboard.current.vKey.wasReleasedThisFrame)
-            _buildColorSelector.SetColor(Color.green);
         
         if (Keyboard.current.zKey.wasReleasedThisFrame)
             _buildEditor.Undo();

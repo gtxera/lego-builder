@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Reflex.Extensions;
+using Reflex.Injectors;
 using UnityEngine;
 
 public class PiecePreviewService
@@ -22,6 +24,8 @@ public class PiecePreviewService
         var previewObject = new GameObject("Preview Piece");
         previewObject.transform.position = _position;
         var preview = previewObject.AddComponent<PiecePreview>();
+        
+        GameObjectInjector.InjectObject(previewObject, previewObject.scene.GetSceneContainer());
         
         var type = template.GetType();
         if (!_previews.TryGetValue(type, out var previews))

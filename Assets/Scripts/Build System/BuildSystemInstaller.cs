@@ -17,7 +17,8 @@ public class BuildSystemInstaller : MonoBehaviour, IInstaller
             .AddScoped(typeof(PiecePartsPool))
             .AddScoped(typeof(PieceResourceLoader<MeshPiece>))
             .AddScoped(typeof(PieceResourceLoader<PieceTag>))
-            .AddScoped(_ => _pieceParticleEmitter, typeof(PieceParticleEmitter));
+            .AddScoped(_ => _pieceParticleEmitter, typeof(PieceParticleEmitter))
+            .AddScoped(typeof(PieceMaterials));
         
         RegisterTools(containerBuilder);
     }

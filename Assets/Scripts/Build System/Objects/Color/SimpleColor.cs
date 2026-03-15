@@ -7,9 +7,10 @@ public class SimpleColor : PieceColor
     [SerializeField]
     private Color _color;
     
-    public SimpleColor(Color color)
+    public SimpleColor(Color color, bool transparent = false)
     {
         Color = color;
+        Transparent = transparent;
     }
 
     protected override Color GetColor() => _color;

@@ -14,6 +14,8 @@ public abstract class PieceColor
             NamedColor = new NamedColor(value);
         }
     }
+    
+    public bool Transparent { get; set; }
 
     public NamedColor NamedColor { get; private set; }
 

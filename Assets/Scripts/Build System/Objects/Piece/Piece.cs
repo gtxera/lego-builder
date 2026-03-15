@@ -12,7 +12,7 @@ public class Piece : MonoBehaviour
     
     private Rigidbody _rigidbody;
 
-    private readonly Dictionary<int, Action<Color>> _onColorChangedCallbacks = new();
+    private readonly Dictionary<int, Action<Color, bool>> _onColorChangedCallbacks = new();
 
     private GameObject _connectorsRoot;
     private readonly List<Socket> _sockets = new();
@@ -344,21 +344,21 @@ public class Piece : MonoBehaviour
 
         if (color is SwatchColor swatchColor)
         {
-            Action<Color> callback = callbackColor => OnColorChanged(callbackColor, index);
+            Action<Color, bool> callback = (callbackColor, tranparent) => OnColorChanged(callbackColor, tranparent, index);
             _onColorChangedCallbacks[index] = callback;
             swatchColor.ColorChanged += callback;
         }
         
-        OnColorChanged(color.Color, index);
+        OnColorChanged(color.Color, color.Transparent, index);
         Debug.Log(color.NamedColor);
 
         return true;
     }
 
-    private void OnColorChanged(Color color, int index)
+    private void OnColorChanged(Color color, bool transparent, int index)
     {
         foreach (var coloredPart in _coloredParts)
-            coloredPart.SetColor(color);
+            coloredPart.SetColor(color, transparent);
     }
 
     public bool MovedMoreRecentlyThan(Piece piece)

@@ -15,8 +15,8 @@ public class BuildColorController : MonoBehaviour
         _colorSelector.ColorChanged += OnColorChanged;
     }
 
-    private void OnColorChanged(Color color)
+    private void OnColorChanged(Color color, bool transparent)
     {
-        _buildColorSelector.SetColor(color);
+        _buildColorSelector.SetColor(color, transparent);
     }
 }

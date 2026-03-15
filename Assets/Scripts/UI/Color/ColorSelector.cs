@@ -11,16 +11,20 @@ public class ColorSelector : MonoBehaviour
     [SerializeField, Child]
     private SaturationValuePicker _saturationValuePicker;
 
+    [SerializeField, Child]
+    private Toggle _transparentToggle;
+
     private float _hue;
     private float _saturation;
     private float _value;
 
-    public event Action<Color> ColorChanged = delegate { };
+    public event Action<Color, bool> ColorChanged = delegate { };
 
     private void Awake()
     {
         _hueWheel.HueChanged += OnHueChanged;
         _saturationValuePicker.SaturationValueChanged += OnSaturationValueChanged;
+        _transparentToggle.onValueChanged.AddListener(OnTransparentToggleChanged);
     }
 
     private void OnHueChanged(float hue)
@@ -38,9 +42,14 @@ public class ColorSelector : MonoBehaviour
         CallColorChanged();
     }
 
+    private void OnTransparentToggleChanged(bool _)
+    {
+        CallColorChanged();
+    }
+
     private void CallColorChanged()
     {
         var color = Color.HSVToRGB(_hue, _saturation, _value);
-        ColorChanged(color);
+        ColorChanged(color, _transparentToggle.isOn);
     }
 }
