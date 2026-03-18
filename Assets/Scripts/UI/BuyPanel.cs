@@ -47,7 +47,6 @@ public class BuyPanel : MonoBehaviour
         cameraTransform.SetParent(null);
         
         var bounds = build.GetBounds();
-        bounds.center = buildTransform.position;
         
         FitOrtho(_camera, bounds);
         

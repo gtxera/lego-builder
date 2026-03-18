@@ -1,6 +1,7 @@
 using System;
 using Reflex.Attributes;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class PieceColoredPart : MonoBehaviour
 {
@@ -29,6 +30,7 @@ public class PieceColoredPart : MonoBehaviour
         {
             _transparent = transparent;
             _renderer.sharedMaterial = _pieceMaterials.GetMaterial(_transparent);
+            _renderer.shadowCastingMode = _transparent ? ShadowCastingMode.Off : ShadowCastingMode.On;
         }
         
         var materialPropertyBlock = new MaterialPropertyBlock();

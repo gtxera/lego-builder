@@ -15,6 +15,7 @@ public abstract class PieceColor
         }
     }
     
+    [field: SerializeField]
     public bool Transparent { get; set; }
 
     public NamedColor NamedColor { get; private set; }
