@@ -7,8 +7,10 @@ public abstract class PieceConnector<TConnector, TConnecting> : PieceConnector
     where TConnecting : PieceConnector<TConnecting, TConnector>
 {
     private Piece _ownerPiece;
+    private static readonly Vector3 OverlapOffset = new(0f, 0.01f, 0f);
 
-    private Collider[] _castResults = new Collider[4];
+    private readonly Collider[] _castResults = new Collider[4];
+    private int _layerMask;
     
     protected abstract string Layer { get; }
     
@@ -26,6 +28,7 @@ public abstract class PieceConnector<TConnector, TConnecting> : PieceConnector
         collider.isTrigger = true;
         collider.radius = 0.24f;
         gameObject.layer = LayerMask.NameToLayer(Layer);
+        _layerMask = LayerMask.GetMask(Layer);
     }
 
     public override void Initialize(Piece piece)
@@ -39,7 +42,10 @@ public abstract class PieceConnector<TConnector, TConnecting> : PieceConnector
 
     public override void Connect()
     {
-        var size = Physics.OverlapSphereNonAlloc(transform.position - new Vector3(0, .01f, 0), .24f, _castResults, LayerMask.GetMask(Layer), QueryTriggerInteraction.Collide);
+        if (Connected)
+            return;
+
+        var size = Physics.OverlapSphereNonAlloc(transform.position - OverlapOffset, 0.24f, _castResults, _layerMask, QueryTriggerInteraction.Collide);
         for (int i = 0; i < size; i++)
         {
             var collider = _castResults[i];
@@ -47,11 +53,7 @@ public abstract class PieceConnector<TConnector, TConnecting> : PieceConnector
                 continue;
 
             if (collider.gameObject.TryGetComponent<TConnecting>(out var connecting))
-            {
-                Debug.Log(GetType().Name);
-                Debug.Log(connecting.GetType().Name);
                 Connect(connecting);
-            }
         }
     }
     

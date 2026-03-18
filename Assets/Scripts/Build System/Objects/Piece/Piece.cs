@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Utils;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -18,6 +17,7 @@ public class Piece : MonoBehaviour
     private readonly List<Socket> _sockets = new();
     private readonly List<Stud> _studs = new();
     private readonly List<AnchorPoint> _anchors = new();
+    private readonly List<PieceConnector> _connectors = new();
 
     private readonly Collider[] _overlaps = new Collider[32];
 
@@ -26,13 +26,17 @@ public class Piece : MonoBehaviour
     private IEnumerable<PieceColoredPart> _coloredParts;
 
     private float _creationTime;
+    private Vector3 _worldSize;
+    private Vector3 _baseHalfSize;
+    private Vector3 _rotatedHalfSize;
+    private Vector3 _rotatedSize;
+    private bool _connectionsSuspended;
 
-    private IEnumerable<PieceConnector> Connectors => _anchors.Concat<PieceConnector>(_sockets).Concat(_studs);
-    
     [SerializeField]
     private float _lastMovementTime;
 
-    private static readonly int BaseColorPropertyId = Shader.PropertyToID("_BaseColor");
+    private static int NonConnectorLayerMask;
+    private static int AnchorLayerMask;
 
     public IPieceTemplate Template { get; private set; }
 
@@ -40,15 +44,30 @@ public class Piece : MonoBehaviour
 
     public IReadOnlyList<PieceColor> Colors => _colors;
 
-    public IEnumerable<Piece> ConnectedPieces => Connectors
-        .Where(connector => connector.ConnectedPiece != null)
-        .Select(connector => connector.ConnectedPiece)
-        .Distinct();
+    public IEnumerable<Piece> ConnectedPieces
+    {
+        get
+        {
+            var uniquePieces = new HashSet<Piece>();
+            foreach (var connector in _connectors)
+            {
+                var connectedPiece = connector.ConnectedPiece;
+                if (connectedPiece != null && uniquePieces.Add(connectedPiece))
+                    yield return connectedPiece;
+            }
+        }
+    }
     
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
         _rigidbody.isKinematic = true;
+
+        if (NonConnectorLayerMask == 0)
+            NonConnectorLayerMask = ~LayerMask.GetMask("Connectors", "Anchors");
+
+        if (AnchorLayerMask == 0)
+            LayerMask.GetMask("Anchors");
     }
 
     public void Initialize(IPieceTemplate template)
@@ -59,6 +78,9 @@ public class Piece : MonoBehaviour
         _coloredParts = GetComponentsInChildren<PieceColoredPart>();
         
         _colors = new PieceColor[Template.GetColorCount()];
+        _worldSize = Template.GetSize().ToWorld();
+        _baseHalfSize = _worldSize / 2f;
+        RefreshRotationCache();
 
         Id = Guid.NewGuid();
 
@@ -97,6 +119,7 @@ public class Piece : MonoBehaviour
             CreateConnector("Left Anchor", rootTransform, leftPosition, _anchors, Quaternion.LookRotation(Vector3.left));
         }
 
+        CreateConnectorCache();
         _creationTime = Time.time;
     }
 
@@ -142,20 +165,37 @@ public class Piece : MonoBehaviour
     
     public Vector3 MoveTo(Vector3 position)
     {
-        foreach (var connector in Connectors)
-            connector.Disconnect();
+        if (!_connectionsSuspended)
+            DisconnectAllConnectors();
         
         var gridPosition = GetGridPosition(position);
-        Debug.Log(gridPosition);
         _rigidbody.position = gridPosition;
         _rigidbody.PublishTransform();
         
         _lastMovementTime = Time.time;
         
-        foreach (var connector in Connectors)
-            connector.Connect();
+        if (!_connectionsSuspended)
+            ReconnectAllConnectors();
 
         return gridPosition;
+    }
+
+    public void BeginDragging()
+    {
+        if (_connectionsSuspended)
+            return;
+
+        _connectionsSuspended = true;
+        DisconnectAllConnectors();
+    }
+
+    public void EndDragging()
+    {
+        if (!_connectionsSuspended)
+            return;
+
+        _connectionsSuspended = false;
+        ReconnectAllConnectors();
     }
 
     public bool TryGetAnchoredPosition(Ray ray, out Vector3 anchoredPosition)
@@ -163,7 +203,7 @@ public class Piece : MonoBehaviour
         var originalPosition = _rigidbody.position;
         _rigidbody.position = new Vector3(1000, 1000, 1000);
 
-        if (!Physics.Raycast(ray, out var hit, float.MaxValue, ~LayerMask.GetMask("Anchors", "Connectors")))
+        if (!Physics.Raycast(ray, out var hit, float.MaxValue, NonConnectorLayerMask))
         {
             _rigidbody.position = originalPosition;
             anchoredPosition = Vector3.zero;
@@ -172,27 +212,17 @@ public class Piece : MonoBehaviour
 
         var position = hit.point;
         var normal = hit.normal;
-        
-        Debug.Log(position);
-        
-        var size = Template.GetSize().ToWorld();
-
-        var halfSize = size / 2f;
-        var pushHalfSize = halfSize;
-        if (_rotation is PieceRotation.East or PieceRotation.West)
-            (pushHalfSize.x, pushHalfSize.z) = (pushHalfSize.z, pushHalfSize.x);
+        var halfSize = _rotatedHalfSize;
+        var pushHalfSize = _rotatedHalfSize;
         
         var centerPosition = GetGridPosition(position + GetPushOutFromNormal(normal, pushHalfSize));
-        Debug.Log(centerPosition);
-        Debug.DrawLine(position, centerPosition, Color.red, 10f);
         
         halfSize -= new Vector3(0.002f, 0.002f, 0.002f);
         
         var hits = Physics.OverlapBoxNonAlloc(centerPosition, halfSize, _overlaps, _rigidbody.rotation,
-            ~LayerMask.GetMask("Connectors", "Anchors"));
+            NonConnectorLayerMask);
         if (hits == 0)
         {
-            Debug.Log("sem colisao");
             _rigidbody.position = originalPosition;
             anchoredPosition = centerPosition;
             return true;
@@ -202,8 +232,7 @@ public class Piece : MonoBehaviour
         bottomPosition.y -= halfSize.y;
 
         //halfSize += new Vector3(0.055f, 0.055f, 0.055f);
-        hits = Physics.OverlapBoxNonAlloc(bottomPosition, halfSize, _overlaps, _rigidbody.rotation,
-            LayerMask.GetMask("Anchors"));
+        hits = Physics.OverlapBoxNonAlloc(bottomPosition, halfSize, _overlaps, _rigidbody.rotation, AnchorLayerMask);
         //halfSize -= new Vector3(0.055f, 0.055f, 0.055f);
 
         AnchorPoint closestAnchor = null;
@@ -228,20 +257,18 @@ public class Piece : MonoBehaviour
             anchoredPosition = Vector3.zero;
             return false;
         }
-        
-        Debug.Log(closestAnchor);
-        
-        var anchors = _anchors
-            .Where(anchor => anchor.IsCompatible(closestAnchor));
 
         closestDistance = float.MaxValue;
         var bestPosition = Vector3.zero;
         var foundNoCollisions = false;
-        foreach (var anchor in anchors)
+        foreach (var anchor in _anchors)
         {
+            if (!anchor.IsCompatible(closestAnchor))
+                continue;
+
             var anchorRelativeCenter = GetGridPosition(closestAnchor.transform.position - anchor.GetDistanceToCenter().Rotated(_rigidbody.rotation));
             hits = Physics.OverlapBoxNonAlloc(anchorRelativeCenter, halfSize, _overlaps, _rigidbody.rotation,
-                ~LayerMask.GetMask("Anchors", "Connectors"));
+                NonConnectorLayerMask);
 
             var distance = Vector3.Distance(anchorRelativeCenter, position);
             
@@ -255,13 +282,11 @@ public class Piece : MonoBehaviour
 
         if (foundNoCollisions)
         {
-            Debug.Log("com ancora");
             _rigidbody.position = originalPosition;
             anchoredPosition = bestPosition;
             return true;
         }
-        
-        Debug.Log("colisao");
+
         _rigidbody.position = originalPosition;
         anchoredPosition = Vector3.zero;
         return false;
@@ -282,7 +307,11 @@ public class Piece : MonoBehaviour
         _rigidbody.position = origin;
 
         if (!_rigidbody.SweepTest(direction, out var hit, Mathf.Infinity, QueryTriggerInteraction.Ignore))
+        {
+            _rigidbody.position = originalPosition;
+            _connectorsRoot.SetActive(true);
             return Vector3.zero;
+        }
 
         var originalPoint = hit.point - direction * hit.distance;
         var center = origin - originalPoint;
@@ -297,11 +326,10 @@ public class Piece : MonoBehaviour
 
     private Vector3 GetGridPosition(Vector3 position)
     {
-        var halfSize = Template.GetSize().ToWorld() / 2;
-        var cornerPosition = position - _rigidbody.rotation * halfSize;
+        var cornerPosition = position - _rigidbody.rotation * _baseHalfSize;
         var gridSnappedPosition = PieceVector.FromWorld(cornerPosition).ToWorld();
 
-        return gridSnappedPosition + _rigidbody.rotation * halfSize;
+        return gridSnappedPosition + _rigidbody.rotation * _baseHalfSize;
     }
 
     private void SetRotation(PieceRotation rotation)
@@ -309,6 +337,7 @@ public class Piece : MonoBehaviour
         _rotation = rotation;
         var quaternion = Quaternion.AngleAxis(_rotation.ToAngle(), Vector3.up);
         _rigidbody.rotation = Quaternion.Inverse(transform.parent.rotation) * quaternion;
+        RefreshRotationCache();
         _rigidbody.PublishTransform();
     }
 
@@ -318,6 +347,7 @@ public class Piece : MonoBehaviour
         var localRotation = Quaternion.Inverse(transform.localRotation) * quaternion;
         _rotation = PieceRotationExtensions.FromAngle(localRotation.eulerAngles.y);
         _rigidbody.rotation = quaternion;
+        RefreshRotationCache();
         _rigidbody.PublishTransform();
     }
 
@@ -326,6 +356,7 @@ public class Piece : MonoBehaviour
         var rotation = Quaternion.AngleAxis(90f, Vector3.up);
         _rotation = PieceRotationExtensions.Add(_rotation, PieceRotation.East);
         _rigidbody.rotation *= rotation;
+        RefreshRotationCache();
         MoveTo(_rigidbody.position);
     }
 
@@ -350,7 +381,6 @@ public class Piece : MonoBehaviour
         }
         
         OnColorChanged(color.Color, color.Transparent, index);
-        Debug.Log(color.NamedColor);
 
         return true;
     }
@@ -374,14 +404,7 @@ public class Piece : MonoBehaviour
 
     public Bounds GetBounds()
     {
-        var size = Template.GetSize().ToWorld();
-        var angle = _rigidbody.rotation.eulerAngles.y;
-        if (Mathf.Approximately(angle, 90) || Mathf.Approximately(angle, 270))
-        {
-            (size.x, size.z) = (size.z, size.x);
-        }
-
-        return new Bounds(Vector3.zero, size);
+        return new Bounds(Vector3.zero, _rotatedSize);
     }
 
     private void OnDestroy()
@@ -401,5 +424,43 @@ public class Piece : MonoBehaviour
             stud.Disconnect();
         foreach (var anchor in _anchors)
             anchor.Disconnect();
+    }
+
+    private void RefreshRotationCache()
+    {
+        _rotatedHalfSize = _baseHalfSize;
+        _rotatedSize = _worldSize;
+
+        if (_rotation is PieceRotation.East or PieceRotation.West)
+        {
+            (_rotatedHalfSize.x, _rotatedHalfSize.z) = (_rotatedHalfSize.z, _rotatedHalfSize.x);
+            (_rotatedSize.x, _rotatedSize.z) = (_rotatedSize.z, _rotatedSize.x);
+        }
+    }
+
+    private void DisconnectAllConnectors()
+    {
+        foreach (var connector in _connectors)
+            connector.Disconnect();
+    }
+
+    private void ReconnectAllConnectors()
+    {
+        foreach (var connector in _connectors)
+            connector.Connect();
+    }
+
+    private void CreateConnectorCache()
+    {
+        _connectors.Clear();
+
+        foreach (var anchor in _anchors)
+            _connectors.Add(anchor);
+
+        foreach (var socket in _sockets)
+            _connectors.Add(socket);
+
+        foreach (var stud in _studs)
+            _connectors.Add(stud);
     }
 }

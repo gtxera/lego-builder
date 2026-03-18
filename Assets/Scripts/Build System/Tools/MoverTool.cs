@@ -29,12 +29,15 @@ public class MoverTool : ITool
 
         _movingPiece = piece;
         _pieceInitialPosition = _lastMovePosition = _movingPiece.transform.position;
+        _movingPiece.BeginDragging();
     }
 
     public void Release(Vector2 pointerScreenPosition)
     {
         if (_movingPiece == null)
             return;
+
+        _movingPiece.EndDragging();
         
         var command = new MovePieceCommand(_buildEditor.Build, _movingPiece.Id, _pieceInitialPosition,
             _movingPiece.transform.position);
@@ -53,7 +56,10 @@ public class MoverTool : ITool
         
         if (!_movingPiece.TryGetAnchoredPosition(ray, out var position))
             position = _movingPiece.GetSweepPosition(ray.origin, ray.direction);
-        
+
+        if (position == _lastMovePosition)
+            return;
+
         _lastMovePosition = _movingPiece.MoveTo(position);
     }
 
