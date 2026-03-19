@@ -44,6 +44,7 @@ public class Piece : MonoBehaviour
     public IPieceTemplate Template { get; private set; }
 
     public Guid Id { get; private set; }
+    public PieceRotation Rotation => _rotation;
 
     public IReadOnlyList<PieceColor> Colors => _colors;
 
@@ -336,7 +337,7 @@ public class Piece : MonoBehaviour
         return gridSnappedPosition + _rigidbody.rotation * _baseHalfSize;
     }
 
-    private void SetRotation(PieceRotation rotation)
+    public void SetRotation(PieceRotation rotation)
     {
         _rotation = rotation;
         var quaternion = Quaternion.AngleAxis(_rotation.ToAngle(), Vector3.up);

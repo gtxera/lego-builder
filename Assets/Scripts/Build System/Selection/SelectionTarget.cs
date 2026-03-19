@@ -9,6 +9,7 @@ public class SelectionTarget : IEditablePieceTarget
     private readonly BuildSelection _buildSelection;
     private readonly Piece[] _pieces;
     private readonly Dictionary<Guid, Vector3> _initialPositions = new();
+    private readonly Dictionary<Guid, PieceRotation> _initialRotations = new();
     private readonly Dictionary<Piece, bool[]> _colliderStates = new();
 
     private Piece _referencePiece;
@@ -20,17 +21,19 @@ public class SelectionTarget : IEditablePieceTarget
         _pieces = pieces.Where(build.IsPartOfBuild).Distinct().ToArray();
     }
 
-    public bool CanRotate => false;
+    public bool CanRotate => true;
     public Piece ReferencePiece => _referencePiece;
 
     public void BeginMove(Piece referencePiece)
     {
         _referencePiece = referencePiece;
         _initialPositions.Clear();
+        _initialRotations.Clear();
 
         foreach (var piece in _pieces)
         {
             _initialPositions[piece.Id] = piece.transform.position;
+            _initialRotations[piece.Id] = piece.Rotation;
             piece.BeginDragging();
         }
 
@@ -65,23 +68,40 @@ public class SelectionTarget : IEditablePieceTarget
         foreach (var piece in _pieces)
             piece.EndDragging();
 
-        var movedPieces = new Dictionary<Guid, (Vector3 StartPosition, Vector3 FinalPosition)>();
+        var transformedPieces = new Dictionary<Guid, (Vector3 StartPosition, Vector3 FinalPosition, PieceRotation StartRotation, PieceRotation FinalRotation)>();
         foreach (var piece in _pieces)
         {
             if (!_initialPositions.TryGetValue(piece.Id, out var startPosition))
                 continue;
-
-            var finalPosition = piece.transform.position;
-            if (finalPosition == startPosition)
+            if (!_initialRotations.TryGetValue(piece.Id, out var startRotation))
                 continue;
 
-            movedPieces[piece.Id] = (startPosition, finalPosition);
+            var finalPosition = piece.transform.position;
+            var finalRotation = piece.Rotation;
+            if (finalPosition == startPosition && finalRotation == startRotation)
+                continue;
+
+            transformedPieces[piece.Id] = (startPosition, finalPosition, startRotation, finalRotation);
         }
 
-        return movedPieces.Count == 0 ? null : new MovePiecesCommand(_build, movedPieces);
+        return transformedPieces.Count == 0 ? null : new TransformPiecesCommand(_build, transformedPieces);
     }
 
-    public void RotateClockwise() { }
+    public void RotateClockwise()
+    {
+        if (_pieces.Length == 0)
+            return;
+
+        var rotation = Quaternion.AngleAxis(90f, Vector3.up);
+        var pivot = GetSelectionPivot();
+
+        foreach (var piece in _pieces)
+        {
+            var rotatedPosition = pivot + rotation * (piece.transform.position - pivot);
+            piece.SetRotation(PieceRotationExtensions.Add(piece.Rotation, PieceRotation.East));
+            piece.MoveTo(rotatedPosition);
+        }
+    }
 
     public ICommand Paint(PieceColor color)
     {
@@ -146,5 +166,15 @@ public class SelectionTarget : IEditablePieceTarget
         }
 
         _colliderStates.Clear();
+    }
+
+    private Vector3 GetSelectionPivot()
+    {
+        var selectionBounds = _pieces[0].GetWorldBounds();
+
+        for (var i = 1; i < _pieces.Length; i++)
+            selectionBounds.Encapsulate(_pieces[i].GetWorldBounds());
+
+        return selectionBounds.center;
     }
 }

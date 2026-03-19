@@ -8,6 +8,7 @@ public class SinglePieceTarget : IEditablePieceTarget
 
     private readonly Piece _piece;
     private Vector3 _initialPosition;
+    private PieceRotation _initialRotation;
 
     public SinglePieceTarget(Build build, Piece piece)
     {
@@ -21,6 +22,7 @@ public class SinglePieceTarget : IEditablePieceTarget
     public void BeginMove(Piece referencePiece)
     {
         _initialPosition = _piece.transform.position;
+        _initialRotation = _piece.Rotation;
         _piece.BeginDragging();
     }
 
@@ -33,10 +35,13 @@ public class SinglePieceTarget : IEditablePieceTarget
     {
         _piece.EndDragging();
 
-        if (_piece.transform.position == _initialPosition)
+        if (_piece.transform.position == _initialPosition && _piece.Rotation == _initialRotation)
             return null;
 
-        return new MovePieceCommand(_build, _piece.Id, _initialPosition, _piece.transform.position);
+        return new TransformPiecesCommand(_build, new Dictionary<Guid, (Vector3, Vector3, PieceRotation, PieceRotation)>
+        {
+            { _piece.Id, (_initialPosition, _piece.transform.position, _initialRotation, _piece.Rotation) }
+        });
     }
 
     public void RotateClockwise()
