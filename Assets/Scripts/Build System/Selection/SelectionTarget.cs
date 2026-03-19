@@ -121,6 +121,7 @@ public class SelectionTarget : IEditablePieceTarget
 
     public ICommand Remove()
     {
+        var selectionToRestore = _buildSelection.SelectedPieceIds;
         var removedPieces = new PieceData[_pieces.Length];
         for (var i = 0; i < _pieces.Length; i++)
         {
@@ -131,7 +132,7 @@ public class SelectionTarget : IEditablePieceTarget
         }
 
         _buildSelection.Clear();
-        return removedPieces.Length == 0 ? null : new RemovePiecesCommand(_build, removedPieces);
+        return removedPieces.Length == 0 ? null : new RemovePiecesCommand(_build, removedPieces, _buildSelection, selectionToRestore);
     }
 
     private void CacheAndDisableColliders()

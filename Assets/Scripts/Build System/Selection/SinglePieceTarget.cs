@@ -5,15 +5,17 @@ using UnityEngine;
 public class SinglePieceTarget : IEditablePieceTarget
 {
     private readonly Build _build;
+    private readonly BuildSelection _buildSelection;
 
     private readonly Piece _piece;
     private Vector3 _initialPosition;
     private PieceRotation _initialRotation;
 
-    public SinglePieceTarget(Build build, Piece piece)
+    public SinglePieceTarget(Build build, Piece piece, BuildSelection buildSelection)
     {
         _build = build;
         _piece = piece;
+        _buildSelection = buildSelection;
     }
 
     public bool CanRotate => true;
@@ -62,8 +64,9 @@ public class SinglePieceTarget : IEditablePieceTarget
     public ICommand Remove()
     {
         var pieceData = _piece.GetData();
+        var selectionToRestore = _buildSelection.Contains(_piece) ? _buildSelection.SelectedPieceIds : null;
         EventBus<PieceRemovedEvent>.Raise(new PieceRemovedEvent(_piece));
         _build.Remove(_piece);
-        return new RemovePiecesCommand(_build, new[] { pieceData });
+        return new RemovePiecesCommand(_build, new[] { pieceData }, _buildSelection, selectionToRestore);
     }
 }

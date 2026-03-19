@@ -21,6 +21,6 @@ public class EditablePieceTargetResolver
                 return new SelectionTarget(_buildEditor.Build, _buildSelection, selectedPieces);
         }
 
-        return new SinglePieceTarget(_buildEditor.Build, piece);
+        return new SinglePieceTarget(_buildEditor.Build, piece, _buildSelection);
     }
 }

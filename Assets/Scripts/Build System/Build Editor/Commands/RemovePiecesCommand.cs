@@ -5,11 +5,19 @@ public class RemovePiecesCommand : ICommand
 {
     private readonly Build _build;
     private readonly IReadOnlyCollection<PieceData> _removedPieces;
+    private readonly BuildSelection _buildSelection;
+    private readonly IReadOnlyCollection<System.Guid> _selectionToRestore;
 
-    public RemovePiecesCommand(Build build, IReadOnlyCollection<PieceData> removedPieces)
+    public RemovePiecesCommand(
+        Build build,
+        IReadOnlyCollection<PieceData> removedPieces,
+        BuildSelection buildSelection = null,
+        IReadOnlyCollection<System.Guid> selectionToRestore = null)
     {
         _build = build;
         _removedPieces = removedPieces;
+        _buildSelection = buildSelection;
+        _selectionToRestore = selectionToRestore;
     }
 
     public void Commit() { }
@@ -32,5 +40,8 @@ public class RemovePiecesCommand : ICommand
             var piece = _build.Add(removedPiece);
             EventBus<PieceCreatedEvent>.Raise(new PieceCreatedEvent(piece));
         }
+
+        if (_buildSelection != null && _selectionToRestore != null)
+            _buildSelection.ReplaceSelection(_selectionToRestore);
     }
 }

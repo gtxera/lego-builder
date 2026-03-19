@@ -10,6 +10,8 @@ public class RemoverTool : ITool
     private readonly BuildSelection _buildSelection;
 
     private readonly HashSet<PieceData> _removedPieces = new();
+    private IReadOnlyCollection<System.Guid> _selectionToRestore;
+    private bool _removedSelectedPiece;
     private ICommand _pendingCommand;
     private bool _selectionInteraction;
 
@@ -28,6 +30,8 @@ public class RemoverTool : ITool
     public void Press(Vector2 pointerScreenPosition)
     {
         _removedPieces.Clear();
+        _selectionToRestore = null;
+        _removedSelectedPiece = false;
         _pendingCommand = null;
         _selectionInteraction = false;
         
@@ -43,10 +47,13 @@ public class RemoverTool : ITool
 
         if (_buildSelection.Contains(piece))
         {
-            var target = _editablePieceTargetResolver.Resolve(piece);
-            _pendingCommand = target?.Remove();
-            _selectionInteraction = _pendingCommand != null;
-            return;
+            var selectedPieces = _buildSelection.GetSelectedPieces(_buildEditor.Build);
+            if (selectedPieces.Count > 0)
+            {
+                _pendingCommand = new SelectionTarget(_buildEditor.Build, _buildSelection, selectedPieces).Remove();
+                _selectionInteraction = _pendingCommand != null;
+                return;
+            }
         }
 
         RemovePiece(piece);
@@ -67,7 +74,11 @@ public class RemoverTool : ITool
         if (_removedPieces.Count == 0)
             return;
         
-        var command = new RemovePiecesCommand(_buildEditor.Build, _removedPieces.ToArray());
+        var command = new RemovePiecesCommand(
+            _buildEditor.Build,
+            _removedPieces.ToArray(),
+            _removedSelectedPiece ? _buildSelection : null,
+            _removedSelectedPiece ? _selectionToRestore : null);
         
         _buildEditor.Commit(command);
     }
@@ -95,6 +106,12 @@ public class RemoverTool : ITool
 
     private void RemovePiece(Piece piece)
     {
+        if (_buildSelection.Contains(piece))
+        {
+            _selectionToRestore ??= _buildSelection.SelectedPieceIds;
+            _removedSelectedPiece = true;
+        }
+
         _removedPieces.Add(piece.GetData());
         EventBus<PieceRemovedEvent>.Raise(new PieceRemovedEvent(piece));
         _buildEditor.Build.Remove(piece);
