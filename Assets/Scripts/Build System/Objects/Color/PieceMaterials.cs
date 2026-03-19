@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
-
 public class PieceMaterials
 {
     private Material _baseMaterial;
     private Material _transparentMaterial;
+    private Material _outlineMaterial;
 
     public Material BaseMaterial
     {
@@ -30,5 +30,16 @@ public class PieceMaterials
     public Material GetMaterial(bool transparent)
     {
         return transparent ? TransparentMaterial : BaseMaterial;
+    }
+
+    public Material OutlineMaterial
+    {
+        get
+        {
+            if (_outlineMaterial == null)
+                _outlineMaterial = Resources.Load<Material>("Materials/Piece/OutlinePieceMaterial");
+            
+            return _outlineMaterial;
+        }
     }
 }

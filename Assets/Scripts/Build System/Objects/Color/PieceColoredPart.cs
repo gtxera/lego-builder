@@ -24,7 +24,7 @@ public class PieceColoredPart : MonoBehaviour
             _coloredMaterialsIndexes = new[] { 0 };
     }
 
-    public void SetColor(Color color, bool transparent, bool selected)
+    public void SetColor(Color color, bool transparent)
     {
         if (transparent != _transparent)
         {
@@ -34,7 +34,7 @@ public class PieceColoredPart : MonoBehaviour
         }
         
         var materialPropertyBlock = new MaterialPropertyBlock();
-        materialPropertyBlock.SetColor(BaseColorPropertyId, selected ? Color.Lerp(color, Color.white, 0.35f) : color);
+        materialPropertyBlock.SetColor(BaseColorPropertyId, color);
         
         foreach (var index in _coloredMaterialsIndexes)
             _renderer.SetPropertyBlock(materialPropertyBlock, index);

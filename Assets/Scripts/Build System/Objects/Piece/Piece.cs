@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Reflex.Extensions;
 using UnityEngine;
 using Utils;
 
@@ -24,6 +25,7 @@ public class Piece : MonoBehaviour
     private PieceRotation _rotation;
 
     private IEnumerable<PieceColoredPart> _coloredParts;
+    private PieceSelectionOutline _selectionOutline;
 
     private float _creationTime;
     private Vector3 _worldSize;
@@ -121,6 +123,7 @@ public class Piece : MonoBehaviour
         }
 
         CreateConnectorCache();
+        _selectionOutline = new PieceSelectionOutline(this, gameObject.scene.GetSceneContainer().Resolve<PieceMaterials>().OutlineMaterial);
         _creationTime = Time.time;
     }
 
@@ -389,7 +392,7 @@ public class Piece : MonoBehaviour
     private void OnColorChanged(Color color, bool transparent, int index)
     {
         foreach (var coloredPart in _coloredParts)
-            coloredPart.SetColor(color, transparent, _selected);
+            coloredPart.SetColor(color, transparent);
     }
 
     public bool MovedMoreRecentlyThan(Piece piece)
@@ -421,11 +424,7 @@ public class Piece : MonoBehaviour
             return;
 
         _selected = selected;
-
-        if (_colors == null || _colors.Length == 0 || _colors[0] == null)
-            return;
-
-        OnColorChanged(_colors[0].Color, _colors[0].Transparent, 0);
+        _selectionOutline?.SetVisible(selected);
     }
 
     private void OnDestroy()
