@@ -7,19 +7,32 @@ public class PainterTool : ITool
     private readonly BuildEditor _buildEditor;
     private readonly BuildColorSelector _buildColorSelector;
     private readonly CameraServices _cameraServices;
+    private readonly EditablePieceTargetResolver _editablePieceTargetResolver;
+    private readonly BuildSelection _buildSelection;
 
     private readonly Dictionary<Guid, PieceColor> _coloredPiecesIds = new();
+    private ICommand _pendingCommand;
+    private bool _selectionInteraction;
 
-    public PainterTool(BuildColorSelector buildColorSelector, CameraServices cameraServices, BuildEditor buildEditor)
+    public PainterTool(
+        BuildColorSelector buildColorSelector,
+        CameraServices cameraServices,
+        BuildEditor buildEditor,
+        EditablePieceTargetResolver editablePieceTargetResolver,
+        BuildSelection buildSelection)
     {
         _buildColorSelector = buildColorSelector;
         _cameraServices = cameraServices;
         _buildEditor = buildEditor;
+        _editablePieceTargetResolver = editablePieceTargetResolver;
+        _buildSelection = buildSelection;
     }
 
     public void Press(Vector2 pointerScreenPosition)
     {
         _coloredPiecesIds.Clear();
+        _pendingCommand = null;
+        _selectionInteraction = false;
 
         var ray = _cameraServices.ScreenToWorldRay(pointerScreenPosition);
         
@@ -30,12 +43,30 @@ public class PainterTool : ITool
         
         if (piece == null || !_buildEditor.Build.IsPartOfBuild(piece))
             return;
-        
+
+        if (_buildSelection.Contains(piece))
+        {
+            var target = _editablePieceTargetResolver.Resolve(piece);
+            _pendingCommand = target?.Paint(_buildColorSelector.GetSelectedColorFor(0));
+            _selectionInteraction = _pendingCommand != null;
+            return;
+        }
+
         PaintPiece(piece);
     }
 
     public void Release(Vector2 pointerScreenPosition)
     {
+        if (_selectionInteraction)
+        {
+            if (_pendingCommand != null)
+                _buildEditor.Commit(_pendingCommand);
+
+            _pendingCommand = null;
+            _selectionInteraction = false;
+            return;
+        }
+
         if (_coloredPiecesIds.Count == 0)
             return;
         
@@ -49,6 +80,9 @@ public class PainterTool : ITool
 
     public void Drag(Vector2 pointerScreenPosition)
     {
+        if (_selectionInteraction)
+            return;
+
         var ray = _cameraServices.ScreenToWorldRay(pointerScreenPosition);
         
         if (!Physics.Raycast(ray, out var hit))

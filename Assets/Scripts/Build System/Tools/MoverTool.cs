@@ -4,14 +4,15 @@ public class MoverTool : ITool
 {
     private readonly BuildEditor _buildEditor;
     private readonly CameraServices _cameraServices;
+    private readonly EditablePieceTargetResolver _editablePieceTargetResolver;
 
-    private Piece _movingPiece;
-    private Vector3 _pieceInitialPosition;
-    private Vector3 _lastMovePosition;
+    private IEditablePieceTarget _movingTarget;
+    private Piece _referencePiece;
 
-    public MoverTool(BuildEditor buildEditor, CameraServices cameraServices)
+    public MoverTool(BuildEditor buildEditor, EditablePieceTargetResolver editablePieceTargetResolver, CameraServices cameraServices)
     {
         _buildEditor = buildEditor;
+        _editablePieceTargetResolver = editablePieceTargetResolver;
         _cameraServices = cameraServices;
     }
 
@@ -23,59 +24,50 @@ public class MoverTool : ITool
             return;
 
         var piece = hit.transform.GetComponentInParent<Piece>();
-
-        if (piece == null || !_buildEditor.Build.IsPartOfBuild(piece))
-            return;
-
-        _movingPiece = piece;
-        _pieceInitialPosition = _lastMovePosition = _movingPiece.transform.position;
-        _movingPiece.BeginDragging();
+        _movingTarget = _editablePieceTargetResolver.Resolve(piece);
+        _movingTarget?.BeginMove(piece);
+        _referencePiece = _movingTarget?.ReferencePiece;
     }
 
     public void Release(Vector2 pointerScreenPosition)
     {
-        if (_movingPiece == null)
+        if (_movingTarget == null)
             return;
 
-        _movingPiece.EndDragging();
+        var command = _movingTarget.EndMove();
+        _movingTarget = null;
+        _referencePiece = null;
         
-        var command = new MovePieceCommand(_buildEditor.Build, _movingPiece.Id, _pieceInitialPosition,
-            _movingPiece.transform.position);
-
-        _movingPiece = null;
-        
-        _buildEditor.Commit(command);
+        if (command != null)
+            _buildEditor.Commit(command);
     }
 
     public void Drag(Vector2 pointerScreenPosition)
     {
-        if (_movingPiece == null)
+        if (_movingTarget == null || _referencePiece == null)
             return;
         
         var ray = _cameraServices.ScreenToWorldRay(pointerScreenPosition);
         
-        if (!_movingPiece.TryGetAnchoredPosition(ray, out var position))
-            position = _movingPiece.GetSweepPosition(ray.origin, ray.direction);
+        if (!_referencePiece.TryGetAnchoredPosition(ray, out var position))
+            position = _referencePiece.GetSweepPosition(ray.origin, ray.direction);
 
-        if (position == _lastMovePosition)
-            return;
-
-        _lastMovePosition = _movingPiece.MoveTo(position);
+        _movingTarget.UpdateMove(position);
     }
 
     public void Tap(Vector2 pointerScreenPosition)
     {
-        if (_movingPiece == null)
+        if (_movingTarget == null || !_movingTarget.CanRotate || _referencePiece == null)
             return;
         
-        _movingPiece.RotateClockwise();
+        _movingTarget.RotateClockwise();
         
         var ray = _cameraServices.ScreenToWorldRay(pointerScreenPosition);
         
-        if (!_movingPiece.TryGetAnchoredPosition(ray, out var position))
-            position = _movingPiece.GetSweepPosition(ray.origin, ray.direction);
+        if (!_referencePiece.TryGetAnchoredPosition(ray, out var position))
+            position = _referencePiece.GetSweepPosition(ray.origin, ray.direction);
         
-        _lastMovePosition = _movingPiece.MoveTo(position);
+        _movingTarget.UpdateMove(position);
     }
 
     public Sprite GetIcon() => Resources.Load<Sprite>("Icons/Mover");

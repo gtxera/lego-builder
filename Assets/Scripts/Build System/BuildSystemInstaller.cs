@@ -9,8 +9,12 @@ public class BuildSystemInstaller : MonoBehaviour, IInstaller
     public void InstallBindings(ContainerBuilder containerBuilder)
     {
         containerBuilder.AddScoped(typeof(BuildEditor))
+            .AddScoped(typeof(BuildSelection))
+            .AddScoped(typeof(BuildSelectionVisualizer))
             .AddScoped(typeof(BuildColorSelector))
             .AddScoped(typeof(BuildTemplateSelector))
+            .AddScoped(typeof(EditablePieceTargetResolver))
+            .AddScoped(typeof(SelectionRectangleOverlay))
             .AddSingleton(typeof(PieceTemplateDatabase))
             .AddScoped(typeof(CameraServices))
             .AddScoped(typeof(PiecePreviewService))
@@ -26,6 +30,7 @@ public class BuildSystemInstaller : MonoBehaviour, IInstaller
     private static void RegisterTools(ContainerBuilder containerBuilder)
     {
         containerBuilder.AddScoped(typeof(ToolController))
+            .AddScoped(typeof(SelectionTool), typeof(SelectionTool), typeof(ITool))
             .AddScoped(typeof(SpawnerTool), typeof(SpawnerTool), typeof(ITool))
             .AddScoped(typeof(MoverTool), typeof(MoverTool), typeof(ITool))
             .AddScoped(typeof(PainterTool), typeof(PainterTool), typeof(ITool))

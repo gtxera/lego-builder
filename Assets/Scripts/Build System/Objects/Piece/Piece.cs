@@ -31,6 +31,7 @@ public class Piece : MonoBehaviour
     private Vector3 _rotatedHalfSize;
     private Vector3 _rotatedSize;
     private bool _connectionsSuspended;
+    private bool _selected;
 
     [SerializeField]
     private float _lastMovementTime;
@@ -388,7 +389,7 @@ public class Piece : MonoBehaviour
     private void OnColorChanged(Color color, bool transparent, int index)
     {
         foreach (var coloredPart in _coloredParts)
-            coloredPart.SetColor(color, transparent);
+            coloredPart.SetColor(color, transparent, _selected);
     }
 
     public bool MovedMoreRecentlyThan(Piece piece)
@@ -405,6 +406,26 @@ public class Piece : MonoBehaviour
     public Bounds GetBounds()
     {
         return new Bounds(Vector3.zero, _rotatedSize);
+    }
+
+    public Bounds GetWorldBounds()
+    {
+        var bounds = GetBounds();
+        bounds.center = transform.position;
+        return bounds;
+    }
+
+    public void SetSelectedVisual(bool selected)
+    {
+        if (_selected == selected)
+            return;
+
+        _selected = selected;
+
+        if (_colors == null || _colors.Length == 0 || _colors[0] == null)
+            return;
+
+        OnColorChanged(_colors[0].Color, _colors[0].Transparent, 0);
     }
 
     private void OnDestroy()

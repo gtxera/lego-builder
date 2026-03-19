@@ -55,6 +55,9 @@ public class CameraController : ValidatedMonoBehaviour
     private PainterTool _painterTool;
 
     [Inject]
+    private SelectionTool _selectionTool;
+
+    [Inject]
     private BuildColorSelector _buildColorSelector;
     
     private void Awake()
@@ -143,6 +146,8 @@ public class CameraController : ValidatedMonoBehaviour
             _toolController.PickTool(_moverTool);
         if (Keyboard.current.pKey.wasReleasedThisFrame)
             _toolController.PickTool(_painterTool);
+        if (Keyboard.current.qKey.wasReleasedThisFrame)
+            _toolController.PickTool(_selectionTool);
         
         if (Keyboard.current.zKey.wasReleasedThisFrame)
             _buildEditor.Undo();
