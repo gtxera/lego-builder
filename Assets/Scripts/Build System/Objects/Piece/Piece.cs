@@ -149,7 +149,7 @@ public class Piece : MonoBehaviour
         connectors.Add(connector);
     }
     
-    public void Initialize(PieceData pieceData)
+    public void Initialize(PieceData pieceData, bool localSpace = false)
     {
         Initialize(pieceData.Template);
 
@@ -159,7 +159,8 @@ public class Piece : MonoBehaviour
             Id = transientData.Id;
         
         SetRotation(transientData.Rotation);
-        MoveTo(transientData.WorldPosition);
+        var targetPosition = localSpace ? transform.parent.TransformPoint(transientData.LocalPosition) : transientData.WorldPosition;
+        MoveTo(targetPosition);
 
         for (int i = 0; i < transientData.Colors.Length; i++)
             TrySetColor(transientData.Colors[i], i);

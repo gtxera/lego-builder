@@ -36,6 +36,17 @@ public class Build : MonoBehaviour
         return piece;
     }
 
+    public Piece AddLocal(PieceData pieceData)
+    {
+        var pieceGameObject = new GameObject("Piece");
+        var piece = pieceGameObject.AddComponent<Piece>();
+        pieceGameObject.transform.SetParent(transform);
+        piece.Initialize(pieceData, true);
+        _pieces.Add(piece);
+
+        return piece;
+    }
+
     public void Remove(Piece piece)
     {
         _pieces.Remove(piece);
@@ -72,6 +83,19 @@ public class Build : MonoBehaviour
     {
         foreach (var piece in buildData.Pieces)
             Add(piece);
+    }
+
+    public void CreateLocal(BuildData buildData)
+    {
+        foreach (var piece in buildData.Pieces)
+            AddLocal(piece);
+    }
+
+    public void Clear()
+    {
+        var piecesCopy =  _pieces.ToArray();
+        foreach (var piece in piecesCopy)
+            Remove(piece);
     }
 
     public BuildData GetBuildData()

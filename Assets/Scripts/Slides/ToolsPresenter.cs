@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using PrimeTween;
 using Reflex.Attributes;
 using UnityEngine;
@@ -24,6 +25,9 @@ public class ToolsPresenter : MonoBehaviour
     [SerializeField]
     private Build _build;
 
+    [SerializeField]
+    private JsonBuild _jsonBuild;
+
     private LinkedList<ITool> _toolsList;
     private LinkedListNode<ITool> _currentTool;
 
@@ -33,7 +37,7 @@ public class ToolsPresenter : MonoBehaviour
     
     private void Awake()
     {
-        _toolsList = new LinkedList<ITool>(_tools);
+        _toolsList = new LinkedList<ITool>(_tools.Where(tool => tool.GetType() != typeof(SelectionTool)));
     }
 
     public void StartBuild()
@@ -112,6 +116,17 @@ public class ToolsPresenter : MonoBehaviour
         ShowTool();
         ShowTool();
         CycleUndoRedo();
+    }
+
+    public void ShowFinishedBuild()
+    {
+        _build.Clear();
+        _build.CreateLocal(_jsonBuild.GetBuildData().GetCentered());
+    }
+
+    public void ClearFinishedBuild()
+    {
+        _build.Clear();
     }
 
     private void Undo()
