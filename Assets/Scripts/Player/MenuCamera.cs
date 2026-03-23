@@ -20,6 +20,9 @@ public class MenuCamera : ValidatedMonoBehaviour
 
     [Inject]
     private readonly LevelSelector _levelSelector;
+
+    [SerializeField]
+    private bool _slideshow;
     
     [SerializeField, Scene]
     private CinemachineOrbitalFollow _orbitalFollow;
@@ -47,6 +50,9 @@ public class MenuCamera : ValidatedMonoBehaviour
     
     [SerializeField]
     private TitleScreen _titleScreen;
+
+    [SerializeField]
+    private SlideController _slideController;
 
     private Tween _animationTween;
 
@@ -115,9 +121,16 @@ public class MenuCamera : ValidatedMonoBehaviour
                 }))
                 .OnComplete(() =>
                 {
-                    _cameraControlInputContext.Enable();
-                    _levelSelectorInputContext.Enable();
-                    Show();
+                    if (_slideshow)
+                    {
+                        _slideController.StartSlides();
+                    }
+                    else
+                    {
+                        _cameraControlInputContext.Enable();
+                        _levelSelectorInputContext.Enable();
+                        Show();
+                    }
                     if (!_gameplayMusicEmitter.IsPlaying())
                         _gameplayMusicEmitter.Play();
                 }));

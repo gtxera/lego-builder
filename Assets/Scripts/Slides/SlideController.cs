@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using KBCore.Refs;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -12,6 +13,9 @@ public class SlideController : ValidatedMonoBehaviour
 
     [SerializeField, Scene]
     private SlideCamera _camera;
+
+    [SerializeField, Scene]
+    private CinemachineCamera _cinemachineCamera;
     
     private LinkedList<Slide> _slidesList;
 
@@ -24,6 +28,7 @@ public class SlideController : ValidatedMonoBehaviour
 
     public void StartSlides()
     {
+        _cinemachineCamera.enabled = false;
         _currentSlide = _slidesList.First;
         _currentSlide.Value.Enter(_camera);
     }
