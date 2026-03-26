@@ -4,8 +4,6 @@ using UnityEngine.InputSystem;
 
 public class BuildInputContext : InputContext, ITickable
 {
-    private const float DefaultTapDelay = 0.25f;
-
     private readonly PointerUIController _pointerUiController;
     private readonly CameraServices _cameraServices;
     private readonly BuildEditor _buildEditor;
@@ -22,8 +20,6 @@ public class BuildInputContext : InputContext, ITickable
     private Vector2 _currentScreenPosition;
     private Piece _startPiece;
     private Piece _currentPiece;
-
-    private PendingTap _pendingTap;
 
     public BuildInputContext(
         LegoBuilderInputActions inputActions,
@@ -60,17 +56,10 @@ public class BuildInputContext : InputContext, ITickable
         inputActions.Build.Hold.performed -= OnHoldPerformed;
         inputActions.Build.DoubleTap.performed -= OnDoubleTapPerformed;
         ResetGestureState();
-        _pendingTap = default;
     }
 
     public void Tick(float deltaTime)
     {
-        if (_gestureActive || !_pendingTap.IsPending || Time.unscaledTime < _pendingTap.DispatchAt)
-            return;
-
-        var pendingTap = _pendingTap;
-        _pendingTap = default;
-        PieceTapped(pendingTap.Piece, pendingTap.ScreenPosition);
     }
 
     private void OnTouchStarted(InputAction.CallbackContext context)
@@ -104,7 +93,6 @@ public class BuildInputContext : InputContext, ITickable
         if (!_dragStarted && Vector2.Distance(_startScreenPosition, pointerPosition) >= _dragThresholdPixels)
         {
             _dragStarted = true;
-            CancelPendingTap();
             DragStarted(_startPiece, _startScreenPosition);
         }
 
@@ -118,7 +106,6 @@ public class BuildInputContext : InputContext, ITickable
             return;
 
         _holdTriggered = true;
-        CancelPendingTap();
 
         var pointerPosition = ReadPointerPosition(context);
         _currentScreenPosition = pointerPosition;
@@ -133,7 +120,6 @@ public class BuildInputContext : InputContext, ITickable
             return;
 
         _doubleTapTriggered = true;
-        CancelPendingTap();
         DoubleTapTriggered(ResolvePiece(pointerPosition), pointerPosition);
     }
 
@@ -154,21 +140,11 @@ public class BuildInputContext : InputContext, ITickable
             }
             else if (!_holdTriggered && !_doubleTapTriggered && _startPiece != null)
             {
-                QueueTap(_startPiece, pointerPosition);
+                PieceTapped(_startPiece, pointerPosition);
             }
         }
 
         ResetGestureState();
-    }
-
-    private void QueueTap(Piece piece, Vector2 screenPosition)
-    {
-        _pendingTap = new PendingTap(piece, screenPosition, Time.unscaledTime + DefaultTapDelay);
-    }
-
-    private void CancelPendingTap()
-    {
-        _pendingTap = default;
     }
 
     private Vector2 ReadPointerPosition(InputAction.CallbackContext context)
@@ -203,20 +179,5 @@ public class BuildInputContext : InputContext, ITickable
         _currentScreenPosition = Vector2.zero;
         _startPiece = null;
         _currentPiece = null;
-    }
-
-    private readonly struct PendingTap
-    {
-        public PendingTap(Piece piece, Vector2 screenPosition, float dispatchAt)
-        {
-            Piece = piece;
-            ScreenPosition = screenPosition;
-            DispatchAt = dispatchAt;
-        }
-
-        public Piece Piece { get; }
-        public Vector2 ScreenPosition { get; }
-        public float DispatchAt { get; }
-        public bool IsPending => Piece != null;
     }
 }

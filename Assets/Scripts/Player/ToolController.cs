@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class ToolController
 {
+    private const float DoubleTapRevertWindow = 0.3f;
+
     private readonly BuildInputContext _buildInputContext;
     private readonly CameraControlInputContext _cameraControlInputContext;
     private readonly BuildEditor _buildEditor;
@@ -20,6 +22,10 @@ public class ToolController
     private Piece _activeReferencePiece;
     private bool _dragControlsCamera;
     private bool _selectionMoveArmed;
+    private Guid _lastTappedPieceId;
+    private Guid[] _lastTapPreviousSelection;
+    private Guid[] _lastTapNextSelection;
+    private float _lastTapTime;
 
     public ToolController(
         BuildInputContext buildInputContext,
@@ -97,6 +103,7 @@ public class ToolController
         CancelCurrentMove();
         _dragControlsCamera = false;
         _selectionMoveArmed = false;
+        ClearLastTapState();
     }
 
     private void OnPieceTapped(Piece piece, Vector2 pointerScreenPosition)
@@ -111,12 +118,16 @@ public class ToolController
             nextSelection.Add(piece.Id);
 
         if (!new HashSet<Guid>(previousSelection).SetEquals(nextSelection))
+        {
             _buildEditor.Commit(new SetSelectionCommand(_buildSelection, previousSelection, nextSelection));
+            RegisterImmediateTap(piece.Id, previousSelection, nextSelection);
+        }
     }
 
     private void OnDragStarted(Piece startPiece, Vector2 pointerScreenPosition)
     {
         HideActionMenu();
+        ClearLastTapState();
 
         if (_selectionMoveArmed && _buildSelection.HasSelection)
         {
@@ -172,6 +183,8 @@ public class ToolController
 
     private void OnHoldTriggered(Piece piece, Vector2 pointerScreenPosition)
     {
+        ClearLastTapState();
+
         if (_buildEditor.Build == null)
             return;
 
@@ -184,6 +197,7 @@ public class ToolController
 
     private void OnDoubleTapTriggered(Piece piece, Vector2 pointerScreenPosition)
     {
+        RevertImmediateTapIfNeeded(piece);
         HideActionMenu();
         SpawnPiece(pointerScreenPosition);
     }
@@ -347,5 +361,44 @@ public class ToolController
     {
         var screenSize = new Vector2(Screen.currentResolution.width, Screen.currentResolution.height);
         return vector / screenSize;
+    }
+
+    private void RegisterImmediateTap(Guid pieceId, IEnumerable<Guid> previousSelection, IEnumerable<Guid> nextSelection)
+    {
+        _lastTappedPieceId = pieceId;
+        _lastTapPreviousSelection = previousSelection.ToArray();
+        _lastTapNextSelection = nextSelection.ToArray();
+        _lastTapTime = Time.unscaledTime;
+    }
+
+    private void RevertImmediateTapIfNeeded(Piece piece)
+    {
+        if (piece == null ||
+            _lastTapPreviousSelection == null ||
+            _lastTapNextSelection == null ||
+            piece.Id != _lastTappedPieceId ||
+            Time.unscaledTime - _lastTapTime > DoubleTapRevertWindow)
+        {
+            ClearLastTapState();
+            return;
+        }
+
+        var currentSelection = _buildSelection.SelectedPieceIds.ToArray();
+        if (!new HashSet<Guid>(currentSelection).SetEquals(_lastTapNextSelection))
+        {
+            ClearLastTapState();
+            return;
+        }
+
+        _buildEditor.Commit(new SetSelectionCommand(_buildSelection, currentSelection, _lastTapPreviousSelection));
+        ClearLastTapState();
+    }
+
+    private void ClearLastTapState()
+    {
+        _lastTappedPieceId = Guid.Empty;
+        _lastTapPreviousSelection = null;
+        _lastTapNextSelection = null;
+        _lastTapTime = 0f;
     }
 }
