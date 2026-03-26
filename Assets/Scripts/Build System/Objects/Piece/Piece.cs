@@ -367,6 +367,15 @@ public class Piece : MonoBehaviour
         MoveTo(_rigidbody.position);
     }
 
+    public void RotateCounterClockwise()
+    {
+        var rotation = Quaternion.AngleAxis(-90f, Vector3.up);
+        _rotation = PieceRotationExtensions.Add(_rotation, PieceRotation.West);
+        _rigidbody.rotation *= rotation;
+        RefreshRotationCache();
+        MoveTo(_rigidbody.position);
+    }
+
     public bool TrySetColor(PieceColor color, int index)
     {
         if (index >= _colors.Length)
@@ -436,7 +445,7 @@ public class Piece : MonoBehaviour
         {
             Template.OnDestroy(gameObject);
         }
-        catch (UnknownContractException _) { }
+        catch (UnknownContractException) { }
         
         for (int i = 0; i < _colors.Length; i++)
         {

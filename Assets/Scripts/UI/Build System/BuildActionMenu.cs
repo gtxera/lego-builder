@@ -21,7 +21,8 @@ public class BuildActionMenu : IDisposable
     }
 
     public event Action ColorRequested = delegate { };
-    public event Action MoveRequested = delegate { };
+    public event Action RotateRightRequested = delegate { };
+    public event Action RotateLeftRequested = delegate { };
     public event Action RemoveRequested = delegate { };
 
     public bool IsVisible => _presenter != null && _presenter.IsVisible;
@@ -31,7 +32,8 @@ public class BuildActionMenu : IDisposable
         var actions = new[]
         {
             new BuildRadialActionDefinition(BuildRadialActionType.Color, "Colorir", Resources.Load<Sprite>("Icons/Brush"), hasSelection),
-            new BuildRadialActionDefinition(BuildRadialActionType.Move, "Mover", Resources.Load<Sprite>("Icons/Mover"), hasSelection),
+            new BuildRadialActionDefinition(BuildRadialActionType.RotateRight, "Rotacionar direita", null, hasSelection),
+            new BuildRadialActionDefinition(BuildRadialActionType.RotateLeft, "Rotacionar esquerda", null, hasSelection),
             new BuildRadialActionDefinition(BuildRadialActionType.Remove, "Remover", Resources.Load<Sprite>("Icons/Remove"), hasSelection)
         };
 
@@ -60,8 +62,11 @@ public class BuildActionMenu : IDisposable
             case BuildRadialActionType.Color:
                 ColorRequested();
                 break;
-            case BuildRadialActionType.Move:
-                MoveRequested();
+            case BuildRadialActionType.RotateRight:
+                RotateRightRequested();
+                break;
+            case BuildRadialActionType.RotateLeft:
+                RotateLeftRequested();
                 break;
             case BuildRadialActionType.Remove:
                 RemoveRequested();
@@ -108,6 +113,7 @@ public readonly struct BuildRadialActionDefinition
 public enum BuildRadialActionType
 {
     Color,
-    Move,
+    RotateRight,
+    RotateLeft,
     Remove
 }

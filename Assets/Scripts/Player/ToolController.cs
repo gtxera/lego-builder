@@ -21,7 +21,6 @@ public class ToolController
     private IEditablePieceTarget _activeMoveTarget;
     private Piece _activeReferencePiece;
     private bool _dragControlsCamera;
-    private bool _selectionMoveArmed;
     private Guid _lastTappedPieceId;
     private Guid[] _lastTapPreviousSelection;
     private Guid[] _lastTapNextSelection;
@@ -59,9 +58,11 @@ public class ToolController
         _buildInputContext.DragEnded += OnDragEnded;
         _buildInputContext.HoldTriggered += OnHoldTriggered;
         _buildInputContext.DoubleTapTriggered += OnDoubleTapTriggered;
+        _buildInputContext.SecondaryTapTriggered += OnSecondaryTapTriggered;
 
         _buildActionMenu.ColorRequested += OnColorRequested;
-        _buildActionMenu.MoveRequested += OnMoveRequested;
+        _buildActionMenu.RotateRightRequested += OnRotateRightRequested;
+        _buildActionMenu.RotateLeftRequested += OnRotateLeftRequested;
         _buildActionMenu.RemoveRequested += OnRemoveRequested;
     }
 
@@ -102,7 +103,6 @@ public class ToolController
         HideActionMenu();
         CancelCurrentMove();
         _dragControlsCamera = false;
-        _selectionMoveArmed = false;
         ClearLastTapState();
     }
 
@@ -128,13 +128,6 @@ public class ToolController
     {
         HideActionMenu();
         ClearLastTapState();
-
-        if (_selectionMoveArmed && _buildSelection.HasSelection)
-        {
-            _selectionMoveArmed = false;
-            if (TryBeginSelectionMove(startPiece))
-                return;
-        }
 
         if (startPiece != null)
         {
@@ -202,6 +195,15 @@ public class ToolController
         SpawnPiece(pointerScreenPosition);
     }
 
+    private void OnSecondaryTapTriggered(Vector2 pointerScreenPosition)
+    {
+        if (_activeMoveTarget == null || _activeReferencePiece == null || !_activeMoveTarget.CanRotate)
+            return;
+
+        _activeMoveTarget.RotateClockwise();
+        UpdateSelectionMove(pointerScreenPosition);
+    }
+
     private void OnColorRequested()
     {
         HideActionMenu();
@@ -211,10 +213,16 @@ public class ToolController
             _buildEditor.Commit(command);
     }
 
-    private void OnMoveRequested()
+    private void OnRotateRightRequested()
     {
         HideActionMenu();
-        _selectionMoveArmed = _buildSelection.HasSelection;
+        RotateSelection(RotateDirection.Clockwise);
+    }
+
+    private void OnRotateLeftRequested()
+    {
+        HideActionMenu();
+        RotateSelection(RotateDirection.CounterClockwise);
     }
 
     private void OnRemoveRequested()
@@ -326,17 +334,6 @@ public class ToolController
         return true;
     }
 
-    private Piece GetMoveReferencePiece(Piece startPiece)
-    {
-        if (_buildEditor.Build == null || !_buildSelection.HasSelection)
-            return null;
-
-        if (startPiece != null && _buildSelection.Contains(startPiece))
-            return startPiece;
-
-        return _buildSelection.GetSelectedPieces(_buildEditor.Build).FirstOrDefault();
-    }
-
     private void HideActionMenu()
     {
         if (!_buildActionMenu.IsVisible)
@@ -400,5 +397,83 @@ public class ToolController
         _lastTapPreviousSelection = null;
         _lastTapNextSelection = null;
         _lastTapTime = 0f;
+    }
+
+    private void RotateSelection(RotateDirection rotateDirection)
+    {
+        var moveTarget = CreateEditableSelectionTarget();
+        if (moveTarget == null || !moveTarget.CanRotate)
+            return;
+
+        var selectedPieces = _buildSelection.GetSelectedPieces(_buildEditor.Build);
+        if (selectedPieces.Count == 0)
+            return;
+
+        var initialStates = CapturePieceStates(selectedPieces);
+
+        switch (rotateDirection)
+        {
+            case RotateDirection.Clockwise:
+                moveTarget.RotateClockwise();
+                break;
+            case RotateDirection.CounterClockwise:
+                moveTarget.RotateCounterClockwise();
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(rotateDirection), rotateDirection, null);
+        }
+
+        var command = CreateTransformCommand(selectedPieces, initialStates);
+        if (command != null)
+            _buildEditor.Commit(command);
+    }
+
+    private static Dictionary<Guid, (Vector3 Position, PieceRotation Rotation)> CapturePieceStates(IEnumerable<Piece> pieces)
+    {
+        var states = new Dictionary<Guid, (Vector3 Position, PieceRotation Rotation)>();
+
+        foreach (var piece in pieces)
+            states[piece.Id] = (piece.transform.position, piece.Rotation);
+
+        return states;
+    }
+
+    private TransformPiecesCommand CreateTransformCommand(
+        IEnumerable<Piece> pieces,
+        IReadOnlyDictionary<Guid, (Vector3 Position, PieceRotation Rotation)> initialStates)
+    {
+        var transformedPieces = new Dictionary<Guid, (Vector3 StartPosition, Vector3 FinalPosition, PieceRotation StartRotation, PieceRotation FinalRotation)>();
+
+        foreach (var piece in pieces)
+        {
+            if (!initialStates.TryGetValue(piece.Id, out var initialState))
+                continue;
+
+            var finalPosition = piece.transform.position;
+            var finalRotation = piece.Rotation;
+            if (finalPosition == initialState.Position && finalRotation == initialState.Rotation)
+                continue;
+
+            transformedPieces[piece.Id] = (initialState.Position, finalPosition, initialState.Rotation, finalRotation);
+        }
+
+        return transformedPieces.Count == 0 ? null : new TransformPiecesCommand(_buildEditor.Build, transformedPieces);
+    }
+
+    private Piece GetMoveReferencePiece(Piece startPiece)
+    {
+        if (_buildEditor.Build == null || !_buildSelection.HasSelection)
+            return null;
+
+        if (startPiece != null && _buildSelection.Contains(startPiece))
+            return startPiece;
+
+        return _buildSelection.GetSelectedPieces(_buildEditor.Build).FirstOrDefault();
+    }
+
+    private enum RotateDirection
+    {
+        Clockwise,
+        CounterClockwise
     }
 }

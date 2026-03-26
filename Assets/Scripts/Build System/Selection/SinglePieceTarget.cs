@@ -51,6 +51,11 @@ public class SinglePieceTarget : IEditablePieceTarget
         _piece.RotateClockwise();
     }
 
+    public void RotateCounterClockwise()
+    {
+        _piece.RotateCounterClockwise();
+    }
+
     public ICommand Paint(PieceColor color)
     {
         if (_piece.Colors[0].IsEqual(color))

@@ -9,6 +9,7 @@ public interface IEditablePieceTarget
     void UpdateMove(Vector3 targetPosition);
     ICommand EndMove();
     void RotateClockwise();
+    void RotateCounterClockwise();
     ICommand Paint(PieceColor color);
     ICommand Remove();
 }

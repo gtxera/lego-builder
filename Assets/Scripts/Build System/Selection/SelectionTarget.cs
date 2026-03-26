@@ -92,18 +92,12 @@ public class SelectionTarget : IEditablePieceTarget
 
     public void RotateClockwise()
     {
-        if (_pieces.Length == 0)
-            return;
+        RotateAroundPivot(90f, PieceRotation.East);
+    }
 
-        var rotation = Quaternion.AngleAxis(90f, Vector3.up);
-        var pivot = GetSelectionPivot();
-
-        foreach (var piece in _pieces)
-        {
-            var rotatedPosition = pivot + rotation * (piece.transform.position - pivot);
-            piece.SetRotation(PieceRotationExtensions.Add(piece.Rotation, PieceRotation.East));
-            piece.MoveTo(rotatedPosition);
-        }
+    public void RotateCounterClockwise()
+    {
+        RotateAroundPivot(-90f, PieceRotation.West);
     }
 
     public ICommand Paint(PieceColor color)
@@ -180,5 +174,21 @@ public class SelectionTarget : IEditablePieceTarget
             selectionBounds.Encapsulate(_pieces[i].GetWorldBounds());
 
         return selectionBounds.center;
+    }
+
+    private void RotateAroundPivot(float angle, PieceRotation rotationStep)
+    {
+        if (_pieces.Length == 0)
+            return;
+
+        var rotation = Quaternion.AngleAxis(angle, Vector3.up);
+        var pivot = GetSelectionPivot();
+
+        foreach (var piece in _pieces)
+        {
+            var rotatedPosition = pivot + rotation * (piece.transform.position - pivot);
+            piece.SetRotation(PieceRotationExtensions.Add(piece.Rotation, rotationStep));
+            piece.MoveTo(rotatedPosition);
+        }
     }
 }

@@ -17,12 +17,6 @@ public class BuildRadialActionMenuPresenter : MonoBehaviour
     private float _radius = 120f;
 
     [SerializeField]
-    private float _startAngle = 135f;
-
-    [SerializeField]
-    private float _endAngle = 315f;
-
-    [SerializeField]
     private Vector2 _screenPadding = new(140f, 140f);
 
     private readonly List<BuildRadialActionButton> _buttons = new();
@@ -90,8 +84,8 @@ public class BuildRadialActionMenuPresenter : MonoBehaviour
         if (count <= 1)
             return Vector2.up * _radius;
 
-        var t = count == 1 ? 0.5f : index / (float)(count - 1);
-        var angle = Mathf.Lerp(_startAngle, _endAngle, t) * Mathf.Deg2Rad;
+        var angleStep = 360f / count;
+        var angle = (90f - index * angleStep) * Mathf.Deg2Rad;
         return new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * _radius;
     }
 

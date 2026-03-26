@@ -38,6 +38,7 @@ public class BuildInputContext : InputContext, ITickable
     public event Action<Piece, Vector2> DragEnded = delegate { };
     public event Action<Piece, Vector2> HoldTriggered = delegate { };
     public event Action<Piece, Vector2> DoubleTapTriggered = delegate { };
+    public event Action<Vector2> SecondaryTapTriggered = delegate { };
 
     protected override void Enable(LegoBuilderInputActions inputActions)
     {
@@ -46,6 +47,7 @@ public class BuildInputContext : InputContext, ITickable
         inputActions.Build.Drag.performed += OnDragPerformed;
         inputActions.Build.Hold.performed += OnHoldPerformed;
         inputActions.Build.DoubleTap.performed += OnDoubleTapPerformed;
+        inputActions.Build.SecondaryTap.performed += OnSecondaryTapPerformed;
     }
 
     protected override void Disable(LegoBuilderInputActions inputActions)
@@ -55,6 +57,7 @@ public class BuildInputContext : InputContext, ITickable
         inputActions.Build.Drag.performed -= OnDragPerformed;
         inputActions.Build.Hold.performed -= OnHoldPerformed;
         inputActions.Build.DoubleTap.performed -= OnDoubleTapPerformed;
+        inputActions.Build.SecondaryTap.performed -= OnSecondaryTapPerformed;
         ResetGestureState();
     }
 
@@ -121,6 +124,15 @@ public class BuildInputContext : InputContext, ITickable
 
         _doubleTapTriggered = true;
         DoubleTapTriggered(ResolvePiece(pointerPosition), pointerPosition);
+    }
+
+    private void OnSecondaryTapPerformed(InputAction.CallbackContext context)
+    {
+        var pointerPosition = ReadPointerPosition(context);
+        if (_pointerUiController.IsPointerOverUI(pointerPosition))
+            return;
+
+        SecondaryTapTriggered(pointerPosition);
     }
 
     private void OnTouchCanceled(InputAction.CallbackContext context)
