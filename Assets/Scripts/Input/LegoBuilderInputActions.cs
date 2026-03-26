@@ -478,6 +478,15 @@ public partial class @LegoBuilderInputActions: IInputActionCollection2, IDisposa
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Tap"",
+                    ""type"": ""Button"",
+                    ""id"": ""82195357-4dc7-468a-98db-acf09d84511c"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -632,6 +641,17 @@ public partial class @LegoBuilderInputActions: IInputActionCollection2, IDisposa
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Secondary Tap"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9b0e4c83-8f78-4c4d-baf2-c60ff633bd4a"",
+                    ""path"": ""<Pointer>/press"",
+                    ""interactions"": ""Tap"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Tap"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1269,6 +1289,7 @@ public partial class @LegoBuilderInputActions: IInputActionCollection2, IDisposa
         m_Build_Hold = m_Build.FindAction("Hold", throwIfNotFound: true);
         m_Build_Drag = m_Build.FindAction("Drag", throwIfNotFound: true);
         m_Build_SecondaryTap = m_Build.FindAction("Secondary Tap", throwIfNotFound: true);
+        m_Build_Tap = m_Build.FindAction("Tap", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1666,6 +1687,7 @@ public partial class @LegoBuilderInputActions: IInputActionCollection2, IDisposa
     private readonly InputAction m_Build_Hold;
     private readonly InputAction m_Build_Drag;
     private readonly InputAction m_Build_SecondaryTap;
+    private readonly InputAction m_Build_Tap;
     /// <summary>
     /// Provides access to input actions defined in input action map "Build".
     /// </summary>
@@ -1705,6 +1727,10 @@ public partial class @LegoBuilderInputActions: IInputActionCollection2, IDisposa
         /// Provides access to the underlying input action "Build/SecondaryTap".
         /// </summary>
         public InputAction @SecondaryTap => m_Wrapper.m_Build_SecondaryTap;
+        /// <summary>
+        /// Provides access to the underlying input action "Build/Tap".
+        /// </summary>
+        public InputAction @Tap => m_Wrapper.m_Build_Tap;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1752,6 +1778,9 @@ public partial class @LegoBuilderInputActions: IInputActionCollection2, IDisposa
             @SecondaryTap.started += instance.OnSecondaryTap;
             @SecondaryTap.performed += instance.OnSecondaryTap;
             @SecondaryTap.canceled += instance.OnSecondaryTap;
+            @Tap.started += instance.OnTap;
+            @Tap.performed += instance.OnTap;
+            @Tap.canceled += instance.OnTap;
         }
 
         /// <summary>
@@ -1784,6 +1813,9 @@ public partial class @LegoBuilderInputActions: IInputActionCollection2, IDisposa
             @SecondaryTap.started -= instance.OnSecondaryTap;
             @SecondaryTap.performed -= instance.OnSecondaryTap;
             @SecondaryTap.canceled -= instance.OnSecondaryTap;
+            @Tap.started -= instance.OnTap;
+            @Tap.performed -= instance.OnTap;
+            @Tap.canceled -= instance.OnTap;
         }
 
         /// <summary>
@@ -2322,6 +2354,13 @@ public partial class @LegoBuilderInputActions: IInputActionCollection2, IDisposa
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnSecondaryTap(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Tap" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnTap(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

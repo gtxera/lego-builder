@@ -46,6 +46,11 @@ public class BuildActionMenu : IDisposable
         _presenter.Hide();
     }
 
+    public bool ContainsScreenPoint(Vector2 screenPosition)
+    {
+        return _presenter != null && _presenter.ContainsScreenPoint(screenPosition);
+    }
+
     public void Dispose()
     {
         if (_presenter == null)

@@ -53,12 +53,20 @@ public class ToolController
         _buildEditor.FinishedEditing += OnFinishedEditing;
 
         _buildInputContext.PieceTapped += OnPieceTapped;
+        _buildInputContext.EmptyTapped += OnEmptyTapped;
+        _buildInputContext.TapReleased += OnTapReleased;
         _buildInputContext.DragStarted += OnDragStarted;
         _buildInputContext.DragMoved += OnDragMoved;
         _buildInputContext.DragEnded += OnDragEnded;
         _buildInputContext.HoldTriggered += OnHoldTriggered;
         _buildInputContext.DoubleTapTriggered += OnDoubleTapTriggered;
         _buildInputContext.SecondaryTapTriggered += OnSecondaryTapTriggered;
+
+        _cameraControlInputContext.CameraMoveStarted += OnCameraInteraction;
+        _cameraControlInputContext.CameraMoveRequested += OnCameraMoveRequested;
+        _cameraControlInputContext.CameraLookOrbitXRequested += OnCameraLookOrbitXRequested;
+        _cameraControlInputContext.CameraLookOrbitYRequested += OnCameraLookOrbitYRequested;
+        _cameraControlInputContext.CameraZoomRequested += OnCameraZoomRequested;
 
         _buildActionMenu.ColorRequested += OnColorRequested;
         _buildActionMenu.RotateRightRequested += OnRotateRightRequested;
@@ -108,6 +116,8 @@ public class ToolController
 
     private void OnPieceTapped(Piece piece, Vector2 pointerScreenPosition)
     {
+        HideActionMenu();
+
         if (piece == null || _buildEditor.Build == null)
             return;
 
@@ -122,6 +132,26 @@ public class ToolController
             _buildEditor.Commit(new SetSelectionCommand(_buildSelection, previousSelection, nextSelection));
             RegisterImmediateTap(piece.Id, previousSelection, nextSelection);
         }
+    }
+
+    private void OnEmptyTapped(Vector2 pointerScreenPosition)
+    {
+        HideActionMenu();
+        ClearLastTapState();
+
+        if (_buildEditor.Build == null || !_buildSelection.HasSelection)
+            return;
+
+        var previousSelection = _buildSelection.SelectedPieceIds.ToArray();
+        _buildEditor.Commit(new SetSelectionCommand(_buildSelection, previousSelection, Array.Empty<Guid>()));
+    }
+
+    private void OnTapReleased(Vector2 pointerScreenPosition)
+    {
+        if (_buildActionMenu.IsVisible && _buildActionMenu.ContainsScreenPoint(pointerScreenPosition))
+            return;
+
+        HideActionMenu();
     }
 
     private void OnDragStarted(Piece startPiece, Vector2 pointerScreenPosition)
@@ -202,6 +232,31 @@ public class ToolController
 
         _activeMoveTarget.RotateClockwise();
         UpdateSelectionMove(pointerScreenPosition);
+    }
+
+    private void OnCameraInteraction()
+    {
+        HideActionMenu();
+    }
+
+    private void OnCameraMoveRequested(Vector2 delta)
+    {
+        HideActionMenu();
+    }
+
+    private void OnCameraLookOrbitXRequested(float delta)
+    {
+        HideActionMenu();
+    }
+
+    private void OnCameraLookOrbitYRequested(float delta)
+    {
+        HideActionMenu();
+    }
+
+    private void OnCameraZoomRequested(float delta)
+    {
+        HideActionMenu();
     }
 
     private void OnColorRequested()

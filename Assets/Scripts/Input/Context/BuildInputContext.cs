@@ -39,6 +39,8 @@ public class BuildInputContext : InputContext, ITickable
     public event Action<Piece, Vector2> HoldTriggered = delegate { };
     public event Action<Piece, Vector2> DoubleTapTriggered = delegate { };
     public event Action<Vector2> SecondaryTapTriggered = delegate { };
+    public event Action<Vector2> TapReleased = delegate { };
+    public event Action<Vector2> EmptyTapped = delegate { };
 
     protected override void Enable(LegoBuilderInputActions inputActions)
     {
@@ -144,15 +146,21 @@ public class BuildInputContext : InputContext, ITickable
         _currentScreenPosition = pointerPosition;
         _currentPiece = ResolvePiece(pointerPosition);
 
+        if (!_dragStarted && !_holdTriggered && !_doubleTapTriggered)
+            TapReleased(pointerPosition);
+
         if (!_gestureStartedOverUi)
         {
             if (_dragStarted)
             {
                 DragEnded(_startPiece, pointerPosition);
             }
-            else if (!_holdTriggered && !_doubleTapTriggered && _startPiece != null)
+            else if (!_holdTriggered && !_doubleTapTriggered)
             {
-                PieceTapped(_startPiece, pointerPosition);
+                if (_startPiece != null)
+                    PieceTapped(_startPiece, pointerPosition);
+                else
+                    EmptyTapped(pointerPosition);
             }
         }
 

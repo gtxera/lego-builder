@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class BuildRadialActionMenuPresenter : MonoBehaviour
 {
@@ -20,6 +21,8 @@ public class BuildRadialActionMenuPresenter : MonoBehaviour
     private Vector2 _screenPadding = new(140f, 140f);
 
     private readonly List<BuildRadialActionButton> _buttons = new();
+    private readonly List<RaycastResult> _raycastResults = new();
+    private PointerEventData _pointerEventData;
 
     public event Action<BuildRadialActionType> ActionSelected = delegate { };
 
@@ -27,6 +30,7 @@ public class BuildRadialActionMenuPresenter : MonoBehaviour
 
     private void Awake()
     {
+        _pointerEventData = new PointerEventData(EventSystem.current);
         HideImmediate();
     }
 
@@ -60,6 +64,27 @@ public class BuildRadialActionMenuPresenter : MonoBehaviour
     public void Hide()
     {
         HideImmediate();
+    }
+
+    public bool ContainsScreenPoint(Vector2 screenPosition)
+    {
+        if (!IsVisible || EventSystem.current == null || _pointerEventData == null)
+            return false;
+
+        _pointerEventData.position = screenPosition;
+        _raycastResults.Clear();
+        EventSystem.current.RaycastAll(_pointerEventData, _raycastResults);
+
+        foreach (var result in _raycastResults)
+        {
+            if (result.gameObject == null)
+                continue;
+
+            if (result.gameObject.transform.IsChildOf(transform))
+                return true;
+        }
+
+        return false;
     }
 
     private void HideImmediate()
