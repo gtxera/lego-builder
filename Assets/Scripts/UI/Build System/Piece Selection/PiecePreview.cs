@@ -6,6 +6,7 @@ using UnityEngine.Rendering;
 public class PiecePreview : MonoBehaviour
 {
     private PiecePreviewService _piecePreviewService;
+    private BuildColorSelector _colorSelector;
 
     private Transform _viewObject;
 
@@ -24,6 +25,7 @@ public class PiecePreview : MonoBehaviour
         Vector2Int size)
     {
         _piecePreviewService = piecePreviewService;
+        _colorSelector = colorSelector;
         
         var renderTexture = new RenderTexture(size.x, size.y, 24);
 
@@ -48,8 +50,15 @@ public class PiecePreview : MonoBehaviour
             renderer.shadowCastingMode = ShadowCastingMode.Off;
 
         colorSelector.ColorChanged += OnSelectedColorChanged;
+        OnSelectedColorChanged(colorSelector.GetSelectedColorFor(0));
         
         return renderTexture;
+    }
+
+    private void OnDestroy()
+    {
+        if (_colorSelector != null)
+            _colorSelector.ColorChanged -= OnSelectedColorChanged;
     }
 
     private void OnSelectedColorChanged(PieceColor color)
