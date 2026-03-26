@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Reflex.Exceptions;
 using Reflex.Extensions;
 using UnityEngine;
 using Utils;
@@ -431,7 +432,11 @@ public class Piece : MonoBehaviour
 
     private void OnDestroy()
     {
-        Template.OnDestroy(gameObject);
+        try
+        {
+            Template.OnDestroy(gameObject);
+        }
+        catch (UnknownContractException _) { }
         
         for (int i = 0; i < _colors.Length; i++)
         {

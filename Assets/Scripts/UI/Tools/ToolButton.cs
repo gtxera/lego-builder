@@ -20,6 +20,7 @@ public class ToolButton : ValidatedMonoBehaviour
     
     private void Awake()
     {
+        gameObject.SetActive(false);
         _button.onClick.AddListener(OnClick);
         _icon.preserveAspect = true;
     }

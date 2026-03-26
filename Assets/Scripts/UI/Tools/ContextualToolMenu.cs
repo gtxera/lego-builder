@@ -20,6 +20,7 @@ public abstract class ContextualToolMenu<TTool> : MonoBehaviour where TTool : IT
 
     private void Awake()
     {
+        gameObject.SetActive(false);
         _toolController.ToolSelected += OnToolSelected;
         _toolController.ToolDeselected += OnToolDeselected;
         _rectTransform = (RectTransform)transform;

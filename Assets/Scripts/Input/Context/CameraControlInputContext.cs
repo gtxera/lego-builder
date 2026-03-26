@@ -1,13 +1,11 @@
 using System;
-using PrimeTween;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Controls;
 
 public class CameraControlInputContext : InputContext, ITickable
 {
-    private bool _primaryTouchPerformed;
-    private bool _secondTouchPerformed;
+    private const float PointerDeltaScale = 1000f;
+
     private Vector2 _lastFirstTouchPosition;
     private Vector2 _lastSecondTouchPosition;
     private float _lastTouchesDistance;
@@ -15,15 +13,9 @@ public class CameraControlInputContext : InputContext, ITickable
     private bool _touchBeganInUI;
 
     private int _touchCount;
-    private bool _touchesProcessed;
-
     private bool _moveControlEnabled = true;
 
-    private Tween _doubleTapDelay;
-    private bool _doubleTapMode;
-
     private readonly PointerUIController _pointerUIController;
-    private readonly TouchController _touchController;
 
     private readonly InputAction _firstTouchInputAction;
     private readonly InputAction _secondTouchInputAction;
@@ -31,7 +23,7 @@ public class CameraControlInputContext : InputContext, ITickable
     public CameraControlInputContext(LegoBuilderInputActions inputActions, PointerUIController pointerUIController, TouchController touchController) : base(inputActions)
     {
         _pointerUIController = pointerUIController;
-        _touchController = touchController;
+        _ = touchController;
 
         _firstTouchInputAction = inputActions.Camera.FirstTouch;
         _secondTouchInputAction = inputActions.Camera.SecondTouch;
@@ -53,12 +45,11 @@ public class CameraControlInputContext : InputContext, ITickable
         _moveControlEnabled = true;
 
         inputActions.Camera.FirstTouchContact.performed += OnFirstTouchContact;
-        inputActions.Camera.FirstTouch.performed += OnFirstTouchMoved;
         inputActions.Camera.FirstTouchContact.canceled += OnFirstTouchLifted;
         
         inputActions.Camera.SecondTouchContact.performed += OnSecondTouchContact;
         inputActions.Camera.SecondTouchContact.canceled += OnSecondTouchLifted;
-        
+
         inputActions.Camera.Touch.performed += OnMoveStarted;
         inputActions.Camera.Move.performed += OnMovePerformed;
         inputActions.Camera.Touch.canceled += OnMoveCanceled;
@@ -72,7 +63,6 @@ public class CameraControlInputContext : InputContext, ITickable
         _moveControlEnabled = false;
 
         inputActions.Camera.FirstTouchContact.performed -= OnFirstTouchContact;
-        inputActions.Camera.FirstTouch.performed -= OnFirstTouchMoved;
         inputActions.Camera.FirstTouchContact.canceled -= OnFirstTouchLifted;
 
         inputActions.Camera.SecondTouchContact.performed -= OnSecondTouchContact;
@@ -95,44 +85,6 @@ public class CameraControlInputContext : InputContext, ITickable
         _touchBeganInUI = _pointerUIController.IsPointerOverUI(position);
         _touchCount++;
         _lastFirstTouchPosition = position;
-        
-        if (!_doubleTapDelay.isAlive)
-            _doubleTapDelay = Tween.Delay(.25f);
-        else
-        {
-            _doubleTapMode = true;
-            _doubleTapDelay.Stop();
-        }
-    }
-
-    private void OnFirstTouchMoved(InputAction.CallbackContext context)
-    {
-        if (_lastFirstTouchPosition == Vector2.zero || _touchCount >= 2)
-            return;
-
-        if (_doubleTapDelay.isAlive)
-        {
-            _doubleTapDelay.Stop();
-            Debug.Log("moveu");
-        }
-        
-        var position = context.ReadValue<Vector2>();
-        var lastTouchPosition = _lastFirstTouchPosition;
-        _lastFirstTouchPosition = position;
-        
-        if (!CanMove())
-            return;
-        
-        var delta = lastTouchPosition - position;
-
-        if (!_doubleTapMode)
-            HandleCameraMoveRequest(NormalizeToScreen(delta * 1000000));
-        else
-        {
-            var normalized = NormalizeToScreen(-delta);
-            HandleCameraLookOrbitXRequested(normalized.x * 1000000);
-            HandleCameraLookOrbitYRequested(normalized.y * 1000000);
-        }
     }
     
     private void OnFirstTouchLifted(InputAction.CallbackContext context)
@@ -141,8 +93,6 @@ public class CameraControlInputContext : InputContext, ITickable
         if (_touchCount > 0)
             _touchCount--; 
         _lastFirstTouchPosition = Vector2.zero;
-        _doubleTapMode = false;
-        Debug.Log($"toque 1 up");
     }
 
     private void OnSecondTouchContact(InputAction.CallbackContext context)
@@ -151,8 +101,6 @@ public class CameraControlInputContext : InputContext, ITickable
             throw new InvalidOperationException("Touch deve ser touch");
         
         var position = touchscreen.touches[1].position.ReadValue();
-
-        Debug.Log($"toque 2 {position}");
         _lastSecondTouchPosition = position;
         _touchCount++;
         _lastTouchesDistance = Vector2.Distance(NormalizeToScreen(_lastFirstTouchPosition), NormalizeToScreen(_lastSecondTouchPosition));
@@ -163,7 +111,6 @@ public class CameraControlInputContext : InputContext, ITickable
     {
         if (_touchCount > 0)
             _touchCount--;
-        Debug.Log($"toque 2 up");
     }
 
     private void OnMoveStarted(InputAction.CallbackContext context)
@@ -176,26 +123,24 @@ public class CameraControlInputContext : InputContext, ITickable
         if (CanMove())
             CameraMoveStarted();
     }
-    
+
     private void OnMovePerformed(InputAction.CallbackContext context)
     {
         if (!CanMove())
             return;
-        
-        HandleCameraMoveRequest(context.ReadValue<Vector2>()*1000);
+
+        HandleCameraMoveRequest(context.ReadValue<Vector2>() * PointerDeltaScale);
     }
 
-    private void OnMoveCanceled(InputAction.CallbackContext _)
+    private void OnMoveCanceled(InputAction.CallbackContext context)
     {
         _touchBeganInUI = false;
-        
+
         if (!CanMove())
             return;
 
         CameraMoveFinished();
     }
-
-    private bool CanMove() => !_touchBeganInUI && _moveControlEnabled && _touchCount <= 1;
 
     private void OnLookPerformed(InputAction.CallbackContext context)
     {
@@ -216,7 +161,7 @@ public class CameraControlInputContext : InputContext, ITickable
 
     private void OnZoomPerformed(InputAction.CallbackContext context)
     {
-        if (_pointerUIController.IsPointerOverUI(Pointer.current.position.ReadValue()))
+        if (Pointer.current != null && _pointerUIController.IsPointerOverUI(Pointer.current.position.ReadValue()))
             return;
         
         var delta = context.ReadValue<Vector2>();
@@ -224,14 +169,14 @@ public class CameraControlInputContext : InputContext, ITickable
         HandleCameraZoomRequested(-delta.y * 1000);
     }
 
-    private void HandleCameraMoveRequest(Vector2 delta)
-    {
-        CameraMoveRequested(NormalizeToScreen(delta));
-    }
-
     private void HandleCameraLookOrbitYRequested(float delta)
     {
         CameraLookOrbitYRequested(delta);
+    }
+
+    private void HandleCameraMoveRequest(Vector2 delta)
+    {
+        CameraMoveRequested(NormalizeToScreen(delta));
     }
 
     private void HandleCameraLookOrbitXRequested(float delta)
@@ -250,17 +195,27 @@ public class CameraControlInputContext : InputContext, ITickable
         return vector / screenSize;
     }
 
+    private bool CanMove() => !_touchBeganInUI && _moveControlEnabled && _touchCount <= 1;
+
     public void Tick(float deltaTime)
     {
-        if (_touchCount != 2)
+        if (_touchCount == 1 && !_touchBeganInUI && _moveControlEnabled)
+        {
+            var singleTouchPosition = _firstTouchInputAction.ReadValue<Vector2>();
+            var singleTouchDelta = singleTouchPosition - _lastFirstTouchPosition;
+
+            if (singleTouchDelta != Vector2.zero)
+                HandleCameraMoveRequest(singleTouchDelta * PointerDeltaScale);
+
+            _lastFirstTouchPosition = singleTouchPosition;
+            return;
+        }
+
+        if (_touchCount != 2 || _touchBeganInUI || !_moveControlEnabled)
             return;
 
-        Debug.Log("dois!");
         var firstTouchPosition = _firstTouchInputAction.ReadValue<Vector2>();
         var secondTouchPosition = _secondTouchInputAction.ReadValue<Vector2>();
-
-        Debug.Log($"primeiro {firstTouchPosition}");
-        Debug.Log($"segundo {secondTouchPosition}");
 
         var touchesDistance = Vector2.Distance(NormalizeToScreen(firstTouchPosition), NormalizeToScreen(secondTouchPosition));
         var touchesDirection = (secondTouchPosition - firstTouchPosition).normalized;
@@ -277,19 +232,14 @@ public class CameraControlInputContext : InputContext, ITickable
         var firstSign = Mathf.Sign(firstTouchDelta.y);
         var secondSign = Mathf.Sign(secondTouchDelta.y);
 
-        Debug.Log($"first delta {firstTouchDelta.y}");
-        Debug.Log($"second delta {secondTouchDelta.y}");
-
         if (firstSign == secondSign)
         {
             var absoluteFirstDelta = Mathf.Abs(firstTouchDelta.y);
             var absoluteSecondDelta = Mathf.Abs(secondTouchDelta.y);
 
             var delta = Mathf.Max(absoluteFirstDelta, absoluteSecondDelta) * firstSign;
-            Debug.Log($"delta altura {delta}");
             HandleCameraLookOrbitYRequested(delta * 200000);
         }
-
 
         _lastTouchesDistance = touchesDistance;
         _lastTouchesDirection = touchesDirection;

@@ -10,6 +10,9 @@ using UnityEngine.InputSystem;
 public class CameraController : ValidatedMonoBehaviour
 {
     [Inject]
+    private readonly ToolController _toolController;
+
+    [Inject]
     private readonly CameraControlInputContext _cameraControlInputContext;
 
     [Inject]
@@ -30,40 +33,22 @@ public class CameraController : ValidatedMonoBehaviour
     [SerializeField, Scene]
     private CinemachineOrbitalFollow _orbitalFollow;
     
-    private Vector3 _lastPosition;
     private readonly Dictionary<float, Vector3> _aggregatedVelocities = new();
     private readonly List<float> _oldVelocities = new();
-
-    private List<Bounds> _limitingBounds = new();
+    private readonly List<Bounds> _limitingBounds = new();
 
     private Vector3 _velocity;
     private Tween _moveToTargetTween;
 
-    [Inject]
-    private ToolController _toolController;
-
-    [Inject]
-    private SpawnerTool _spanwerTool;
-
-    [Inject]
-    private RemoverTool _removerTool;
-
-    [Inject]
-    private MoverTool _moverTool;
-    
-    [Inject]
-    private PainterTool _painterTool;
-
-    [Inject]
-    private SelectionTool _selectionTool;
-
-    [Inject]
-    private BuildColorSelector _buildColorSelector;
-    
     private void Awake()
     {
+        _toolController.CameraMoveRequested += OnMove;
+        _toolController.CameraMoveFinished += OnMoveFinished;
         _cameraControlInputContext.CameraMoveRequested += OnMove;
         _cameraControlInputContext.CameraMoveFinished += OnMoveFinished;
+        _cameraControlInputContext.CameraLookOrbitXRequested += OnLookX;
+        _cameraControlInputContext.CameraLookOrbitYRequested += OnLookY;
+        _cameraControlInputContext.CameraZoomRequested += OnZoom;
         
         _limitingBounds.Add(new Bounds(Vector3.zero, Vector3.one * 120f));
 
@@ -128,9 +113,7 @@ public class CameraController : ValidatedMonoBehaviour
         foreach (var limitingBounds in _limitingBounds)
         {
             if (!limitingBounds.Contains(newPosition))
-            {
                 newPosition = limitingBounds.ClosestPoint(newPosition);
-            }
         }
 
         transform.position = newPosition;
@@ -138,21 +121,25 @@ public class CameraController : ValidatedMonoBehaviour
 
     private void Update()
     {
-        if (Keyboard.current.rKey.wasReleasedThisFrame)
-            _toolController.PickTool(_removerTool);
-        if (Keyboard.current.sKey.wasReleasedThisFrame)
-            _toolController.PickTool(_spanwerTool);
-        if (Keyboard.current.mKey.wasReleasedThisFrame)
-            _toolController.PickTool(_moverTool);
-        if (Keyboard.current.pKey.wasReleasedThisFrame)
-            _toolController.PickTool(_painterTool);
-        if (Keyboard.current.qKey.wasReleasedThisFrame)
-            _toolController.PickTool(_selectionTool);
-        
         if (Keyboard.current.zKey.wasReleasedThisFrame)
             _buildEditor.Undo();
         
         if (Keyboard.current.xKey.wasReleasedThisFrame)
             _buildEditor.Redo();
+    }
+
+    private void OnLookX(float delta)
+    {
+        _orbitalFollow.HorizontalAxis.Value += delta * _sensitivitySettings.LookXSensitivity * Time.deltaTime;
+    }
+
+    private void OnLookY(float delta)
+    {
+        _orbitalFollow.VerticalAxis.Value += delta * _sensitivitySettings.LookYSensitivity * Time.deltaTime;
+    }
+
+    private void OnZoom(float delta)
+    {
+        _orbitalFollow.RadialAxis.Value += delta * _sensitivitySettings.ZoomSensitivity * Time.deltaTime;
     }
 }

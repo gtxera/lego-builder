@@ -433,6 +433,51 @@ public partial class @LegoBuilderInputActions: IInputActionCollection2, IDisposa
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Touch"",
+                    ""type"": ""Button"",
+                    ""id"": ""34c6ca36-915a-4959-a448-323877f44e5f"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Double Tap"",
+                    ""type"": ""Button"",
+                    ""id"": ""07447224-ca36-4263-9ae6-c86e84449e9c"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Hold"",
+                    ""type"": ""Button"",
+                    ""id"": ""87277ec2-a49b-400d-b005-e47df0292d9a"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Drag"",
+                    ""type"": ""Value"",
+                    ""id"": ""509f8bcf-7924-405f-9cd0-4011b850995e"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Secondary Tap"",
+                    ""type"": ""Button"",
+                    ""id"": ""60449aec-8242-4993-9cbf-7e56782f2e74"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -501,6 +546,94 @@ public partial class @LegoBuilderInputActions: IInputActionCollection2, IDisposa
                     ""action"": ""Redo"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""39051ed1-a653-460d-8145-d0403f8d45fe"",
+                    ""path"": ""<Pointer>/press"",
+                    ""interactions"": ""MultiTap(tapCount=2,tapTime=0.25,tapDelay=0.25)"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Double Tap"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""87add43a-eb5e-4c29-a85b-5903d80b1df4"",
+                    ""path"": ""<Pointer>/press"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Touch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d6451ba0-0e8e-4a13-b5ae-9472822cc5e7"",
+                    ""path"": ""<Pointer>/press"",
+                    ""interactions"": ""Hold(duration=0.45,pressPoint=0.2)"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Hold"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""One Modifier"",
+                    ""id"": ""98fed869-e38c-46df-9c6f-ee34505eadb1"",
+                    ""path"": ""OneModifier"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Drag"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""modifier"",
+                    ""id"": ""22676e91-ecb0-422d-971e-5729f6f581cb"",
+                    ""path"": ""<Pointer>/press"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Drag"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""binding"",
+                    ""id"": ""49e2cac2-031a-4be3-bf5b-2223e3a267e5"",
+                    ""path"": ""<Pointer>/delta"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Drag"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""183d68d3-a552-4e5b-994a-bfda15f172e6"",
+                    ""path"": ""<Touchscreen>/touch1/tap"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Secondary Tap"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8af13865-db39-4745-9e3e-1cd4e55ce1fe"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Secondary Tap"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -1131,6 +1264,11 @@ public partial class @LegoBuilderInputActions: IInputActionCollection2, IDisposa
         m_Build = asset.FindActionMap("Build", throwIfNotFound: true);
         m_Build_Undo = m_Build.FindAction("Undo", throwIfNotFound: true);
         m_Build_Redo = m_Build.FindAction("Redo", throwIfNotFound: true);
+        m_Build_Touch = m_Build.FindAction("Touch", throwIfNotFound: true);
+        m_Build_DoubleTap = m_Build.FindAction("Double Tap", throwIfNotFound: true);
+        m_Build_Hold = m_Build.FindAction("Hold", throwIfNotFound: true);
+        m_Build_Drag = m_Build.FindAction("Drag", throwIfNotFound: true);
+        m_Build_SecondaryTap = m_Build.FindAction("Secondary Tap", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1523,6 +1661,11 @@ public partial class @LegoBuilderInputActions: IInputActionCollection2, IDisposa
     private List<IBuildActions> m_BuildActionsCallbackInterfaces = new List<IBuildActions>();
     private readonly InputAction m_Build_Undo;
     private readonly InputAction m_Build_Redo;
+    private readonly InputAction m_Build_Touch;
+    private readonly InputAction m_Build_DoubleTap;
+    private readonly InputAction m_Build_Hold;
+    private readonly InputAction m_Build_Drag;
+    private readonly InputAction m_Build_SecondaryTap;
     /// <summary>
     /// Provides access to input actions defined in input action map "Build".
     /// </summary>
@@ -1542,6 +1685,26 @@ public partial class @LegoBuilderInputActions: IInputActionCollection2, IDisposa
         /// Provides access to the underlying input action "Build/Redo".
         /// </summary>
         public InputAction @Redo => m_Wrapper.m_Build_Redo;
+        /// <summary>
+        /// Provides access to the underlying input action "Build/Touch".
+        /// </summary>
+        public InputAction @Touch => m_Wrapper.m_Build_Touch;
+        /// <summary>
+        /// Provides access to the underlying input action "Build/DoubleTap".
+        /// </summary>
+        public InputAction @DoubleTap => m_Wrapper.m_Build_DoubleTap;
+        /// <summary>
+        /// Provides access to the underlying input action "Build/Hold".
+        /// </summary>
+        public InputAction @Hold => m_Wrapper.m_Build_Hold;
+        /// <summary>
+        /// Provides access to the underlying input action "Build/Drag".
+        /// </summary>
+        public InputAction @Drag => m_Wrapper.m_Build_Drag;
+        /// <summary>
+        /// Provides access to the underlying input action "Build/SecondaryTap".
+        /// </summary>
+        public InputAction @SecondaryTap => m_Wrapper.m_Build_SecondaryTap;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1574,6 +1737,21 @@ public partial class @LegoBuilderInputActions: IInputActionCollection2, IDisposa
             @Redo.started += instance.OnRedo;
             @Redo.performed += instance.OnRedo;
             @Redo.canceled += instance.OnRedo;
+            @Touch.started += instance.OnTouch;
+            @Touch.performed += instance.OnTouch;
+            @Touch.canceled += instance.OnTouch;
+            @DoubleTap.started += instance.OnDoubleTap;
+            @DoubleTap.performed += instance.OnDoubleTap;
+            @DoubleTap.canceled += instance.OnDoubleTap;
+            @Hold.started += instance.OnHold;
+            @Hold.performed += instance.OnHold;
+            @Hold.canceled += instance.OnHold;
+            @Drag.started += instance.OnDrag;
+            @Drag.performed += instance.OnDrag;
+            @Drag.canceled += instance.OnDrag;
+            @SecondaryTap.started += instance.OnSecondaryTap;
+            @SecondaryTap.performed += instance.OnSecondaryTap;
+            @SecondaryTap.canceled += instance.OnSecondaryTap;
         }
 
         /// <summary>
@@ -1591,6 +1769,21 @@ public partial class @LegoBuilderInputActions: IInputActionCollection2, IDisposa
             @Redo.started -= instance.OnRedo;
             @Redo.performed -= instance.OnRedo;
             @Redo.canceled -= instance.OnRedo;
+            @Touch.started -= instance.OnTouch;
+            @Touch.performed -= instance.OnTouch;
+            @Touch.canceled -= instance.OnTouch;
+            @DoubleTap.started -= instance.OnDoubleTap;
+            @DoubleTap.performed -= instance.OnDoubleTap;
+            @DoubleTap.canceled -= instance.OnDoubleTap;
+            @Hold.started -= instance.OnHold;
+            @Hold.performed -= instance.OnHold;
+            @Hold.canceled -= instance.OnHold;
+            @Drag.started -= instance.OnDrag;
+            @Drag.performed -= instance.OnDrag;
+            @Drag.canceled -= instance.OnDrag;
+            @SecondaryTap.started -= instance.OnSecondaryTap;
+            @SecondaryTap.performed -= instance.OnSecondaryTap;
+            @SecondaryTap.canceled -= instance.OnSecondaryTap;
         }
 
         /// <summary>
@@ -2094,6 +2287,41 @@ public partial class @LegoBuilderInputActions: IInputActionCollection2, IDisposa
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnRedo(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Touch" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnTouch(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Double Tap" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnDoubleTap(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Hold" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnHold(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Drag" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnDrag(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Secondary Tap" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSecondaryTap(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

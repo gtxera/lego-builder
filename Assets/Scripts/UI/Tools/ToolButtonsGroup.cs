@@ -22,6 +22,8 @@ public class ToolButtonsGroup : MonoBehaviour
 
     private void Awake()
     {
+        gameObject.SetActive(false);
+
         foreach (var tool in _tools)
         {
             var toolButton = Instantiate(_toolButtonPrefab, transform);

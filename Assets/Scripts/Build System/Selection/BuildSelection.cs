@@ -20,6 +20,8 @@ public class BuildSelection : IDisposable
 
     public bool Contains(Piece piece) => piece != null && _selectedPieceIds.Contains(piece.Id);
 
+    public bool Contains(Guid pieceId) => _selectedPieceIds.Contains(pieceId);
+
     public IReadOnlyCollection<Guid> SelectedPieceIds => _selectedPieceIds.ToArray();
 
     public void ReplaceSelection(IEnumerable<Guid> pieceIds)
@@ -40,6 +42,37 @@ public class BuildSelection : IDisposable
     public void Clear()
     {
         ReplaceSelection(Array.Empty<Guid>());
+    }
+
+    public void AddToSelection(Guid pieceId)
+    {
+        if (_selectedPieceIds.Add(pieceId))
+            SelectionChanged();
+    }
+
+    public void AddRangeToSelection(IEnumerable<Guid> pieceIds)
+    {
+        var changed = false;
+
+        foreach (var pieceId in pieceIds)
+            changed |= _selectedPieceIds.Add(pieceId);
+
+        if (changed)
+            SelectionChanged();
+    }
+
+    public void RemoveFromSelection(Guid pieceId)
+    {
+        if (_selectedPieceIds.Remove(pieceId))
+            SelectionChanged();
+    }
+
+    public void ToggleSelection(Guid pieceId)
+    {
+        if (!_selectedPieceIds.Remove(pieceId))
+            _selectedPieceIds.Add(pieceId);
+
+        SelectionChanged();
     }
 
     public IReadOnlyList<Piece> GetSelectedPieces(Build build)

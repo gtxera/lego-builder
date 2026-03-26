@@ -7,10 +7,7 @@ using UnityEngine;
 public class UIViewController : MonoBehaviour
 {
     [Inject]
-    private readonly CameraControlInputContext _cameraControlInputContext;
-
-    [Inject]
-    private readonly ToolInputContext _toolInputContext;
+    private readonly ToolController _toolController;
 
     [SerializeField, Self]
     private CanvasGroup _canvasGroup;
@@ -19,11 +16,10 @@ public class UIViewController : MonoBehaviour
 
     private void Awake()
     {
-        _cameraControlInputContext.CameraMoveStarted += Hide;
-        _cameraControlInputContext.CameraMoveFinished += Show;
-
-        _toolInputContext.Pressed += _ => Hide();
-        _toolInputContext.Released += _ => Show();
+        _toolController.CameraMoveStarted += Hide;
+        _toolController.CameraMoveFinished += Show;
+        _toolController.SelectionMoveStarted += Hide;
+        _toolController.SelectionMoveFinished += Show;
     }
 
     private void Hide()

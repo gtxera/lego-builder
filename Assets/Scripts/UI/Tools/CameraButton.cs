@@ -17,6 +17,7 @@ public class CameraButton : MonoBehaviour
 
     private void Awake()
     {
+        gameObject.SetActive(false);
         _button.onClick.AddListener(OnClick);
 
         _toolController.ToolSelected += _ => _selectedImage.enabled = false;

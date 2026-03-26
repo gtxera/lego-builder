@@ -15,6 +15,7 @@ public class BuildSystemInstaller : MonoBehaviour, IInstaller
             .AddScoped(typeof(BuildTemplateSelector))
             .AddScoped(typeof(EditablePieceTargetResolver))
             .AddScoped(typeof(SelectionRectangleOverlay))
+            .AddScoped(typeof(BuildActionMenu))
             .AddSingleton(typeof(PieceTemplateDatabase))
             .AddScoped(typeof(CameraServices))
             .AddScoped(typeof(PiecePreviewService))

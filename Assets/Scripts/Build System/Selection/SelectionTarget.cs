@@ -26,7 +26,10 @@ public class SelectionTarget : IEditablePieceTarget
 
     public void BeginMove(Piece referencePiece)
     {
-        _referencePiece = referencePiece;
+        _referencePiece = _pieces.FirstOrDefault(piece => piece == referencePiece) ?? _pieces.FirstOrDefault();
+        if (_referencePiece == null)
+            return;
+
         _initialPositions.Clear();
         _initialRotations.Clear();
 
