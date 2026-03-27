@@ -16,6 +16,7 @@ public class ToolController
     private readonly BuildColorSelector _buildColorSelector;
     private readonly CameraServices _cameraServices;
     private readonly BuildActionMenu _buildActionMenu;
+    private readonly PainterTool _painterTool;
 
     private ITool _activeTool;
     private IEditablePieceTarget _activeMoveTarget;
@@ -27,6 +28,7 @@ public class ToolController
     private Guid[] _lastTapPreviousSelection;
     private Guid[] _lastTapNextSelection;
     private float _lastTapTime;
+    private bool _actionColorMenuActive;
 
     public ToolController(
         BuildInputContext buildInputContext,
@@ -38,6 +40,7 @@ public class ToolController
         BuildColorSelector buildColorSelector,
         CameraServices cameraServices,
         BuildActionMenu buildActionMenu,
+        PainterTool painterTool,
         BuildSelectionVisualizer buildSelectionVisualizer)
     {
         _buildInputContext = buildInputContext;
@@ -49,6 +52,7 @@ public class ToolController
         _buildColorSelector = buildColorSelector;
         _cameraServices = cameraServices;
         _buildActionMenu = buildActionMenu;
+        _painterTool = painterTool;
         _ = buildSelectionVisualizer;
 
         _buildEditor.StartedEditing += OnStartedEditing;
@@ -88,14 +92,34 @@ public class ToolController
     public event Action ToolReleased = delegate { };
     public event Action<ITool> ToolSelected = delegate { };
     public event Action<ITool> ToolDeselected = delegate { };
+    public event Action<IReadOnlyList<Piece>> ColorSelectionRequested = delegate { };
 
     public void PickTool(ITool tool)
     {
+        if (_activeTool == tool)
+            return;
+
+        if (tool != _painterTool)
+            _actionColorMenuActive = false;
+
+        if (_activeTool != null)
+            ToolDeselected(_activeTool);
+
         _activeTool = tool;
+
+        if (_activeTool != null)
+            ToolSelected(_activeTool);
     }
 
     public void DeselectTool()
     {
+        if (_activeTool == null)
+            return;
+
+        if (_activeTool == _painterTool)
+            _actionColorMenuActive = false;
+
+        ToolDeselected(_activeTool);
         _activeTool = null;
     }
 
@@ -131,6 +155,7 @@ public class ToolController
     {
         _buildInputContext.Disable();
         _cameraControlInputContext.EnableMoveControl();
+        CloseActionColorMenu();
         HideActionMenu();
         CancelPendingSpawnPlacement();
         CancelCurrentMove();
@@ -140,6 +165,7 @@ public class ToolController
 
     private void OnPieceTapped(Piece piece, Vector2 pointerScreenPosition)
     {
+        CloseActionColorMenu();
         HideActionMenu();
 
         if (piece == null || _buildEditor.Build == null)
@@ -160,6 +186,7 @@ public class ToolController
 
     private void OnEmptyTapped(Vector2 pointerScreenPosition)
     {
+        CloseActionColorMenu();
         HideActionMenu();
         ClearLastTapState();
 
@@ -193,6 +220,7 @@ public class ToolController
             return;
         }
 
+        CloseActionColorMenu();
         HideActionMenu();
         ClearLastTapState();
 
@@ -255,6 +283,7 @@ public class ToolController
 
     private void OnHoldTriggered(Piece piece, Vector2 pointerScreenPosition)
     {
+        CloseActionColorMenu();
         ClearLastTapState();
 
         if (_buildEditor.Build == null)
@@ -269,6 +298,7 @@ public class ToolController
 
     private void OnDoubleTapTriggered(Piece piece, Vector2 pointerScreenPosition)
     {
+        CloseActionColorMenu();
         RevertImmediateTapIfNeeded(piece);
         BeginPendingSpawnPlacement(_buildTemplateSelector.SelectedTemplate, pointerScreenPosition);
     }
@@ -281,6 +311,8 @@ public class ToolController
             return;
         }
 
+        CloseActionColorMenu();
+
         if (_activeMoveTarget == null || _activeReferencePiece == null || !_activeMoveTarget.CanRotate)
             return;
 
@@ -290,52 +322,66 @@ public class ToolController
 
     private void OnCameraInteraction()
     {
+        CloseActionColorMenu();
         HideActionMenu();
     }
 
     private void OnCameraMoveRequested(Vector2 delta)
     {
+        CloseActionColorMenu();
         HideActionMenu();
     }
 
     private void OnCameraLookOrbitXRequested(float delta)
     {
+        CloseActionColorMenu();
         HideActionMenu();
     }
 
     private void OnCameraLookOrbitYRequested(float delta)
     {
+        CloseActionColorMenu();
         HideActionMenu();
     }
 
     private void OnCameraZoomRequested(float delta)
     {
+        CloseActionColorMenu();
         HideActionMenu();
     }
 
     private void OnColorRequested()
     {
         HideActionMenu();
+        if (_buildEditor.Build == null || !_buildSelection.HasSelection)
+            return;
 
-        var command = CreateEditableSelectionTarget()?.Paint(_buildColorSelector.GetSelectedColorFor(0));
-        if (command != null)
-            _buildEditor.Commit(command);
+        var selectedPieces = _buildSelection.GetSelectedPieces(_buildEditor.Build);
+        if (selectedPieces.Count == 0)
+            return;
+
+        PickTool(_painterTool);
+        _actionColorMenuActive = true;
+        ColorSelectionRequested(selectedPieces);
     }
 
     private void OnRotateRightRequested()
     {
+        CloseActionColorMenu();
         HideActionMenu();
         RotateSelection(RotateDirection.Clockwise);
     }
 
     private void OnRotateLeftRequested()
     {
+        CloseActionColorMenu();
         HideActionMenu();
         RotateSelection(RotateDirection.CounterClockwise);
     }
 
     private void OnRemoveRequested()
     {
+        CloseActionColorMenu();
         HideActionMenu();
 
         var command = CreateEditableSelectionTarget()?.Remove();
@@ -520,6 +566,17 @@ public class ToolController
 
         _buildActionMenu.Hide();
         ActionMenuHidden();
+    }
+
+    private void CloseActionColorMenu()
+    {
+        if (!_actionColorMenuActive)
+            return;
+
+        _actionColorMenuActive = false;
+
+        if (_activeTool == _painterTool)
+            DeselectTool();
     }
 
     private void CancelCurrentMove()

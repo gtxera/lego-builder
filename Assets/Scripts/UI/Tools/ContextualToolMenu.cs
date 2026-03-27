@@ -33,6 +33,7 @@ public abstract class ContextualToolMenu<TTool> : MonoBehaviour where TTool : IT
         if (tool is not TTool)
             return;
 
+        gameObject.SetActive(true);
         transform.SetAsLastSibling();
         Tween.UIAnchoredPosition(_rectTransform, _showTween);
         FMODUnity.RuntimeManager.PlayOneShot(_slideEvent);
@@ -43,6 +44,7 @@ public abstract class ContextualToolMenu<TTool> : MonoBehaviour where TTool : IT
         if (tool is not TTool) 
             return;
 
-        Tween.UIAnchoredPosition(_rectTransform, _hideTween);
+        Tween.UIAnchoredPosition(_rectTransform, _hideTween)
+            .OnComplete(target: this, _ => gameObject.SetActive(false));
     }
 }

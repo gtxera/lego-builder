@@ -27,6 +27,7 @@ public class HueWheel : ValidatedMonoBehaviour, IPointerDownHandler, IPointerUpH
     private RectTransform _rectTransform;
 
     public event Action<float> HueChanged = delegate { }; 
+    public event Action InteractionFinished = delegate { };
     
     private void Awake()
     {
@@ -86,6 +87,7 @@ public class HueWheel : ValidatedMonoBehaviour, IPointerDownHandler, IPointerUpH
     public void OnPointerUp(PointerEventData eventData)
     {
         _dragging = false;
+        InteractionFinished();
     }
     
     public void OnPointerMove(PointerEventData eventData)
@@ -110,5 +112,12 @@ public class HueWheel : ValidatedMonoBehaviour, IPointerDownHandler, IPointerUpH
 
         var hue = Mathf.Clamp01(angle / (Mathf.PI * 2f));
         HueChanged(hue);
+    }
+
+    public void SetHue(float hue)
+    {
+        var angle = Mathf.Repeat(hue, 1f) * Mathf.PI * 2f;
+        var position = new Vector2(Mathf.Sin(angle), Mathf.Cos(angle)) * _reticleMagnitude;
+        _reticleImage.rectTransform.localPosition = position;
     }
 }

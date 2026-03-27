@@ -21,6 +21,7 @@ public class SaturationValuePicker : ValidatedMonoBehaviour, IPointerDownHandler
     private bool _dragging;
 
     public event Action<Vector2> SaturationValueChanged = delegate { };
+    public event Action InteractionFinished = delegate { };
 
     private void Awake()
     {
@@ -54,6 +55,7 @@ public class SaturationValuePicker : ValidatedMonoBehaviour, IPointerDownHandler
     public void OnPointerUp(PointerEventData eventData)
     {
         _dragging = false;
+        InteractionFinished();
     }
 
     private void MoveReticle(Vector2 reticlePosition)
@@ -67,5 +69,12 @@ public class SaturationValuePicker : ValidatedMonoBehaviour, IPointerDownHandler
         _reticleImage.rectTransform.localPosition = position;
 
         SaturationValueChanged(normalized);
+    }
+
+    public void SetSaturationValue(Vector2 normalized)
+    {
+        normalized = new Vector2(Mathf.Clamp01(normalized.x), Mathf.Clamp01(normalized.y));
+        var position = Vector2.Scale(normalized, _rectTransform.rect.size) - _rectTransform.rect.size / 2f;
+        _reticleImage.rectTransform.localPosition = position;
     }
 }

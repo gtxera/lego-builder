@@ -14,10 +14,21 @@ public class BuildColorSelector
     public event Action<PieceColor> ColorChanged = delegate { }; 
 
     public PieceColor GetSelectedColorFor(int index) => _colors[index];
+    public PieceColor SelectedColor => GetSelectedColorFor(0);
 
     public void SetColor(Color color, bool transparent)
     {
-        _colors[0] = new SimpleColor(color, transparent);
+        SetColor(new SimpleColor(color, transparent));
+    }
+
+    public void SetColor(PieceColor color)
+    {
+        _colors[0] = Clone(color);
         ColorChanged(_colors[0]);
+    }
+
+    public static PieceColor Clone(PieceColor color)
+    {
+        return new SimpleColor(color.Color, color.Transparent);
     }
 }
