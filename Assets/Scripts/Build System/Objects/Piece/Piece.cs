@@ -306,29 +306,39 @@ public class Piece : MonoBehaviour
 
     public Vector3 GetSweepPosition(Vector3 origin, Vector3 direction)
     {
-        var originalPosition = _rigidbody.position;
-        direction.Normalize();
-        
-        _connectorsRoot.SetActive(false);
-        
-        _rigidbody.position = origin;
-
-        if (!_rigidbody.SweepTest(direction, out var hit, Mathf.Infinity, QueryTriggerInteraction.Ignore))
-        {
-            _rigidbody.position = originalPosition;
-            _connectorsRoot.SetActive(true);
+        if (!TryGetSweepDistance(origin, direction, out var distance))
             return Vector3.zero;
+
+        return GetGridPosition(origin + direction.normalized * distance);
+    }
+
+    public bool TryGetSweepDistance(Vector3 origin, Vector3 direction, out float hitDistance)
+    {
+        var originalPosition = _rigidbody.position;
+        if (direction.sqrMagnitude <= Mathf.Epsilon)
+        {
+            hitDistance = 0f;
+            return false;
         }
 
-        var originalPoint = hit.point - direction * hit.distance;
-        var center = origin - originalPoint;
-        var position = GetGridPosition(hit.point + center);
+        direction.Normalize();
+
+        _connectorsRoot.SetActive(false);
+        _rigidbody.position = origin;
+
+        var hitDetected = _rigidbody.SweepTest(direction, out var hit, Mathf.Infinity, QueryTriggerInteraction.Ignore);
 
         _rigidbody.position = originalPosition;
-        
         _connectorsRoot.SetActive(true);
-        
-        return position;
+
+        if (!hitDetected)
+        {
+            hitDistance = 0f;
+            return false;
+        }
+
+        hitDistance = hit.distance;
+        return true;
     }
 
     private Vector3 GetGridPosition(Vector3 position)
