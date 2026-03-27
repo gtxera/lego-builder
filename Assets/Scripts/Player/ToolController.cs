@@ -23,6 +23,7 @@ public class ToolController
     private Piece _activeReferencePiece;
     private Piece _pendingSpawnPiece;
     private Vector2 _pendingSpawnPointerScreenPosition;
+    private bool _pendingSpawnSelectionMoveActive;
     private bool _dragControlsCamera;
     private Guid _lastTappedPieceId;
     private Guid[] _lastTapPreviousSelection;
@@ -125,7 +126,7 @@ public class ToolController
 
     public bool StartExternalSpawnPlacement(IPieceTemplate template, Vector2 pointerScreenPosition)
     {
-        return BeginPendingSpawnPlacement(template, pointerScreenPosition);
+        return BeginPendingSpawnPlacement(template, pointerScreenPosition, true);
     }
 
     public void UpdateExternalSpawnPlacement(Vector2 pointerScreenPosition)
@@ -216,6 +217,7 @@ public class ToolController
     {
         if (_pendingSpawnPiece != null)
         {
+            BeginPendingSpawnSelectionMoveIfNeeded();
             UpdatePendingSpawnPlacement(pointerScreenPosition);
             return;
         }
@@ -300,7 +302,7 @@ public class ToolController
     {
         CloseActionColorMenu();
         RevertImmediateTapIfNeeded(piece);
-        BeginPendingSpawnPlacement(_buildTemplateSelector.SelectedTemplate, pointerScreenPosition);
+        BeginPendingSpawnPlacement(_buildTemplateSelector.SelectedTemplate, pointerScreenPosition, false);
     }
 
     private void OnSecondaryTapTriggered(Vector2 pointerScreenPosition)
@@ -432,7 +434,7 @@ public class ToolController
         _buildEditor.Commit(new SpawnPieceCommand(_buildEditor.Build, piece.GetData()));
     }
 
-    private bool BeginPendingSpawnPlacement(IPieceTemplate template, Vector2 pointerScreenPosition)
+    private bool BeginPendingSpawnPlacement(IPieceTemplate template, Vector2 pointerScreenPosition, bool notifySelectionMove)
     {
         if (_buildEditor.Build == null || template == null)
             return false;
@@ -447,9 +449,16 @@ public class ToolController
         _pendingSpawnPiece.SetWorldRotation(0f);
         _pendingSpawnPiece.TrySetColor(_buildColorSelector.GetSelectedColorFor(0), 0);
         _pendingSpawnPiece.BeginDragging();
+        _pendingSpawnSelectionMoveActive = false;
 
         UpdatePendingSpawnPlacement(pointerScreenPosition);
-        SelectionMoveStarted();
+
+        if (notifySelectionMove)
+        {
+            _pendingSpawnSelectionMoveActive = true;
+            SelectionMoveStarted();
+        }
+
         return true;
     }
 
@@ -479,6 +488,11 @@ public class ToolController
 
     private void FinalizePendingSpawnPlacement()
     {
+        FinalizePendingSpawnPlacement(true);
+    }
+
+    private void FinalizePendingSpawnPlacement(bool notifySelectionMoveFinished)
+    {
         if (_pendingSpawnPiece == null)
             return;
 
@@ -487,7 +501,11 @@ public class ToolController
         _pendingSpawnPiece = null;
         _pendingSpawnPointerScreenPosition = Vector2.zero;
         _buildEditor.Commit(new SpawnPieceCommand(_buildEditor.Build, piece.GetData()));
-        SelectionMoveFinished();
+
+        if (notifySelectionMoveFinished && _pendingSpawnSelectionMoveActive)
+            SelectionMoveFinished();
+
+        _pendingSpawnSelectionMoveActive = false;
     }
 
     private void CancelPendingSpawnPlacement()
@@ -499,7 +517,11 @@ public class ToolController
         _buildEditor.Build.Remove(_pendingSpawnPiece);
         _pendingSpawnPiece = null;
         _pendingSpawnPointerScreenPosition = Vector2.zero;
-        SelectionMoveFinished();
+
+        if (_pendingSpawnSelectionMoveActive)
+            SelectionMoveFinished();
+
+        _pendingSpawnSelectionMoveActive = false;
     }
 
     private void EnsurePieceIncludedInSelection(Piece piece)
@@ -633,6 +655,15 @@ public class ToolController
         _lastTapPreviousSelection = null;
         _lastTapNextSelection = null;
         _lastTapTime = 0f;
+    }
+
+    private void BeginPendingSpawnSelectionMoveIfNeeded()
+    {
+        if (_pendingSpawnPiece == null || _pendingSpawnSelectionMoveActive)
+            return;
+
+        _pendingSpawnSelectionMoveActive = true;
+        SelectionMoveStarted();
     }
 
     private void RotateSelection(RotateDirection rotateDirection)

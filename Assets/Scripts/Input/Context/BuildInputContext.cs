@@ -4,6 +4,9 @@ using UnityEngine.InputSystem;
 
 public class BuildInputContext : InputContext, ITickable
 {
+    private const float DoubleTapMaxDelay = 0.3f;
+    private const float DoubleTapMaxDistancePixels = 32f;
+
     private readonly PointerUIController _pointerUiController;
     private readonly CameraServices _cameraServices;
     private readonly BuildEditor _buildEditor;
@@ -15,11 +18,14 @@ public class BuildInputContext : InputContext, ITickable
     private bool _dragStarted;
     private bool _holdTriggered;
     private bool _doubleTapTriggered;
+    private bool _tapCandidateAvailable;
 
     private Vector2 _startScreenPosition;
     private Vector2 _currentScreenPosition;
+    private Vector2 _lastTapScreenPosition;
     private Piece _startPiece;
     private Piece _currentPiece;
+    private float _lastTapTime;
 
     public BuildInputContext(
         LegoBuilderInputActions inputActions,
@@ -48,7 +54,6 @@ public class BuildInputContext : InputContext, ITickable
         inputActions.Build.Touch.canceled += OnTouchCanceled;
         inputActions.Build.Drag.performed += OnDragPerformed;
         inputActions.Build.Hold.performed += OnHoldPerformed;
-        inputActions.Build.DoubleTap.performed += OnDoubleTapPerformed;
         inputActions.Build.SecondaryTap.performed += OnSecondaryTapPerformed;
     }
 
@@ -58,9 +63,9 @@ public class BuildInputContext : InputContext, ITickable
         inputActions.Build.Touch.canceled -= OnTouchCanceled;
         inputActions.Build.Drag.performed -= OnDragPerformed;
         inputActions.Build.Hold.performed -= OnHoldPerformed;
-        inputActions.Build.DoubleTap.performed -= OnDoubleTapPerformed;
         inputActions.Build.SecondaryTap.performed -= OnSecondaryTapPerformed;
         ResetGestureState();
+        ClearTapCandidate();
     }
 
     public void Tick(float deltaTime)
@@ -75,11 +80,17 @@ public class BuildInputContext : InputContext, ITickable
         _gestureActive = true;
         _dragStarted = false;
         _holdTriggered = false;
-        _doubleTapTriggered = false;
         _startScreenPosition = pointerPosition;
         _currentScreenPosition = pointerPosition;
         _startPiece = ResolvePiece(pointerPosition);
         _currentPiece = _startPiece;
+
+        _doubleTapTriggered = !_gestureStartedOverUi && IsDoubleTap(pointerPosition);
+        if (_doubleTapTriggered)
+        {
+            ClearTapCandidate();
+            DoubleTapTriggered(_startPiece, pointerPosition);
+        }
     }
 
     private void OnDragPerformed(InputAction.CallbackContext context)
@@ -92,7 +103,7 @@ public class BuildInputContext : InputContext, ITickable
         _currentScreenPosition = pointerPosition;
         _currentPiece = ResolvePiece(pointerPosition);
 
-        if (_gestureStartedOverUi || _holdTriggered || _doubleTapTriggered)
+        if (_gestureStartedOverUi || _holdTriggered)
             return;
 
         if (!_dragStarted && Vector2.Distance(_startScreenPosition, pointerPosition) >= _dragThresholdPixels)
@@ -118,16 +129,6 @@ public class BuildInputContext : InputContext, ITickable
         HoldTriggered(_currentPiece ?? _startPiece, pointerPosition);
     }
 
-    private void OnDoubleTapPerformed(InputAction.CallbackContext context)
-    {
-        var pointerPosition = ReadPointerPosition(context);
-        if (_pointerUiController.IsPointerOverUI(pointerPosition))
-            return;
-
-        _doubleTapTriggered = true;
-        DoubleTapTriggered(ResolvePiece(pointerPosition), pointerPosition);
-    }
-
     private void OnSecondaryTapPerformed(InputAction.CallbackContext context)
     {
         var pointerPosition = ReadPointerPosition(context);
@@ -146,7 +147,7 @@ public class BuildInputContext : InputContext, ITickable
         _currentScreenPosition = pointerPosition;
         _currentPiece = ResolvePiece(pointerPosition);
 
-        if (!_dragStarted && !_holdTriggered && !_doubleTapTriggered)
+        if (!_dragStarted && !_holdTriggered)
             TapReleased(pointerPosition);
 
         if (!_gestureStartedOverUi)
@@ -162,6 +163,16 @@ public class BuildInputContext : InputContext, ITickable
                 else
                     EmptyTapped(pointerPosition);
             }
+        }
+
+        if (_gestureStartedOverUi || _dragStarted || _holdTriggered || _doubleTapTriggered)
+        {
+            if (_gestureStartedOverUi || _dragStarted || _holdTriggered)
+                ClearTapCandidate();
+        }
+        else
+        {
+            RegisterTapCandidate(pointerPosition);
         }
 
         ResetGestureState();
@@ -199,5 +210,26 @@ public class BuildInputContext : InputContext, ITickable
         _currentScreenPosition = Vector2.zero;
         _startPiece = null;
         _currentPiece = null;
+    }
+
+    private bool IsDoubleTap(Vector2 pointerPosition)
+    {
+        return _tapCandidateAvailable &&
+               Time.unscaledTime - _lastTapTime <= DoubleTapMaxDelay &&
+               Vector2.Distance(_lastTapScreenPosition, pointerPosition) <= DoubleTapMaxDistancePixels;
+    }
+
+    private void RegisterTapCandidate(Vector2 pointerPosition)
+    {
+        _tapCandidateAvailable = true;
+        _lastTapTime = Time.unscaledTime;
+        _lastTapScreenPosition = pointerPosition;
+    }
+
+    private void ClearTapCandidate()
+    {
+        _tapCandidateAvailable = false;
+        _lastTapTime = 0f;
+        _lastTapScreenPosition = Vector2.zero;
     }
 }
