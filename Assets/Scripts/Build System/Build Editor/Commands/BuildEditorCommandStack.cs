@@ -51,6 +51,20 @@ public class BuildEditorCommandStack
         PublishUndoAvailable();
         return true;
     }
+
+    public bool TryDiscardLast(out ICommand command)
+    {
+        if (!_undoStack.TryPop(out command))
+            return false;
+
+        PublishUndoUnavailable();
+        return true;
+    }
+
+    public bool TryPeekLast(out ICommand command)
+    {
+        return _undoStack.TryPeek(out command);
+    }
     
     public void Clear()
     {

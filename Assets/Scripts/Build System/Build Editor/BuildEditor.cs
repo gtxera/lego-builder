@@ -65,4 +65,14 @@ public class BuildEditor
 
         CommandRedone(Build);
     }
+
+    public bool TryDiscardLastCommand(out ICommand command)
+    {
+        return _commandStack.TryDiscardLast(out command);
+    }
+
+    public bool TryPeekLastCommand(out ICommand command)
+    {
+        return _commandStack.TryPeekLast(out command);
+    }
 }

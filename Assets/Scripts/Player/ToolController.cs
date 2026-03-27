@@ -645,7 +645,14 @@ public class ToolController
             return;
         }
 
-        _buildEditor.Commit(new SetSelectionCommand(_buildSelection, currentSelection, _lastTapPreviousSelection));
+        if (!_buildEditor.TryPeekLastCommand(out var lastCommand) || lastCommand is not SetSelectionCommand)
+        {
+            ClearLastTapState();
+            return;
+        }
+
+        _buildSelection.ReplaceSelection(_lastTapPreviousSelection);
+        _buildEditor.TryDiscardLastCommand(out _);
         ClearLastTapState();
     }
 
