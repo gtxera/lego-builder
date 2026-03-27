@@ -28,6 +28,15 @@ public class SinglePieceTarget : IEditablePieceTarget
         _piece.BeginDragging();
     }
 
+    public bool TryGetMovePosition(Ray ray, out Vector3 targetPosition)
+    {
+        if (_piece.TryGetAnchoredPosition(ray, out targetPosition))
+            return true;
+
+        targetPosition = _piece.GetSweepPosition(ray.origin, ray.direction);
+        return targetPosition != Vector3.zero;
+    }
+
     public void UpdateMove(Vector3 targetPosition)
     {
         _piece.MoveTo(targetPosition);

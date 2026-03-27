@@ -22,6 +22,9 @@ public class ToolsPresenter : MonoBehaviour
     [Inject]
     private readonly BuildTemplateSelector _buildTemplateSelector;
 
+    [Inject]
+    private readonly EditablePieceTargetResolver _editablePieceTargetResolver;
+
     [SerializeField]
     private Build _build;
 
@@ -166,10 +169,22 @@ public class ToolsPresenter : MonoBehaviour
     private void MovePiece()
     {
         var piece = _buildEditor.Build.GetPiece(_pieceId);
-        var initialPosition = piece.transform.position;
-        var finalPosition = piece.MoveTo(piece.GetSweepPosition(transform.position + new Vector3(0.8f * 4, 1), Vector3.down));
-        var command = new MovePieceCommand(_buildEditor.Build, _pieceId, initialPosition, finalPosition);
-        _buildEditor.Commit(command);
+        if (piece == null)
+            return;
+
+        var moveTarget = _editablePieceTargetResolver.Resolve(piece);
+        if (moveTarget == null)
+            return;
+
+        moveTarget.BeginMove(piece);
+
+        var ray = new Ray(transform.position + new Vector3(0.8f * 4, 1), Vector3.down);
+        if (moveTarget.TryGetMovePosition(ray, out var position))
+            moveTarget.UpdateMove(position);
+
+        var command = moveTarget.EndMove();
+        if (command != null)
+            _buildEditor.Commit(command);
     }
 
     private void PaintPiece()

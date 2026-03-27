@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class SelectionTarget : IEditablePieceTarget
 {
+    private static readonly int SweepLayerMask = ~LayerMask.GetMask("Connectors", "Anchors");
+
     private readonly Build _build;
     private readonly BuildSelection _buildSelection;
     private readonly Piece[] _pieces;
@@ -13,6 +15,8 @@ public class SelectionTarget : IEditablePieceTarget
     private readonly Dictionary<Piece, bool[]> _colliderStates = new();
 
     private Piece _referencePiece;
+    private Vector3 _selectionCenterOffset;
+    private Vector3 _selectionHalfExtents;
 
     public SelectionTarget(Build build, BuildSelection buildSelection, IReadOnlyCollection<Piece> pieces)
     {
@@ -40,7 +44,22 @@ public class SelectionTarget : IEditablePieceTarget
             piece.BeginDragging();
         }
 
+        RefreshSweepData();
         CacheAndDisableColliders();
+    }
+
+    public bool TryGetMovePosition(Ray ray, out Vector3 targetPosition)
+    {
+        if (_referencePiece == null)
+        {
+            targetPosition = Vector3.zero;
+            return false;
+        }
+
+        if (TryGetSweepPosition(ray, out targetPosition))
+            return true;
+
+        return _referencePiece.TryGetAnchoredPosition(ray, out targetPosition);
     }
 
     public void UpdateMove(Vector3 targetPosition)
@@ -138,9 +157,6 @@ public class SelectionTarget : IEditablePieceTarget
 
         foreach (var piece in _pieces)
         {
-            if (piece == _referencePiece)
-                continue;
-
             var colliders = piece.GetComponentsInChildren<Collider>(true);
             var states = new bool[colliders.Length];
             for (var i = 0; i < colliders.Length; i++)
@@ -190,5 +206,48 @@ public class SelectionTarget : IEditablePieceTarget
             piece.SetRotation(PieceRotationExtensions.Add(piece.Rotation, rotationStep));
             piece.MoveTo(rotatedPosition);
         }
+
+        if (_referencePiece != null)
+            RefreshSweepData();
+    }
+
+    private void RefreshSweepData()
+    {
+        var selectionBounds = GetSelectionBounds();
+        _selectionCenterOffset = selectionBounds.center - _referencePiece.transform.position;
+        _selectionHalfExtents = selectionBounds.extents;
+    }
+
+    private Bounds GetSelectionBounds()
+    {
+        var selectionBounds = _pieces[0].GetWorldBounds();
+
+        for (var i = 1; i < _pieces.Length; i++)
+            selectionBounds.Encapsulate(_pieces[i].GetWorldBounds());
+
+        return selectionBounds;
+    }
+
+    private bool TryGetSweepPosition(Ray ray, out Vector3 targetPosition)
+    {
+        var direction = ray.direction;
+        if (direction.sqrMagnitude <= Mathf.Epsilon)
+        {
+            targetPosition = Vector3.zero;
+            return false;
+        }
+
+        direction.Normalize();
+        var castCenter = ray.origin + _selectionCenterOffset;
+        var halfExtents = Vector3.Max(_selectionHalfExtents - Vector3.one * 0.002f, Vector3.one * 0.001f);
+
+        if (!Physics.BoxCast(castCenter, halfExtents, direction, out var hit, Quaternion.identity, Mathf.Infinity, SweepLayerMask, QueryTriggerInteraction.Ignore))
+        {
+            targetPosition = Vector3.zero;
+            return false;
+        }
+
+        targetPosition = castCenter + direction * hit.distance - _selectionCenterOffset;
+        return true;
     }
 }

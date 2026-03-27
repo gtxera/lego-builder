@@ -6,6 +6,7 @@ public interface IEditablePieceTarget
     Piece ReferencePiece { get; }
 
     void BeginMove(Piece referencePiece);
+    bool TryGetMovePosition(Ray ray, out Vector3 targetPosition);
     void UpdateMove(Vector3 targetPosition);
     ICommand EndMove();
     void RotateClockwise();

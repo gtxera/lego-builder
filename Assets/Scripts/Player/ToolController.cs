@@ -410,28 +410,8 @@ public class ToolController
     private void UpdateSelectionMove(Vector2 pointerScreenPosition)
     {
         var ray = _cameraServices.ScreenToWorldRay(pointerScreenPosition);
-
-        if (!_activeReferencePiece.TryGetAnchoredPosition(ray, out var position))
-            position = _activeReferencePiece.GetSweepPosition(ray.origin, ray.direction);
-
-        _activeMoveTarget.UpdateMove(position);
-    }
-
-    private void SpawnPiece(Vector2 pointerScreenPosition)
-    {
-        if (_buildEditor.Build == null)
-            return;
-
-        var piece = _buildEditor.Build.Add(_buildTemplateSelector.SelectedTemplate);
-        piece.SetWorldRotation(0f);
-
-        var ray = _cameraServices.ScreenToWorldRay(pointerScreenPosition);
-        if (!piece.TryGetAnchoredPosition(ray, out var position))
-            position = piece.GetSweepPosition(ray.origin, ray.direction);
-
-        piece.MoveTo(position);
-        piece.TrySetColor(_buildColorSelector.GetSelectedColorFor(0), 0);
-        _buildEditor.Commit(new SpawnPieceCommand(_buildEditor.Build, piece.GetData()));
+        if (_activeMoveTarget.TryGetMovePosition(ray, out var position))
+            _activeMoveTarget.UpdateMove(position);
     }
 
     private bool BeginPendingSpawnPlacement(IPieceTemplate template, Vector2 pointerScreenPosition, bool notifySelectionMove)

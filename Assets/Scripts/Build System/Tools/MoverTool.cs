@@ -48,11 +48,8 @@ public class MoverTool : ITool
             return;
         
         var ray = _cameraServices.ScreenToWorldRay(pointerScreenPosition);
-        
-        if (!_referencePiece.TryGetAnchoredPosition(ray, out var position))
-            position = _referencePiece.GetSweepPosition(ray.origin, ray.direction);
-
-        _movingTarget.UpdateMove(position);
+        if (_movingTarget.TryGetMovePosition(ray, out var position))
+            _movingTarget.UpdateMove(position);
     }
 
     public void Tap(Vector2 pointerScreenPosition)
@@ -63,11 +60,8 @@ public class MoverTool : ITool
         _movingTarget.RotateClockwise();
         
         var ray = _cameraServices.ScreenToWorldRay(pointerScreenPosition);
-        
-        if (!_referencePiece.TryGetAnchoredPosition(ray, out var position))
-            position = _referencePiece.GetSweepPosition(ray.origin, ray.direction);
-        
-        _movingTarget.UpdateMove(position);
+        if (_movingTarget.TryGetMovePosition(ray, out var position))
+            _movingTarget.UpdateMove(position);
     }
 
     public Sprite GetIcon() => Resources.Load<Sprite>("Icons/Mover");
