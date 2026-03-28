@@ -26,7 +26,7 @@ public class Piece : MonoBehaviour
     private PieceRotation _rotation;
 
     private IEnumerable<PieceColoredPart> _coloredParts;
-    private PieceSelectionOutline _selectionOutline;
+    private Outline _selectionOutline;
 
     private float _creationTime;
     private Vector3 _worldSize;
@@ -125,7 +125,7 @@ public class Piece : MonoBehaviour
         }
 
         CreateConnectorCache();
-        _selectionOutline = new PieceSelectionOutline(this, gameObject.scene.GetSceneContainer().Resolve<PieceMaterials>().OutlineMaterial);
+        InitializeSelectionOutline();
         _creationTime = Time.time;
     }
 
@@ -446,7 +446,18 @@ public class Piece : MonoBehaviour
             return;
 
         _selected = selected;
-        _selectionOutline?.SetVisible(selected);
+        if (_selectionOutline != null)
+            _selectionOutline.enabled = selected;
+    }
+
+    private void InitializeSelectionOutline()
+    {
+        var settings = gameObject.scene.GetSceneContainer().Resolve<PieceSelectionOutlineSettings>();
+        _selectionOutline = GetComponent<Outline>() ?? gameObject.AddComponent<Outline>();
+        _selectionOutline.OutlineMode = settings.Mode;
+        _selectionOutline.OutlineColor = settings.Color;
+        _selectionOutline.OutlineWidth = settings.Width;
+        _selectionOutline.enabled = _selected;
     }
 
     private void OnDestroy()

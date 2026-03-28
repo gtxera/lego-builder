@@ -5,6 +5,9 @@ public class BuildSystemInstaller : MonoBehaviour, IInstaller
 {
     [SerializeField]
     private PieceParticleEmitter _pieceParticleEmitter;
+
+    [SerializeField]
+    private PieceSelectionOutlineSettings _pieceSelectionOutline = new();
     
     public void InstallBindings(ContainerBuilder containerBuilder)
     {
@@ -23,6 +26,7 @@ public class BuildSystemInstaller : MonoBehaviour, IInstaller
             .AddScoped(typeof(PieceResourceLoader<MeshPiece>))
             .AddScoped(typeof(PieceResourceLoader<PieceTag>))
             .AddScoped(_ => _pieceParticleEmitter, typeof(PieceParticleEmitter))
+            .AddScoped(_ => _pieceSelectionOutline, typeof(PieceSelectionOutlineSettings))
             .AddScoped(typeof(PieceMaterials));
         
         RegisterTools(containerBuilder);
@@ -37,5 +41,22 @@ public class BuildSystemInstaller : MonoBehaviour, IInstaller
             .AddScoped(typeof(PainterTool), typeof(PainterTool), typeof(ITool))
             .AddScoped(typeof(RemoverTool), typeof(RemoverTool), typeof(ITool));
     }
+}
+
+[System.Serializable]
+public class PieceSelectionOutlineSettings
+{
+    [SerializeField]
+    private Outline.Mode _mode = Outline.Mode.OutlineVisible;
+
+    [SerializeField]
+    private Color _color = Color.green;
+
+    [SerializeField, Range(0f, 10f)]
+    private float _width = 4f;
+
+    public Outline.Mode Mode => _mode;
+    public Color Color => _color;
+    public float Width => _width;
 }
 
