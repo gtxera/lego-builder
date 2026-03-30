@@ -46,6 +46,9 @@ public class LevelStarter : ValidatedMonoBehaviour
     
     private readonly List<SizeRequirementIndicator> _sizeRequirementIndicators = new();
     private readonly List<ExactBuildRequirementGhostVisualizer> _exactBuildRequirementGhostVisualizers = new();
+    private EventBinding<PieceCreatedEvent> _onPieceCreated;
+    private EventBinding<PieceMovedEvent> _onPieceMoved;
+    private EventBinding<PieceRemovedEvent> _onPieceRemoved;
 
     private MaterialPropertyBlock _materialPropertyBlock;
 
@@ -96,6 +99,13 @@ public class LevelStarter : ValidatedMonoBehaviour
         _levelController.LevelFinished += OnLevelFinished;
     }
 
+    private void OnDestroy()
+    {
+        _levelController.LevelStarted -= OnLevelStarted;
+        _levelController.LevelFinished -= OnLevelFinished;
+        UnregisterGhostRefreshHandlers();
+    }
+
     public void Select()
     {
         _ui.SelectAnimation();
@@ -119,8 +129,10 @@ public class LevelStarter : ValidatedMonoBehaviour
         if (level != _level)
             return;
 
+        RegisterGhostRefreshHandlers();
+
         foreach (var ghostVisualizer in _exactBuildRequirementGhostVisualizers)
-            ghostVisualizer.Show();
+            ghostVisualizer.Show(_build);
 
         foreach (var requirementIndicator in _sizeRequirementIndicators)
             requirementIndicator.LevelStarted(_levelController);
@@ -136,6 +148,8 @@ public class LevelStarter : ValidatedMonoBehaviour
         
         if (level != _level)
             return;
+
+        UnregisterGhostRefreshHandlers();
 
         foreach (var ghostVisualizer in _exactBuildRequirementGhostVisualizers)
             ghostVisualizer.Hide();
@@ -169,5 +183,46 @@ public class LevelStarter : ValidatedMonoBehaviour
     private void LateUpdate()
     {
         _uiTransform.anchoredPosition = _cameraServices.WorldPositionInScreen(transform.position);
+    }
+
+    private void RegisterGhostRefreshHandlers()
+    {
+        if (_onPieceCreated != null)
+            return;
+
+        _onPieceCreated = new EventBinding<PieceCreatedEvent>(_ => RefreshGhostVisualizers());
+        _onPieceMoved = new EventBinding<PieceMovedEvent>(_ => RefreshGhostVisualizers());
+        _onPieceRemoved = new EventBinding<PieceRemovedEvent>(_ => RefreshGhostVisualizers());
+
+        EventBus<PieceCreatedEvent>.Register(_onPieceCreated);
+        EventBus<PieceMovedEvent>.Register(_onPieceMoved);
+        EventBus<PieceRemovedEvent>.Register(_onPieceRemoved);
+    }
+
+    private void UnregisterGhostRefreshHandlers()
+    {
+        if (_onPieceCreated != null)
+        {
+            EventBus<PieceCreatedEvent>.Deregister(_onPieceCreated);
+            _onPieceCreated = null;
+        }
+
+        if (_onPieceMoved != null)
+        {
+            EventBus<PieceMovedEvent>.Deregister(_onPieceMoved);
+            _onPieceMoved = null;
+        }
+
+        if (_onPieceRemoved != null)
+        {
+            EventBus<PieceRemovedEvent>.Deregister(_onPieceRemoved);
+            _onPieceRemoved = null;
+        }
+    }
+
+    private void RefreshGhostVisualizers()
+    {
+        foreach (var ghostVisualizer in _exactBuildRequirementGhostVisualizers)
+            ghostVisualizer.Refresh(_build);
     }
 }

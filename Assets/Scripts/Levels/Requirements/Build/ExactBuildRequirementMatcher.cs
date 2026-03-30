@@ -9,23 +9,32 @@ public static class ExactBuildRequirementMatcher
 
     public static bool AreEquivalent(BuildData requiredBuild, BuildData actualBuild)
     {
+        return GetMatchResult(requiredBuild, actualBuild).IsEquivalent;
+    }
+
+    public static MatchResult GetMatchResult(BuildData requiredBuild, BuildData actualBuild)
+    {
         var requiredPieces = Enumerate(requiredBuild).Select(CreateSignature).ToList();
         var actualPieces = Enumerate(actualBuild).Select(CreateSignature).ToList();
 
-        if (requiredPieces.Count != actualPieces.Count)
-            return false;
-
         var matchedRequiredPieces = new bool[requiredPieces.Count];
+        var matchedRequiredPieceCount = 0;
+        var unmatchedActualPieceCount = 0;
+
         foreach (var actualPiece in actualPieces)
         {
             var matchIndex = FindMatch(requiredPieces, matchedRequiredPieces, actualPiece);
             if (matchIndex < 0)
-                return false;
+            {
+                unmatchedActualPieceCount++;
+                continue;
+            }
 
             matchedRequiredPieces[matchIndex] = true;
+            matchedRequiredPieceCount++;
         }
 
-        return true;
+        return new MatchResult(matchedRequiredPieces, matchedRequiredPieceCount, unmatchedActualPieceCount);
     }
 
     private static IEnumerable<PieceData> Enumerate(BuildData buildData)
@@ -138,6 +147,30 @@ public static class ExactBuildRequirementMatcher
             }
 
             return true;
+        }
+    }
+
+    public sealed class MatchResult
+    {
+        private readonly bool[] _matchedRequiredPieces;
+
+        public MatchResult(bool[] matchedRequiredPieces, int matchedRequiredPieceCount, int unmatchedActualPieceCount)
+        {
+            _matchedRequiredPieces = matchedRequiredPieces ?? Array.Empty<bool>();
+            MatchedRequiredPieceCount = matchedRequiredPieceCount;
+            UnmatchedActualPieceCount = unmatchedActualPieceCount;
+        }
+
+        public int RequiredPieceCount => _matchedRequiredPieces.Length;
+        public int MatchedRequiredPieceCount { get; }
+        public int UnmatchedActualPieceCount { get; }
+        public bool IsEquivalent => UnmatchedActualPieceCount == 0 && MatchedRequiredPieceCount == RequiredPieceCount;
+
+        public bool IsRequiredPieceMatched(int index)
+        {
+            return index >= 0 &&
+                   index < _matchedRequiredPieces.Length &&
+                   _matchedRequiredPieces[index];
         }
     }
 }
