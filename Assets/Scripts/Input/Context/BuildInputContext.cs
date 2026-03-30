@@ -70,6 +70,7 @@ public class BuildInputContext : InputContext, ITickable
 
     public void Tick(float deltaTime)
     {
+        Debug.Log(_enabled);
     }
 
     private void OnTouchStarted(InputAction.CallbackContext context)

@@ -36,13 +36,24 @@ public class CameraControlInputContext : InputContext, ITickable
     public event Action<float> CameraLookOrbitXRequested = delegate { };
     public event Action<float> CameraZoomRequested = delegate { };
 
+    public void ResetState()
+    {
+        _lastFirstTouchPosition = Vector2.zero;
+        _lastSecondTouchPosition = Vector2.zero;
+        _lastTouchesDistance = 0f;
+        _lastTouchesDirection = Vector2.zero;
+        _touchBeganInUI = false;
+        _touchCount = 0;
+        _moveControlEnabled = true;
+    }
+
     public void EnableMoveControl() => _moveControlEnabled = true;
 
     public void DisableMoveControl() => _moveControlEnabled = false;
 
     protected override void Enable(LegoBuilderInputActions inputActions)
     {
-        _moveControlEnabled = true;
+        ResetState();
 
         inputActions.Camera.FirstTouchContact.performed += OnFirstTouchContact;
         inputActions.Camera.FirstTouchContact.canceled += OnFirstTouchLifted;
@@ -60,6 +71,7 @@ public class CameraControlInputContext : InputContext, ITickable
 
     protected override void Disable(LegoBuilderInputActions inputActions)
     {
+        ResetState();
         _moveControlEnabled = false;
 
         inputActions.Camera.FirstTouchContact.performed -= OnFirstTouchContact;
@@ -245,5 +257,6 @@ public class CameraControlInputContext : InputContext, ITickable
         _lastTouchesDirection = touchesDirection;
         _lastFirstTouchPosition = firstTouchPosition;
         _lastSecondTouchPosition = secondTouchPosition;
+        Debug.Log(_enabled);
     }
 }

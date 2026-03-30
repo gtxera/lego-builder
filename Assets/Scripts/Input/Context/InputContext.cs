@@ -4,7 +4,7 @@ public abstract class InputContext
 {
     private readonly LegoBuilderInputActions _inputActions;
 
-    private bool _enabled;
+    protected bool _enabled;
 
     protected InputContext(LegoBuilderInputActions inputActions)
     {

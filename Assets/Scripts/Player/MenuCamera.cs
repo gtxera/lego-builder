@@ -77,8 +77,9 @@ public class MenuCamera : ValidatedMonoBehaviour
     {
         _orbitalFollow.VerticalAxis.Value = _orbitalFollow.VerticalAxis.Range.y;
         _orbitalFollow.RadialAxis.Value = _orbitalFollow.RadialAxis.Range.y;
-        
-        _menuMusicEmitter.Play();
+
+        if (!SceneTransitionState.IsSceneTransitionInProgress && !SceneTransitionState.ConsumeSuppressMenuMusicOnce())
+            _menuMusicEmitter.Play();
     }
 
     private void LateUpdate()
@@ -127,13 +128,26 @@ public class MenuCamera : ValidatedMonoBehaviour
                     }
                     else
                     {
-                        _cameraControlInputContext.Enable();
-                        _levelSelectorInputContext.Enable();
-                        Show();
+                        EnterGameplayState();
                     }
+
                     if (!_gameplayMusicEmitter.IsPlaying())
                         _gameplayMusicEmitter.Play();
                 }));
+    }
+
+    public void EnterGameplayWithoutIntro()
+    {
+        _playing = false;
+        _menuMusicEmitter.Stop();
+
+        _orbitalFollow.VerticalAxis.Value = _orbitalFollow.VerticalAxis.Center;
+        _orbitalFollow.RadialAxis.Value = _orbitalFollow.RadialAxis.Center;
+
+        EnterGameplayState();
+
+        if (!_gameplayMusicEmitter.IsPlaying())
+            _gameplayMusicEmitter.Play();
     }
 
     private void PlayReturnAnimation()
@@ -173,8 +187,34 @@ public class MenuCamera : ValidatedMonoBehaviour
                 {
                     _playing = true;
                     _titleScreen.Show();
-                    _menuMusicEmitter.Play();
+
+                    if (!SceneTransitionState.IsSceneTransitionInProgress)
+                        _menuMusicEmitter.Play();
                 }));
+    }
+
+    private void OnDestroy()
+    {
+        if (!SceneTransitionState.IsSceneTransitionInProgress)
+            return;
+
+        if (_menuMusicEmitter != null && _menuMusicEmitter.IsPlaying())
+            _menuMusicEmitter.Stop();
+
+        if (_gameplayMusicEmitter != null && _gameplayMusicEmitter.IsPlaying())
+            _gameplayMusicEmitter.Stop();
+    }
+
+    private void EnterGameplayState()
+    {
+        _cameraControlInputContext.Disable();
+        _levelSelectorInputContext.Disable();
+        _cameraControlInputContext.ResetState();
+        _cameraControlInputContext.EnableMoveControl();
+        _cameraControlInputContext.Enable();
+        _levelSelectorInputContext.Enable();
+        Show();
+        SceneTransitionState.CompleteSceneTransition();
     }
 
     private void Show()

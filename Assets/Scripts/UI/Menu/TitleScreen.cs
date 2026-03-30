@@ -1,3 +1,4 @@
+using System.Collections;
 using KBCore.Refs;
 using PrimeTween;
 using TMPro;
@@ -23,6 +24,19 @@ public class TitleScreen : MonoBehaviour
 
     private void Start()
     {
+        if (_menuCamera == null)
+        {
+            gameObject.SetActive(false);
+            return;
+        }
+
+        if (SceneTransitionState.ConsumeSkipLinearIntroOnce())
+        {
+            gameObject.SetActive(false);
+            _menuCamera.EnterGameplayWithoutIntro();
+            return;
+        }
+
         Show();
     }
 
@@ -48,7 +62,7 @@ public class TitleScreen : MonoBehaviour
         if (_playing)
             return;
 
-        if (Pointer.current.press.wasReleasedThisFrame && !_playing)
+        if (Pointer.current != null && Pointer.current.press.wasReleasedThisFrame)
         {
             Tween.Alpha(_rootGroup, 0f, 1f)
                 .OnComplete(target: this, screen => screen.gameObject.SetActive(false));
