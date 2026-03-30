@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Reflex.Exceptions;
 using Reflex.Extensions;
 using UnityEngine;
@@ -16,6 +17,7 @@ public class PiecePreview : MonoBehaviour
     private Camera _camera;
 
     private IEnumerable<Renderer> _renderers;
+    private PieceColoredPart[] _coloredParts;
     private static readonly int BaseColor = Shader.PropertyToID("_BaseColor");
 
     public RenderTexture GetRenderTexture(
@@ -49,6 +51,7 @@ public class PiecePreview : MonoBehaviour
         _camera.backgroundColor = Color.clear;
 
         _renderers = GetComponentsInChildren<Renderer>();
+        _coloredParts = GetComponentsInChildren<PieceColoredPart>(true);
         foreach (var renderer in _renderers)
             renderer.shadowCastingMode = ShadowCastingMode.Off;
 
@@ -77,14 +80,25 @@ public class PiecePreview : MonoBehaviour
 
     private void OnSelectedColorChanged(PieceColor color)
     {
-        var propertyBlock = new MaterialPropertyBlock();
-        propertyBlock.SetColor(BaseColor, color.Color);
+        if (_coloredParts != null && _coloredParts.Length > 0)
+        {
+            foreach (var coloredPart in _coloredParts.Where(part => part != null))
+                coloredPart.SetColor(color.Color, color.Transparent);
+        }
+        else
+        {
+            var propertyBlock = new MaterialPropertyBlock();
+            propertyBlock.SetColor(BaseColor, color.Color);
+
+            foreach (var renderer in _renderers)
+            {
+                renderer.sharedMaterial = _pieceMaterials.GetMaterial(color.Transparent);
+                renderer.SetPropertyBlock(propertyBlock);
+            }
+        }
 
         foreach (var renderer in _renderers)
-        {
-            renderer.sharedMaterial = _pieceMaterials.GetMaterial(color.Transparent);
-            renderer.SetPropertyBlock(propertyBlock);
-        }
+            renderer.shadowCastingMode = ShadowCastingMode.Off;
         
         SetLayerRecursive(transform, LayerMask.NameToLayer("ExamplePieces"));
         _camera.Render();

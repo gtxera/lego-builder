@@ -14,6 +14,7 @@ public class BuildCatalogService
         _itemsByCategory[BuildCatalogCategory.Brick] = Wrap(pieceTemplateDatabase.GetTemplates<BrickPieceTemplate>(), BuildCatalogCategory.Brick);
         _itemsByCategory[BuildCatalogCategory.Plate] = Wrap(pieceTemplateDatabase.GetTemplates<PlatePieceTemplate>(), BuildCatalogCategory.Plate);
         _itemsByCategory[BuildCatalogCategory.Tile] = Wrap(pieceTemplateDatabase.GetTemplates<TilePieceTemplate>(), BuildCatalogCategory.Tile);
+        _itemsByCategory[BuildCatalogCategory.Cylinder] = Wrap(pieceTemplateDatabase.GetTemplates<CylinderPieceTemplate>(), BuildCatalogCategory.Cylinder);
         _itemsByCategory[BuildCatalogCategory.Ramp] = Wrap(pieceTemplateDatabase.GetTemplates<RampPieceTemplate>(), BuildCatalogCategory.Ramp);
         _itemsByCategory[BuildCatalogCategory.Mesh] = Wrap(pieceTemplateDatabase.GetTemplates<MeshPieceTemplate>(), BuildCatalogCategory.Mesh);
     }

@@ -8,6 +8,7 @@ using Object = UnityEngine.Object;
 public class PiecePartsPool : IDisposable
 {
     private readonly ObjectPool<GameObject> _bodiesPool;
+    private readonly ObjectPool<GameObject> _cylindersPool;
     private readonly ObjectPool<GameObject> _rampsPool;
     private readonly ObjectPool<GameObject> _studsPool;
 
@@ -16,6 +17,19 @@ public class PiecePartsPool : IDisposable
     public PiecePartsPool()
     {
         _bodiesPool = new ObjectPool<GameObject>(CreateBody,
+            gameObject =>
+            {
+                gameObject.SetActive(true);
+                gameObject.transform.position = Vector3.zero;
+            },
+            gameObject =>
+            {
+                gameObject.transform.SetParent(null);
+                gameObject.transform.localRotation = Quaternion.identity;
+                gameObject.SetActive(false);
+            });
+
+        _cylindersPool = new ObjectPool<GameObject>(CreateCylinder,
             gameObject =>
             {
                 gameObject.SetActive(true);
@@ -63,6 +77,15 @@ public class PiecePartsPool : IDisposable
 
     public GameObject GetStud() => _studsPool.Get();
 
+    public GameObject GetCylinder(PieceVector size)
+    {
+        var cylinder = _cylindersPool.Get();
+        var worldSize = size.ToWorld();
+        cylinder.transform.localScale = new Vector3(worldSize.x - 0.02f, worldSize.y / 2f, worldSize.z - 0.02f);
+
+        return cylinder;
+    }
+
     public GameObject GetRamp(PieceVector size)
     {
         var ramp = _rampsPool.Get();
@@ -81,6 +104,11 @@ public class PiecePartsPool : IDisposable
         _studsPool.Release(stud.gameObject);
     }
 
+    public void ReturnCylinder(CylinderMarker cylinder)
+    {
+        _cylindersPool.Release(cylinder.gameObject);
+    }
+
     public void ReturnRamp(RampMarker ramp)
     {
         _rampsPool.Release(ramp.gameObject);
@@ -89,6 +117,7 @@ public class PiecePartsPool : IDisposable
     public void Dispose()
     {
         _bodiesPool?.Dispose();
+        _cylindersPool?.Dispose();
         _studsPool?.Dispose();
         Resources.UnloadAsset(_pieceMaterial);
     }
@@ -104,6 +133,19 @@ public class PiecePartsPool : IDisposable
         GameObjectInjector.InjectObject(body, body.scene.GetSceneContainer());
         
         return body;
+    }
+
+    private GameObject CreateCylinder()
+    {
+        var cylinder = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+        Object.Destroy(cylinder.GetComponent<CapsuleCollider>());
+        cylinder.GetComponent<Renderer>().sharedMaterial = _pieceMaterial;
+        cylinder.AddComponent<CylinderMarker>();
+        cylinder.AddComponent<PieceColoredPart>();
+
+        GameObjectInjector.InjectObject(cylinder, cylinder.scene.GetSceneContainer());
+
+        return cylinder;
     }
 
     private GameObject CreateRamp()
