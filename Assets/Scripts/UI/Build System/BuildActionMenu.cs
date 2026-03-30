@@ -33,9 +33,9 @@ public class BuildActionMenu : IDisposable
         var actions = new[]
         {
             new BuildRadialActionDefinition(BuildRadialActionType.Color, "Colorir", Resources.Load<Sprite>("Icons/Brush"), hasSelection),
-            new BuildRadialActionDefinition(BuildRadialActionType.SaveSet, "Salvar conjunto", null, hasSelection),
-            new BuildRadialActionDefinition(BuildRadialActionType.RotateRight, "Rotacionar direita", null, hasSelection),
-            new BuildRadialActionDefinition(BuildRadialActionType.RotateLeft, "Rotacionar esquerda", null, hasSelection),
+            new BuildRadialActionDefinition(BuildRadialActionType.SaveSet, "Salvar conjunto", Resources.Load<Sprite>("Icons/SaveSet"), hasSelection),
+            new BuildRadialActionDefinition(BuildRadialActionType.RotateRight, "Rotacionar direita", Resources.Load<Sprite>("Icons/RotateRight"), hasSelection),
+            new BuildRadialActionDefinition(BuildRadialActionType.RotateLeft, "Rotacionar esquerda", Resources.Load<Sprite>("Icons/RotateLeft"), hasSelection),
             new BuildRadialActionDefinition(BuildRadialActionType.Remove, "Remover", Resources.Load<Sprite>("Icons/Remove"), hasSelection)
         };
 

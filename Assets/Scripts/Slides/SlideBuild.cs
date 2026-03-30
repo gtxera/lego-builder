@@ -27,6 +27,8 @@ public class SlideBuild : MonoBehaviour
         foreach (var pieceData in _data.Pieces)
         {
             var pieceHolder = new PieceHolder();
+            var targetLocalPosition = pieceData.TransientData.LocalPosition;
+            var startLocalPosition = targetLocalPosition + Vector3.up * 20f;
             sequence
                 .Group(
                     Sequence.Create(Tween.Delay(delay,
@@ -34,11 +36,11 @@ public class SlideBuild : MonoBehaviour
                             {
                                 var piece = new GameObject("Piece").AddComponent<Piece>();
                                 piece.transform.SetParent(_piecesRoot, false);
-                                piece.Initialize(pieceData);
+                                piece.Initialize(pieceData, localSpace: true);
                                 pieceHolder.Piece = piece;
-                                piece.transform.localPosition = Vector3.up * 20;
+                                piece.transform.localPosition = startLocalPosition;
                             }))
-                        .Chain(Tween.Custom(Vector3.up * 20, pieceData.TransientData.LocalPosition, 1f, value =>
+                        .Chain(Tween.Custom(startLocalPosition, targetLocalPosition, 1f, value =>
                         {
                             pieceHolder.Piece.transform.localPosition = value;
                         })));

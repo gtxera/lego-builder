@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 9d894090308141f41af8e292e7b443e1
+guid: be050496a188cc3458aa9b70edbc03ed
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -43,7 +43,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -119,27 +119,36 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WindowsStoreApps
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: Add
+      rect:
+        serializedVersion: 2
+        x: 473
+        y: 341
+        width: 105
+        height: 90
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ec612ca46b6b8a94fa3ca19020e5587e
+      internalID: 1256494369
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 5b0a7c2612ed0c949adcd79870f1a295
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +157,45 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Add: 1256494369
+      Add_0: -791049773
+      "Ilustra\xE7\xE3o50 (1)_0": -637981089
+      "Ilustra\xE7\xE3o50 (1)_1": -1341635010
+      "Ilustra\xE7\xE3o50 (1)_10": 1139650589
+      "Ilustra\xE7\xE3o50 (1)_11": 523763741
+      "Ilustra\xE7\xE3o50 (1)_12": -1394487537
+      "Ilustra\xE7\xE3o50 (1)_13": -1593439617
+      "Ilustra\xE7\xE3o50 (1)_14": 315334807
+      "Ilustra\xE7\xE3o50 (1)_15": -1680282887
+      "Ilustra\xE7\xE3o50 (1)_16": 320471015
+      "Ilustra\xE7\xE3o50 (1)_17": -1303683521
+      "Ilustra\xE7\xE3o50 (1)_18": -700560401
+      "Ilustra\xE7\xE3o50 (1)_19": -1575295630
+      "Ilustra\xE7\xE3o50 (1)_2": -1498411173
+      "Ilustra\xE7\xE3o50 (1)_20": -791114825
+      "Ilustra\xE7\xE3o50 (1)_21": 54514462
+      "Ilustra\xE7\xE3o50 (1)_22": 1487132191
+      "Ilustra\xE7\xE3o50 (1)_23": 1821663028
+      "Ilustra\xE7\xE3o50 (1)_26": 130934273
+      "Ilustra\xE7\xE3o50 (1)_27": -1855477722
+      "Ilustra\xE7\xE3o50 (1)_28": 1452075725
+      "Ilustra\xE7\xE3o50 (1)_3": 1324896355
+      "Ilustra\xE7\xE3o50 (1)_31": -414458503
+      "Ilustra\xE7\xE3o50 (1)_32": 1784124270
+      "Ilustra\xE7\xE3o50 (1)_34": -1181618792
+      "Ilustra\xE7\xE3o50 (1)_35": -2066469344
+      "Ilustra\xE7\xE3o50 (1)_36": -1607416406
+      "Ilustra\xE7\xE3o50 (1)_4": 1225198464
+      "Ilustra\xE7\xE3o50 (1)_5": 1360814201
+      "Ilustra\xE7\xE3o50 (1)_6": 1507391706
+      "Ilustra\xE7\xE3o50 (1)_7": -948424776
+      "Ilustra\xE7\xE3o50 (1)_8": -150491580
+      "Ilustra\xE7\xE3o50 (1)_9": -1580642666
+      Move: 648930429
+      RotateLeft: -1060519291
+      RotateRight: -732273469
+      SaveSet: -372926248
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

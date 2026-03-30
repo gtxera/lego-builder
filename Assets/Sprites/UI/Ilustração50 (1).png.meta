@@ -1,0 +1,994 @@
+fileFormatVersion: 2
+guid: a5b43d50fb2dc2e48afea0f541362200
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 0
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_0"
+      rect:
+        serializedVersion: 2
+        x: 255
+        y: 1063
+        width: 5
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f14ed165beedb3244a5ef0b276ebfb93
+      internalID: 1361385067
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_1"
+      rect:
+        serializedVersion: 2
+        x: 258
+        y: 1018
+        width: 142
+        height: 137
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 62e834a9112eab843a6b3a52310151f3
+      internalID: 890059139
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_2"
+      rect:
+        serializedVersion: 2
+        x: 433
+        y: 1014
+        width: 145
+        height: 136
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 51e14b8599f1da4439027f35390313f0
+      internalID: 138580652
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_3"
+      rect:
+        serializedVersion: 2
+        x: 610
+        y: 1015
+        width: 145
+        height: 137
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4422a68667610d24dbe4bae0cf139adc
+      internalID: 946144519
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_4"
+      rect:
+        serializedVersion: 2
+        x: 792
+        y: 1010
+        width: 142
+        height: 137
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f067a9b4add20674aa9a0d15383ccfa2
+      internalID: 956837152
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_5"
+      rect:
+        serializedVersion: 2
+        x: 788
+        y: 1057
+        width: 4
+        height: 5
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bf52a9fffc618da49a443c557dca6b30
+      internalID: 1673060754
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_6"
+      rect:
+        serializedVersion: 2
+        x: 262
+        y: 919
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f2c38a846f62a2a44a8faa07351537c6
+      internalID: -711824030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_7"
+      rect:
+        serializedVersion: 2
+        x: 265
+        y: 874
+        width: 143
+        height: 136
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2ad52c8361c13d0458ee58a16da6d99f
+      internalID: -1410452941
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_8"
+      rect:
+        serializedVersion: 2
+        x: 440
+        y: 915
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9719d70c34d84474eb33de02d9d9d6b6
+      internalID: 1886960461
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_9"
+      rect:
+        serializedVersion: 2
+        x: 444
+        y: 870
+        width: 142
+        height: 136
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9e6f40fa86e648d4b88a7c6da438fcaf
+      internalID: -1287628384
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_10"
+      rect:
+        serializedVersion: 2
+        x: 617
+        y: 871
+        width: 146
+        height: 138
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a66135551a59ffb4787c1e7054f4556d
+      internalID: 1003613733
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_11"
+      rect:
+        serializedVersion: 2
+        x: 798
+        y: 866
+        width: 143
+        height: 137
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c139da2115ad5ad45897caa8659f9c29
+      internalID: 504895290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_12"
+      rect:
+        serializedVersion: 2
+        x: 796
+        y: 913
+        width: 4
+        height: 5
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cd6738772b58528499ede41cbaa6c364
+      internalID: -1506183880
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_13"
+      rect:
+        serializedVersion: 2
+        x: 273
+        y: 769
+        width: 5
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3740d1cd8e7755445ab94f1c3f5c97f0
+      internalID: 1356606317
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_14"
+      rect:
+        serializedVersion: 2
+        x: 275
+        y: 724
+        width: 143
+        height: 138
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 859aaa8d8e89f7c4b87558b9b7dfe608
+      internalID: 143696868
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_15"
+      rect:
+        serializedVersion: 2
+        x: 451
+        y: 719
+        width: 145
+        height: 137
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7297a4badc659a24496efb0d761e1cd7
+      internalID: 1167675333
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_16"
+      rect:
+        serializedVersion: 2
+        x: 628
+        y: 767
+        width: 4
+        height: 5
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0169ac7b2adf9e840ab1f97749fd67bd
+      internalID: 295757814
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_17"
+      rect:
+        serializedVersion: 2
+        x: 630
+        y: 721
+        width: 143
+        height: 136
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 61764cc230e69f5418271db039a8f74a
+      internalID: 1543421323
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_18"
+      rect:
+        serializedVersion: 2
+        x: 806
+        y: 716
+        width: 147
+        height: 137
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e0a18f9ffddd63b46873e57b89f4116b
+      internalID: -997029841
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_19"
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 574
+        width: 145
+        height: 136
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7329868dcc1178848bc6b766d0b0450e
+      internalID: -2111036406
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_20"
+      rect:
+        serializedVersion: 2
+        x: 458
+        y: 613
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5c3e69e9e04306747ad82667a25a4357
+      internalID: -329622978
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_21"
+      rect:
+        serializedVersion: 2
+        x: 462
+        y: 568
+        width: 142
+        height: 138
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f73ec961900cba6478cb37ffc8e45e87
+      internalID: 1317594813
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_22"
+      rect:
+        serializedVersion: 2
+        x: 637
+        y: 487
+        width: 361
+        height: 167
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5a15cd3c193412548a28e92b9975dd91
+      internalID: 575891617
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_23"
+      rect:
+        serializedVersion: 2
+        x: 305
+        y: 354
+        width: 81
+        height: 88
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a8f8105d9b12e5c43a8ff595bc9e02fa
+      internalID: 1673032295
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_24"
+      rect:
+        serializedVersion: 2
+        x: 473
+        y: 342
+        width: 105
+        height: 90
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4bbb00380899aea4e8233d0090c592a2
+      internalID: -996969189
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_25"
+      rect:
+        serializedVersion: 2
+        x: 647
+        y: 339
+        width: 102
+        height: 99
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 97cd34821b07eec40af2584a7f2b3374
+      internalID: -1630982749
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_26"
+      rect:
+        serializedVersion: 2
+        x: 831
+        y: 342
+        width: 88
+        height: 87
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e846267f7d037fb4fb6de375b1f88f76
+      internalID: -1897902543
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_27"
+      rect:
+        serializedVersion: 2
+        x: 311
+        y: 213
+        width: 78
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 05ef91a5cbf65e547aa1d12f659af03a
+      internalID: 1290672009
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_28"
+      rect:
+        serializedVersion: 2
+        x: 477
+        y: 211
+        width: 92
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 86abfcc2657c76b4385bf2a15c7a35f6
+      internalID: -281180924
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_29"
+      rect:
+        serializedVersion: 2
+        x: 667
+        y: 207
+        width: 83
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 46e03880ec778d142b05fb9a3af770a6
+      internalID: 2023012227
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_30"
+      rect:
+        serializedVersion: 2
+        x: 842
+        y: 206
+        width: 85
+        height: 79
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6c96b6d2b5c5e284d93a3f803694cec3
+      internalID: 353353919
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_31"
+      rect:
+        serializedVersion: 2
+        x: 317
+        y: 66
+        width: 80
+        height: 75
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2de32ea9d9a7bf64b85dd00de9c92a4e
+      internalID: 1808365662
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_32"
+      rect:
+        serializedVersion: 2
+        x: 514
+        y: 60
+        width: 66
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6ac383171fe74b54d94ed11a2963432b
+      internalID: -1188946908
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_33"
+      rect:
+        serializedVersion: 2
+        x: 667
+        y: 63
+        width: 90
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: af5dc455ed5192e4e962bf6309e0306e
+      internalID: -1248196886
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_34"
+      rect:
+        serializedVersion: 2
+        x: 850
+        y: 57
+        width: 11
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1d591e3c2a0cfe7498cdf138888ddef6
+      internalID: 587766266
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_35"
+      rect:
+        serializedVersion: 2
+        x: 852
+        y: 53
+        width: 82
+        height: 85
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fc3212bada6b1c4469eb679f806eacbf
+      internalID: 129362504
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Ilustra\xE7\xE3o50 (1)_36"
+      rect:
+        serializedVersion: 2
+        x: 881
+        y: 50
+        width: 11
+        height: 5
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9047546a0661a4546b5b187c665508a5
+      internalID: 2009561245
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 46f62bcf24bbf2e4e9616978ceb7eddc
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      "Ilustra\xE7\xE3o50 (1)_0": 1361385067
+      "Ilustra\xE7\xE3o50 (1)_1": 890059139
+      "Ilustra\xE7\xE3o50 (1)_10": 1003613733
+      "Ilustra\xE7\xE3o50 (1)_11": 504895290
+      "Ilustra\xE7\xE3o50 (1)_12": -1506183880
+      "Ilustra\xE7\xE3o50 (1)_13": 1356606317
+      "Ilustra\xE7\xE3o50 (1)_14": 143696868
+      "Ilustra\xE7\xE3o50 (1)_15": 1167675333
+      "Ilustra\xE7\xE3o50 (1)_16": 295757814
+      "Ilustra\xE7\xE3o50 (1)_17": 1543421323
+      "Ilustra\xE7\xE3o50 (1)_18": -997029841
+      "Ilustra\xE7\xE3o50 (1)_19": -2111036406
+      "Ilustra\xE7\xE3o50 (1)_2": 138580652
+      "Ilustra\xE7\xE3o50 (1)_20": -329622978
+      "Ilustra\xE7\xE3o50 (1)_21": 1317594813
+      "Ilustra\xE7\xE3o50 (1)_22": 575891617
+      "Ilustra\xE7\xE3o50 (1)_23": 1673032295
+      "Ilustra\xE7\xE3o50 (1)_24": -996969189
+      "Ilustra\xE7\xE3o50 (1)_25": -1630982749
+      "Ilustra\xE7\xE3o50 (1)_26": -1897902543
+      "Ilustra\xE7\xE3o50 (1)_27": 1290672009
+      "Ilustra\xE7\xE3o50 (1)_28": -281180924
+      "Ilustra\xE7\xE3o50 (1)_29": 2023012227
+      "Ilustra\xE7\xE3o50 (1)_3": 946144519
+      "Ilustra\xE7\xE3o50 (1)_30": 353353919
+      "Ilustra\xE7\xE3o50 (1)_31": 1808365662
+      "Ilustra\xE7\xE3o50 (1)_32": -1188946908
+      "Ilustra\xE7\xE3o50 (1)_33": -1248196886
+      "Ilustra\xE7\xE3o50 (1)_34": 587766266
+      "Ilustra\xE7\xE3o50 (1)_35": 129362504
+      "Ilustra\xE7\xE3o50 (1)_36": 2009561245
+      "Ilustra\xE7\xE3o50 (1)_4": 956837152
+      "Ilustra\xE7\xE3o50 (1)_5": 1673060754
+      "Ilustra\xE7\xE3o50 (1)_6": -711824030
+      "Ilustra\xE7\xE3o50 (1)_7": -1410452941
+      "Ilustra\xE7\xE3o50 (1)_8": 1886960461
+      "Ilustra\xE7\xE3o50 (1)_9": -1287628384
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
