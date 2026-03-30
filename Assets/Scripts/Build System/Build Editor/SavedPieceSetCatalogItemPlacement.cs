@@ -17,7 +17,8 @@ public class SavedPieceSetCatalogItemPlacement : ICatalogItemPlacement
     {
         _build = build;
 
-        var recoloredPieces = buildData.Pieces
+        var instancedBuildData = buildData.CloneWithNewPieceIds();
+        var recoloredPieces = instancedBuildData.Pieces
             .Select(piece => Recolor(piece, color))
             .ToArray();
 
@@ -136,12 +137,17 @@ public class SavedPieceSetCatalogItemPlacement : ICatalogItemPlacement
 
         foreach (var piece in _pieces)
         {
-            var colliders = piece.GetComponentsInChildren<Collider>(true);
+            var colliders = piece
+                .GetComponentsInChildren<Collider>(true)
+                .Where(collider => collider != null)
+                .ToArray();
+
             var states = new bool[colliders.Length];
             for (var i = 0; i < colliders.Length; i++)
             {
-                states[i] = colliders[i].enabled;
-                colliders[i].enabled = false;
+                var collider = colliders[i];
+                states[i] = collider.enabled;
+                collider.enabled = false;
             }
 
             _pieceColliders[piece] = colliders;
@@ -158,7 +164,11 @@ public class SavedPieceSetCatalogItemPlacement : ICatalogItemPlacement
 
             var colliderCount = Mathf.Min(colliders.Length, states.Length);
             for (var i = 0; i < colliderCount; i++)
-                colliders[i].enabled = states[i];
+            {
+                var collider = colliders[i];
+                if (collider != null)
+                    collider.enabled = states[i];
+            }
         }
 
         _colliderStates.Clear();
@@ -217,7 +227,11 @@ public class SavedPieceSetCatalogItemPlacement : ICatalogItemPlacement
 
         var colliderCount = Mathf.Min(colliders.Length, states.Length);
         for (var i = 0; i < colliderCount; i++)
-            colliders[i].enabled = enabled && states[i];
+        {
+            var collider = colliders[i];
+            if (collider != null)
+                collider.enabled = enabled && states[i];
+        }
     }
 
     private static PieceData Recolor(PieceData pieceData, PieceColor color)

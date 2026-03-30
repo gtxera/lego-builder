@@ -154,15 +154,21 @@ public class SelectionTarget : IEditablePieceTarget
     private void CacheAndDisableColliders()
     {
         _colliderStates.Clear();
+        _pieceColliders.Clear();
 
         foreach (var piece in _pieces)
         {
-            var colliders = piece.GetComponentsInChildren<Collider>(true);
+            var colliders = piece
+                .GetComponentsInChildren<Collider>(true)
+                .Where(collider => collider != null)
+                .ToArray();
+
             var states = new bool[colliders.Length];
             for (var i = 0; i < colliders.Length; i++)
             {
-                states[i] = colliders[i].enabled;
-                colliders[i].enabled = false;
+                var collider = colliders[i];
+                states[i] = collider.enabled;
+                collider.enabled = false;
             }
 
             _pieceColliders[piece] = colliders;
@@ -179,7 +185,11 @@ public class SelectionTarget : IEditablePieceTarget
 
             var colliderCount = Mathf.Min(colliders.Length, states.Length);
             for (var i = 0; i < colliderCount; i++)
-                colliders[i].enabled = states[i];
+            {
+                var collider = colliders[i];
+                if (collider != null)
+                    collider.enabled = states[i];
+            }
         }
 
         _colliderStates.Clear();
@@ -278,6 +288,10 @@ public class SelectionTarget : IEditablePieceTarget
 
         var colliderCount = Mathf.Min(colliders.Length, states.Length);
         for (var i = 0; i < colliderCount; i++)
-            colliders[i].enabled = enabled && states[i];
+        {
+            var collider = colliders[i];
+            if (collider != null)
+                collider.enabled = enabled && states[i];
+        }
     }
 }

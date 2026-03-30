@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class BuildInputContext : InputContext, ITickable
+public class BuildInputContext : InputContext
 {
     private const float DoubleTapMaxDelay = 0.3f;
     private const float DoubleTapMaxDistancePixels = 32f;
@@ -66,11 +66,6 @@ public class BuildInputContext : InputContext, ITickable
         inputActions.Build.SecondaryTap.performed -= OnSecondaryTapPerformed;
         ResetGestureState();
         ClearTapCandidate();
-    }
-
-    public void Tick(float deltaTime)
-    {
-        Debug.Log(_enabled);
     }
 
     private void OnTouchStarted(InputAction.CallbackContext context)

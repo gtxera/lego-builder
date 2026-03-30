@@ -17,10 +17,6 @@ public class LevelBuildReplicator : MonoBehaviour
         
         if (_progressManager.IsCompleted(_replicatedBuildLevel))
             ReplicateLevelBuildNoAnimation(_progressManager.GetBuildData(_replicatedBuildLevel));
-        else
-        {
-            Debug.Log("buuu");
-        }
     }
 
     private void ReplicateLevelBuild(BuildData data)

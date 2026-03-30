@@ -257,6 +257,5 @@ public class CameraControlInputContext : InputContext, ITickable
         _lastTouchesDirection = touchesDirection;
         _lastFirstTouchPosition = firstTouchPosition;
         _lastSecondTouchPosition = secondTouchPosition;
-        Debug.Log(_enabled);
     }
 }

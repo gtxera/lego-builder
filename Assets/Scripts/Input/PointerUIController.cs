@@ -19,7 +19,6 @@ public class PointerUIController
         _raycastResults.Clear();
         EventSystem.current.RaycastAll(pointerEventData, _raycastResults);
         var result = _raycastResults.Count > 0;
-        Debug.Log(result);
         return result;
     }
 }

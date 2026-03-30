@@ -30,6 +30,15 @@ public class BuildData
         return new BuildData(centeredPieces);
     }
 
+    public BuildData CloneWithNewPieceIds()
+    {
+        if (_pieces == null || _pieces.Length == 0)
+            return new BuildData(Array.Empty<PieceData>());
+
+        var clonedPieces = _pieces.Select(CloneWithNewPieceId).ToArray();
+        return new BuildData(clonedPieces);
+    }
+
     public Bounds GetBounds()
     {
         return GetBounds(useLocalPositions: false);
@@ -68,6 +77,20 @@ public class BuildData
             transientData.WorldPosition - worldOffset);
 
         return new PieceData(piece.Template, centeredTransientData);
+    }
+
+    private static PieceData CloneWithNewPieceId(PieceData piece)
+    {
+        var transientData = piece.TransientData;
+        var clonedTransientData = new PieceTransientData(
+            Guid.NewGuid(),
+            transientData.LocalPosition,
+            transientData.Colors,
+            transientData.Rotation,
+            transientData.CreationTime,
+            transientData.WorldPosition);
+
+        return new PieceData(piece.Template, clonedTransientData);
     }
 
     private static Bounds GetPieceBounds(PieceData piece, bool useLocalPositions)
