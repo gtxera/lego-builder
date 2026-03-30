@@ -21,7 +21,7 @@ public class ToolController
     private ITool _activeTool;
     private IEditablePieceTarget _activeMoveTarget;
     private Piece _activeReferencePiece;
-    private Piece _pendingSpawnPiece;
+    private ICatalogItemPlacement _pendingSpawnPlacement;
     private Vector2 _pendingSpawnPointerScreenPosition;
     private bool _pendingSpawnSelectionMoveActive;
     private bool _dragControlsCamera;
@@ -124,14 +124,14 @@ public class ToolController
         _activeTool = null;
     }
 
-    public bool StartExternalSpawnPlacement(IPieceTemplate template, Vector2 pointerScreenPosition)
+    public bool StartExternalSpawnPlacement(IBuildCatalogItem item, Vector2 pointerScreenPosition)
     {
-        return BeginPendingSpawnPlacement(template, pointerScreenPosition, true);
+        return BeginPendingSpawnPlacement(item, pointerScreenPosition, true);
     }
 
     public void UpdateExternalSpawnPlacement(Vector2 pointerScreenPosition)
     {
-        if (_pendingSpawnPiece == null)
+        if (_pendingSpawnPlacement == null)
             return;
 
         UpdatePendingSpawnPlacement(pointerScreenPosition);
@@ -139,7 +139,7 @@ public class ToolController
 
     public void FinishExternalSpawnPlacement()
     {
-        if (_pendingSpawnPiece == null)
+        if (_pendingSpawnPlacement == null)
             return;
 
         FinalizePendingSpawnPlacement();
@@ -200,7 +200,7 @@ public class ToolController
 
     private void OnTapReleased(Vector2 pointerScreenPosition)
     {
-        if (_pendingSpawnPiece != null)
+        if (_pendingSpawnPlacement != null)
         {
             UpdatePendingSpawnPlacement(pointerScreenPosition);
             FinalizePendingSpawnPlacement();
@@ -215,7 +215,7 @@ public class ToolController
 
     private void OnDragStarted(Piece startPiece, Vector2 pointerScreenPosition)
     {
-        if (_pendingSpawnPiece != null)
+        if (_pendingSpawnPlacement != null)
         {
             BeginPendingSpawnSelectionMoveIfNeeded();
             UpdatePendingSpawnPlacement(pointerScreenPosition);
@@ -239,7 +239,7 @@ public class ToolController
 
     private void OnDragMoved(Piece startPiece, Vector2 pointerScreenPosition, Vector2 pointerScreenDelta)
     {
-        if (_pendingSpawnPiece != null)
+        if (_pendingSpawnPlacement != null)
         {
             UpdatePendingSpawnPlacement(pointerScreenPosition);
             return;
@@ -257,7 +257,7 @@ public class ToolController
 
     private void OnDragEnded(Piece startPiece, Vector2 pointerScreenPosition)
     {
-        if (_pendingSpawnPiece != null)
+        if (_pendingSpawnPlacement != null)
         {
             FinalizePendingSpawnPlacement();
             return;
@@ -302,12 +302,12 @@ public class ToolController
     {
         CloseActionColorMenu();
         RevertImmediateTapIfNeeded(piece);
-        BeginPendingSpawnPlacement(_buildTemplateSelector.SelectedTemplate, pointerScreenPosition, false);
+        BeginPendingSpawnPlacement(_buildTemplateSelector.SelectedItem, pointerScreenPosition, false);
     }
 
     private void OnSecondaryTapTriggered(Vector2 pointerScreenPosition)
     {
-        if (_pendingSpawnPiece != null)
+        if (_pendingSpawnPlacement != null)
         {
             RotatePendingSpawnPlacement(pointerScreenPosition);
             return;
@@ -414,21 +414,17 @@ public class ToolController
             _activeMoveTarget.UpdateMove(position);
     }
 
-    private bool BeginPendingSpawnPlacement(IPieceTemplate template, Vector2 pointerScreenPosition, bool notifySelectionMove)
+    private bool BeginPendingSpawnPlacement(IBuildCatalogItem item, Vector2 pointerScreenPosition, bool notifySelectionMove)
     {
-        if (_buildEditor.Build == null || template == null)
+        if (_buildEditor.Build == null || item == null)
             return false;
 
         HideActionMenu();
         ClearLastTapState();
         CancelPendingSpawnPlacement();
 
-        _buildTemplateSelector.SetTemplate(template);
-
-        _pendingSpawnPiece = _buildEditor.Build.Add(template);
-        _pendingSpawnPiece.SetWorldRotation(0f);
-        _pendingSpawnPiece.TrySetColor(_buildColorSelector.GetSelectedColorFor(0), 0);
-        _pendingSpawnPiece.BeginDragging();
+        _buildTemplateSelector.SetItem(item);
+        _pendingSpawnPlacement = item.CreatePlacement(_buildEditor.Build, _buildColorSelector.GetSelectedColorFor(0));
         _pendingSpawnSelectionMoveActive = false;
 
         UpdatePendingSpawnPlacement(pointerScreenPosition);
@@ -444,25 +440,20 @@ public class ToolController
 
     private void UpdatePendingSpawnPlacement(Vector2 pointerScreenPosition)
     {
-        if (_pendingSpawnPiece == null)
+        if (_pendingSpawnPlacement == null)
             return;
 
         _pendingSpawnPointerScreenPosition = pointerScreenPosition;
-
-        var ray = _cameraServices.ScreenToWorldRay(pointerScreenPosition);
-        if (!_pendingSpawnPiece.TryGetAnchoredPosition(ray, out var position))
-            position = _pendingSpawnPiece.GetSweepPosition(ray.origin, ray.direction);
-
-        _pendingSpawnPiece.MoveTo(position);
+        _pendingSpawnPlacement.UpdatePosition(_cameraServices.ScreenToWorldRay(pointerScreenPosition));
     }
 
     private void RotatePendingSpawnPlacement(Vector2 pointerScreenPosition)
     {
-        if (_pendingSpawnPiece == null)
+        if (_pendingSpawnPlacement == null)
             return;
 
         _pendingSpawnPointerScreenPosition = pointerScreenPosition;
-        _pendingSpawnPiece.RotateClockwise();
+        _pendingSpawnPlacement.RotateClockwise();
         UpdatePendingSpawnPlacement(_pendingSpawnPointerScreenPosition);
     }
 
@@ -473,14 +464,16 @@ public class ToolController
 
     private void FinalizePendingSpawnPlacement(bool notifySelectionMoveFinished)
     {
-        if (_pendingSpawnPiece == null)
+        if (_pendingSpawnPlacement == null)
             return;
 
-        _pendingSpawnPiece.EndDragging();
-        var piece = _pendingSpawnPiece;
-        _pendingSpawnPiece = null;
+        var placement = _pendingSpawnPlacement;
+        _pendingSpawnPlacement = null;
         _pendingSpawnPointerScreenPosition = Vector2.zero;
-        _buildEditor.Commit(new SpawnPieceCommand(_buildEditor.Build, piece.GetData()));
+        var command = placement.Confirm();
+
+        if (command != null)
+            _buildEditor.Commit(command);
 
         if (notifySelectionMoveFinished && _pendingSpawnSelectionMoveActive)
             SelectionMoveFinished();
@@ -490,12 +483,11 @@ public class ToolController
 
     private void CancelPendingSpawnPlacement()
     {
-        if (_pendingSpawnPiece == null)
+        if (_pendingSpawnPlacement == null)
             return;
 
-        _pendingSpawnPiece.EndDragging();
-        _buildEditor.Build.Remove(_pendingSpawnPiece);
-        _pendingSpawnPiece = null;
+        _pendingSpawnPlacement.Cancel();
+        _pendingSpawnPlacement = null;
         _pendingSpawnPointerScreenPosition = Vector2.zero;
 
         if (_pendingSpawnSelectionMoveActive)
@@ -646,7 +638,7 @@ public class ToolController
 
     private void BeginPendingSpawnSelectionMoveIfNeeded()
     {
-        if (_pendingSpawnPiece == null || _pendingSpawnSelectionMoveActive)
+        if (_pendingSpawnPlacement == null || _pendingSpawnSelectionMoveActive)
             return;
 
         _pendingSpawnSelectionMoveActive = true;

@@ -17,7 +17,7 @@ public class PieceSelectorButton : ValidatedMonoBehaviour, IPointerDownHandler, 
     [SerializeField]
     private Image _selectedImage;
     
-    private IPieceTemplate _template;
+    private IBuildCatalogItem _item;
 
     private BuildTemplateSelector _buildTemplateSelector;
     private ToolController _toolController;
@@ -33,19 +33,20 @@ public class PieceSelectorButton : ValidatedMonoBehaviour, IPointerDownHandler, 
     }
 
     public void Initialize(
-        IPieceTemplate pieceTemplate,
+        IBuildCatalogItem item,
         BuildTemplateSelector buildTemplateSelector,
         PiecePreviewService piecePreviewService,
         ToolController toolController)
     {
         _buildTemplateSelector = buildTemplateSelector;
         _toolController = toolController;
-        _template = pieceTemplate;
-        _image.texture = piecePreviewService.GetPreviewTexture(_template, new Vector2Int(256, 256));
+        _item = item;
+        _image.texture = piecePreviewService.GetPreviewTexture(_item, new Vector2Int(256, 256));
 
-        _selectedImage.enabled = _buildTemplateSelector.SelectedTemplate == pieceTemplate;
+        _selectedImage.enabled = _buildTemplateSelector.IsSelected(item);
 
-        _buildTemplateSelector.TemplateDeselected += OnTemplateDeselected;
+        _buildTemplateSelector.ItemSelected += OnItemSelected;
+        _buildTemplateSelector.ItemDeselected += OnItemDeselected;
     }
 
     private void OnClick()
@@ -53,13 +54,21 @@ public class PieceSelectorButton : ValidatedMonoBehaviour, IPointerDownHandler, 
         if (_suppressClick)
             return;
 
-        _buildTemplateSelector.SetTemplate(_template);
+        _buildTemplateSelector.SetItem(_item);
         _selectedImage.enabled = true;
     }
 
-    private void OnTemplateDeselected(IPieceTemplate template)
+    private void OnItemSelected(IBuildCatalogItem item)
     {
-        if (template != _template)
+        if (_item == null)
+            return;
+
+        _selectedImage.enabled = item != null && item.SelectionId == _item.SelectionId;
+    }
+
+    private void OnItemDeselected(IBuildCatalogItem item)
+    {
+        if (_item == null || item == null || item.SelectionId != _item.SelectionId)
             return;
 
         _selectedImage.enabled = false;
@@ -68,7 +77,10 @@ public class PieceSelectorButton : ValidatedMonoBehaviour, IPointerDownHandler, 
     private void OnDestroy()
     {
         if (_buildTemplateSelector != null)
-            _buildTemplateSelector.TemplateDeselected -= OnTemplateDeselected;
+        {
+            _buildTemplateSelector.ItemSelected -= OnItemSelected;
+            _buildTemplateSelector.ItemDeselected -= OnItemDeselected;
+        }
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -99,7 +111,7 @@ public class PieceSelectorButton : ValidatedMonoBehaviour, IPointerDownHandler, 
             if (ContainsScreenPoint(eventData.position, eventData.pressEventCamera))
                 return;
 
-            if (!_toolController.StartExternalSpawnPlacement(_template, eventData.position))
+            if (!_toolController.StartExternalSpawnPlacement(_item, eventData.position))
                 return;
 
             _selectedImage.enabled = true;

@@ -7,9 +7,7 @@ public class SpawnerTool : ITool
     private readonly BuildColorSelector _buildColorSelector;
     private readonly BuildTemplateSelector _buildTemplateSelector;
 
-    private Piece _newPiece;
-    private Vector3 _lastMovePosition;
-    private PieceRotation _rotation;
+    private ICatalogItemPlacement _placement;
 
     public SpawnerTool(BuildEditor buildEditor, CameraServices cameraServices, BuildColorSelector buildColorSelector, BuildTemplateSelector buildTemplateSelector)
     {
@@ -21,54 +19,41 @@ public class SpawnerTool : ITool
 
     public void Press(Vector2 pointerScreenPosition)
     {
-        _newPiece = _buildEditor.Build.Add(_buildTemplateSelector.SelectedTemplate);
-        var ray = _cameraServices.ScreenToWorldRay(pointerScreenPosition);
-        
-        _newPiece.SetWorldRotation(_rotation.ToAngle());
-        
-        if (!_newPiece.TryGetAnchoredPosition(ray, out var position))
-            position = _newPiece.GetSweepPosition(ray.origin, ray.direction);
-        
-        _lastMovePosition = _newPiece.MoveTo(position);
+        var selectedItem = _buildTemplateSelector.SelectedItem;
+        if (selectedItem == null)
+            return;
 
-        _newPiece.TrySetColor(_buildColorSelector.GetSelectedColorFor(0), 0);
+        _placement = selectedItem.CreatePlacement(_buildEditor.Build, _buildColorSelector.GetSelectedColorFor(0));
+        _placement.UpdatePosition(_cameraServices.ScreenToWorldRay(pointerScreenPosition));
     }
 
     public void Release(Vector2 pointerScreenPosition)
     {
-        var command = new SpawnPieceCommand(_buildEditor.Build, _newPiece.GetData());
-        _newPiece = null;
-        _buildEditor.Commit(command);
+        if (_placement == null)
+            return;
+
+        var command = _placement.Confirm();
+        _placement = null;
+
+        if (command != null)
+            _buildEditor.Commit(command);
     }
 
     public void Drag(Vector2 pointerScreenPosition)
     {
-        if (_newPiece == null)
+        if (_placement == null)
             return;
-        
-        var ray = _cameraServices.ScreenToWorldRay(pointerScreenPosition);
-        
-        if (!_newPiece.TryGetAnchoredPosition(ray, out var position))
-            position = _newPiece.GetSweepPosition(ray.origin, ray.direction);
-        
-        _lastMovePosition = _newPiece.MoveTo(position);
+
+        _placement.UpdatePosition(_cameraServices.ScreenToWorldRay(pointerScreenPosition));
     }
 
     public void Tap(Vector2 pointerScreenPosition)
     {
-        if (_newPiece == null)
+        if (_placement == null)
             return;
 
-        _rotation = PieceRotationExtensions.Add(_rotation, PieceRotation.East);
-        
-        _newPiece.RotateClockwise();
-        
-        var ray = _cameraServices.ScreenToWorldRay(pointerScreenPosition);
-        
-        if (!_newPiece.TryGetAnchoredPosition(ray, out var position))
-            position = _newPiece.GetSweepPosition(ray.origin, ray.direction);
-        
-        _lastMovePosition = _newPiece.MoveTo(position);
+        _placement.RotateClockwise();
+        _placement.UpdatePosition(_cameraServices.ScreenToWorldRay(pointerScreenPosition));
     }
 
     public Sprite GetIcon() => Resources.Load<Sprite>("Icons/Add");

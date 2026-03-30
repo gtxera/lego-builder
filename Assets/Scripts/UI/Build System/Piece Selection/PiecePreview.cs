@@ -1,12 +1,14 @@
 using System.Collections.Generic;
-using Reflex.Attributes;
+using Reflex.Extensions;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 public class PiecePreview : MonoBehaviour
 {
-    private PiecePreviewService _piecePreviewService;
+    private IBuildCatalogItem _catalogItem;
     private BuildColorSelector _colorSelector;
+    private PieceMaterials _pieceMaterials;
+    private RenderTexture _renderTexture;
 
     private Transform _viewObject;
 
@@ -15,32 +17,32 @@ public class PiecePreview : MonoBehaviour
     private IEnumerable<Renderer> _renderers;
     private static readonly int BaseColor = Shader.PropertyToID("_BaseColor");
 
-    [Inject]
-    private readonly PieceMaterials _pieceMaterials;
-
     public RenderTexture GetRenderTexture(
-        IPieceTemplate template,
+        IBuildCatalogItem item,
         PiecePreviewService piecePreviewService,
         BuildColorSelector colorSelector,
         Vector2Int size)
     {
-        _piecePreviewService = piecePreviewService;
+        _catalogItem = item;
         _colorSelector = colorSelector;
+        _pieceMaterials = gameObject.scene.GetSceneContainer().Resolve<PieceMaterials>();
         
-        var renderTexture = new RenderTexture(size.x, size.y, 24);
+        _renderTexture = new RenderTexture(size.x, size.y, 24);
 
         _viewObject = new GameObject("View").transform;
         _viewObject.SetParent(transform, false);
-        template.Configure(_viewObject.gameObject);
+        item.ConfigurePreview(_viewObject.gameObject);
+
+        var bounds = item.GetPreviewBounds();
 
         var cameraObject = new GameObject("Camera");
         cameraObject.transform.SetParent(transform, false);
-        cameraObject.transform.localPosition = Vector3.zero + template.GetSize().ToWorld() / 2 + Vector3.one * 1.5f;
-        cameraObject.transform.LookAt(_viewObject);
+        cameraObject.transform.localPosition = bounds.center + bounds.extents + Vector3.one * 1.5f;
+        cameraObject.transform.LookAt(bounds.center);
         
         _camera = cameraObject.AddComponent<Camera>();
         _camera.enabled = false;
-        _camera.targetTexture = renderTexture;
+        _camera.targetTexture = _renderTexture;
         _camera.cullingMask = LayerMask.GetMask("ExamplePieces");
         _camera.clearFlags = CameraClearFlags.Color;
         _camera.backgroundColor = Color.clear;
@@ -52,11 +54,17 @@ public class PiecePreview : MonoBehaviour
         colorSelector.ColorChanged += OnSelectedColorChanged;
         OnSelectedColorChanged(colorSelector.GetSelectedColorFor(0));
         
-        return renderTexture;
+        return _renderTexture;
     }
+
+    public Texture GetTexture() => _renderTexture;
+    public BuildCatalogCategory Category => _catalogItem?.Category ?? BuildCatalogCategory.Brick;
 
     private void OnDestroy()
     {
+        if (_catalogItem != null && _viewObject != null)
+            _catalogItem.CleanupPreview(_viewObject.gameObject);
+
         if (_colorSelector != null)
             _colorSelector.ColorChanged -= OnSelectedColorChanged;
     }

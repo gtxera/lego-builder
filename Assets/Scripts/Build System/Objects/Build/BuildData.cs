@@ -28,7 +28,7 @@ public class BuildData
         return new BuildData(centeredPieces);
     }
 
-    private Bounds GetBounds()
+    public Bounds GetBounds()
     {
         var hasBounds = false;
         var bounds = default(Bounds);

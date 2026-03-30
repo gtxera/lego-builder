@@ -1,14 +1,12 @@
 using System;
 using System.Collections.Generic;
-using Reflex.Extensions;
-using Reflex.Injectors;
 using UnityEngine;
 
 public class PiecePreviewService
 {
     private Vector3 _position = new Vector3(5000, 5000, 5000);
 
-    private readonly Dictionary<Type, List<PiecePreview>> _previews = new();
+    private readonly Dictionary<string, PiecePreview> _previews = new();
     
     private const float FullRotationDuration = 5f;
 
@@ -19,39 +17,26 @@ public class PiecePreviewService
         _colorSelector = colorSelector;
     }
 
-    public Texture GetPreviewTexture(IPieceTemplate template, Vector2Int size)
+    public Texture GetPreviewTexture(IBuildCatalogItem item, Vector2Int size)
     {
+        if (item == null)
+            return null;
+
+        if (_previews.TryGetValue(item.SelectionId, out var cachedPreview))
+            return cachedPreview.GetTexture();
+
         var previewObject = new GameObject("Preview Piece");
         previewObject.transform.position = _position;
         var preview = previewObject.AddComponent<PiecePreview>();
-        
-        GameObjectInjector.InjectObject(previewObject, previewObject.scene.GetSceneContainer());
-        
-        var type = template.GetType();
-        if (!_previews.TryGetValue(type, out var previews))
-        {
-            previews = new List<PiecePreview>();
-            _previews.Add(type, previews);
-        }
-        previews.Add(preview);
-        
-        return preview.GetRenderTexture(template, this, _colorSelector, size);
-    }
-    
-    public void EnablePreview<TPieceTemplate>() where TPieceTemplate : IPieceTemplate
-    {
-        var type = typeof(TPieceTemplate);
 
-        foreach (var (templateType, previews) in _previews)
-        {
-            if (templateType == type)
-                foreach (var preview in previews)
-                    preview.enabled = true;
-            else
-                foreach (var preview in previews)
-                    preview.enabled = false;
-        }
-            
+        _previews[item.SelectionId] = preview;
+        return preview.GetRenderTexture(item, this, _colorSelector, size);
+    }
+
+    public void EnablePreview(BuildCatalogCategory category)
+    {
+        foreach (var preview in _previews.Values)
+            preview.enabled = preview.Category == category;
     }
 
     public float GetRotation(float currentTime) => currentTime % FullRotationDuration / FullRotationDuration * 360f;

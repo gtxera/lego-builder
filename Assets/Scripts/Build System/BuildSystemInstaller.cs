@@ -15,6 +15,8 @@ public class BuildSystemInstaller : MonoBehaviour, IInstaller
             .AddScoped(typeof(BuildSelection))
             .AddScoped(typeof(BuildSelectionVisualizer))
             .AddScoped(typeof(BuildColorSelector))
+            .AddScoped(typeof(SavedPieceSetLibrary))
+            .AddScoped(typeof(BuildCatalogService))
             .AddScoped(typeof(BuildTemplateSelector))
             .AddScoped(typeof(EditablePieceTargetResolver))
             .AddScoped(typeof(SelectionRectangleOverlay))
@@ -59,4 +61,3 @@ public class PieceSelectionOutlineSettings
     public Color Color => _color;
     public float Width => _width;
 }
-

@@ -1,26 +1,32 @@
 using System;
-using System.Linq;
-
 public class BuildTemplateSelector
 {
-    public BuildTemplateSelector(PieceTemplateDatabase pieceTemplateDatabase)
+    public BuildTemplateSelector(BuildCatalogService buildCatalogService)
     {
-        SelectedTemplate = pieceTemplateDatabase.GetTemplates<BrickPieceTemplate>().First();
+        SelectedItem = buildCatalogService.GetDefaultItem();
     }
-    
-    public IPieceTemplate SelectedTemplate { get; private set; }
 
-    public event Action<IPieceTemplate> TemplateSelected = delegate { };
-    public event Action<IPieceTemplate> TemplateDeselected = delegate { }; 
-    
-    public void SetTemplate(IPieceTemplate template)
+    public IBuildCatalogItem SelectedItem { get; private set; }
+
+    public event Action<IBuildCatalogItem> ItemSelected = delegate { };
+    public event Action<IBuildCatalogItem> ItemDeselected = delegate { };
+
+    public bool IsSelected(IBuildCatalogItem item)
     {
-        if (SelectedTemplate == template)
+        return item != null &&
+               SelectedItem != null &&
+               item.SelectionId == SelectedItem.SelectionId;
+    }
+
+    public void SetItem(IBuildCatalogItem item)
+    {
+        if (item == null || IsSelected(item))
             return;
 
-        TemplateDeselected(SelectedTemplate);
-        TemplateSelected(template);
-        
-        SelectedTemplate = template;
+        var previous = SelectedItem;
+        SelectedItem = item;
+
+        ItemDeselected(previous);
+        ItemSelected(item);
     }
 }

@@ -158,11 +158,23 @@ public class ToolsPresenter : MonoBehaviour
 
     private void SpawnPiece()
     {
-        var piece = _buildEditor.Build.Add(_buildTemplateSelector.SelectedTemplate);
-        _pieceId = piece.GetTransientData().Id;
-        piece.MoveTo(piece.GetSweepPosition(transform.position + Vector3.up, Vector3.down));
-        piece.TrySetColor(_buildColorSelector.GetSelectedColorFor(0), 0);
-        var command = new SpawnPieceCommand(_buildEditor.Build, piece.GetData());
+        var selectedItem = _buildTemplateSelector.SelectedItem;
+        if (selectedItem == null)
+            return;
+
+        var placement = selectedItem.CreatePlacement(_buildEditor.Build, _buildColorSelector.GetSelectedColorFor(0));
+        placement.UpdatePosition(new Ray(transform.position + Vector3.up, Vector3.down));
+        var command = placement.Confirm();
+        if (command == null)
+            return;
+
+        var lastCreatedPiece = _buildEditor.Build.Pieces
+            .OrderByDescending(piece => piece.GetTransientData().CreationTime)
+            .FirstOrDefault();
+
+        if (lastCreatedPiece != null)
+            _pieceId = lastCreatedPiece.GetTransientData().Id;
+
         _buildEditor.Commit(command);
     }
 
