@@ -1,6 +1,7 @@
+using System;
 using UnityEngine;
 
-public abstract class InputContext
+public abstract class InputContext : IDisposable
 {
     private readonly LegoBuilderInputActions _inputActions;
 
@@ -32,4 +33,9 @@ public abstract class InputContext
     protected abstract void Enable(LegoBuilderInputActions inputActions);
 
     protected abstract void Disable(LegoBuilderInputActions inputActions);
+
+    public void Dispose()
+    {
+        Disable();
+    }
 }
