@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Reflex.Exceptions;
 using Reflex.Extensions;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -62,8 +63,13 @@ public class PiecePreview : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (_catalogItem != null && _viewObject != null)
-            _catalogItem.CleanupPreview(_viewObject.gameObject);
+        try
+        {
+            if (_catalogItem != null && _viewObject != null)
+                _catalogItem.CleanupPreview(_viewObject.gameObject);
+        }
+        catch (UnknownContractException) {}
+
 
         if (_colorSelector != null)
             _colorSelector.ColorChanged -= OnSelectedColorChanged;

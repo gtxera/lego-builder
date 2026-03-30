@@ -21,21 +21,28 @@ public class BuildData
         if (_pieces == null || _pieces.Length == 0)
             return new BuildData(Array.Empty<PieceData>());
 
-        var bounds = GetBounds();
-        var offset = new Vector3(bounds.center.x, bounds.min.y, bounds.center.z);
-        var centeredPieces = _pieces.Select(piece => CreateCenteredPiece(piece, offset)).ToArray();
+        var localBounds = GetBounds(useLocalPositions: true);
+        var worldBounds = GetBounds(useLocalPositions: false);
+        var localOffset = new Vector3(localBounds.center.x, localBounds.min.y, localBounds.center.z);
+        var worldOffset = new Vector3(worldBounds.center.x, worldBounds.min.y, worldBounds.center.z);
+        var centeredPieces = _pieces.Select(piece => CreateCenteredPiece(piece, localOffset, worldOffset)).ToArray();
 
         return new BuildData(centeredPieces);
     }
 
     public Bounds GetBounds()
     {
+        return GetBounds(useLocalPositions: false);
+    }
+
+    private Bounds GetBounds(bool useLocalPositions)
+    {
         var hasBounds = false;
         var bounds = default(Bounds);
 
         foreach (var piece in _pieces)
         {
-            var pieceBounds = GetPieceBounds(piece);
+            var pieceBounds = GetPieceBounds(piece, useLocalPositions);
             if (!hasBounds)
             {
                 bounds = pieceBounds;
@@ -49,24 +56,25 @@ public class BuildData
         return bounds;
     }
 
-    private static PieceData CreateCenteredPiece(PieceData piece, Vector3 offset)
+    private static PieceData CreateCenteredPiece(PieceData piece, Vector3 localOffset, Vector3 worldOffset)
     {
         var transientData = piece.TransientData;
         var centeredTransientData = new PieceTransientData(
             transientData.Id,
-            transientData.LocalPosition - offset,
+            transientData.LocalPosition - localOffset,
             transientData.Colors,
             transientData.Rotation,
             transientData.CreationTime,
-            transientData.WorldPosition - offset);
+            transientData.WorldPosition - worldOffset);
 
         return new PieceData(piece.Template, centeredTransientData);
     }
 
-    private static Bounds GetPieceBounds(PieceData piece)
+    private static Bounds GetPieceBounds(PieceData piece, bool useLocalPositions)
     {
         var size = GetRotatedSize(piece.Template.GetSize().ToWorld(), piece.TransientData.Rotation);
-        return new Bounds(piece.TransientData.WorldPosition, size);
+        var position = useLocalPositions ? piece.TransientData.LocalPosition : piece.TransientData.WorldPosition;
+        return new Bounds(position, size);
     }
 
     private static Vector3 GetRotatedSize(Vector3 size, PieceRotation rotation)

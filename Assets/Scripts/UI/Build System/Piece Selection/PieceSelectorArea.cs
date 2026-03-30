@@ -73,6 +73,9 @@ public class PieceSelectorArea : MonoBehaviour
             return;
         }
 
+        if (_deleteSelectionButton != null)
+            _deleteSelectionButton.onClick.AddListener(OnDeleteSelectionRequested);
+
         SelectCategory(_runtimeCategories[0]);
         RefreshSavedSetsCategory();
         RefreshActionButtons();
@@ -87,6 +90,9 @@ public class PieceSelectorArea : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (_deleteSelectionButton != null)
+            _deleteSelectionButton.onClick.RemoveListener(OnDeleteSelectionRequested);
+
         _savedPieceSetLibrary.Changed -= OnSavedSetsChanged;
         _buildSelection.SelectionChanged -= OnSelectionChanged;
         _buildTemplateSelector.ItemSelected -= OnSelectedItemChanged;
@@ -125,6 +131,9 @@ public class PieceSelectorArea : MonoBehaviour
 
     private void PopulateCategory(CategoryDefinition category)
     {
+        if (category.Kind == BuildCatalogCategory.SavedSet)
+            return;
+
         foreach (var item in _buildCatalogService.GetItems(category.Kind))
         {
             var button = Instantiate(_pieceSelectorButtonPrefab, category.Root);
