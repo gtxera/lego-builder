@@ -6,6 +6,7 @@ public abstract class PieceColor
 {
     private NamedColor _namedColor;
     
+    [SerializeField]
     private bool _transparent;
 
     public Color Color
@@ -19,7 +20,6 @@ public abstract class PieceColor
         }
     }
 
-    [field: SerializeField]
     public bool Transparent
     {
         get => _transparent;

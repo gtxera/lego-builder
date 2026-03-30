@@ -1,12 +1,22 @@
 using System;
 using System.Linq;
+using Reflex.Extensions;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 public sealed class ExactBuildRequirementGhostVisualizer : IDisposable
 {
+    private const float GhostAlpha = 0.18f;
+    private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
+    private static readonly int AlphaId = Shader.PropertyToID("_Alpha");
+    private static readonly int SourceTransparentId = Shader.PropertyToID("_SourceTransparent");
+    private static readonly int GlowColorId = Shader.PropertyToID("_GlowColor");
+    private static readonly int GlowIntensityId = Shader.PropertyToID("_GlowIntensity");
+    private static readonly int GlowWidthId = Shader.PropertyToID("_GlowWidth");
+
     private readonly ExactBuildRequirement _requirement;
     private readonly Transform _parent;
+    private readonly MaterialPropertyBlock _materialPropertyBlock = new();
 
     private GameObject _ghostRoot;
 
@@ -50,8 +60,10 @@ public sealed class ExactBuildRequirementGhostVisualizer : IDisposable
         var ghostPieceObject = new GameObject("Ghost Piece");
         ghostPieceObject.transform.SetParent(_ghostRoot.transform, false);
 
+        var sourceWasTransparent = IsOriginallyTransparent(pieceData);
         var piece = ghostPieceObject.AddComponent<Piece>();
         piece.Initialize(CreateGhostPieceData(pieceData), localSpace: true);
+        ApplyGhostVisuals(ghostPieceObject, sourceWasTransparent);
         DisableInteraction(ghostPieceObject);
     }
 
@@ -76,6 +88,39 @@ public sealed class ExactBuildRequirementGhostVisualizer : IDisposable
             return new SimpleColor(Color.white, true);
 
         return new SimpleColor(sourceColor.Color, true);
+    }
+
+    private bool IsOriginallyTransparent(PieceData pieceData)
+    {
+        return pieceData.TransientData.Colors?.Any(color => color is { Transparent: true }) == true;
+    }
+
+    private void ApplyGhostVisuals(GameObject ghostPieceObject, bool sourceWasTransparent)
+    {
+        var pieceMaterials = ghostPieceObject.scene.GetSceneContainer().Resolve<PieceMaterials>();
+        var ghostMaterial = pieceMaterials.GhostMaterial;
+        if (ghostMaterial == null)
+            return;
+
+        foreach (var renderer in ghostPieceObject.GetComponentsInChildren<Renderer>(true))
+        {
+            renderer.sharedMaterial = ghostMaterial;
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+
+            _materialPropertyBlock.Clear();
+            var baseColor = Color.white;
+            renderer.GetPropertyBlock(_materialPropertyBlock);
+            if (_materialPropertyBlock.HasColor(BaseColorId))
+                baseColor = _materialPropertyBlock.GetColor(BaseColorId);
+
+            _materialPropertyBlock.SetColor(BaseColorId, baseColor);
+            _materialPropertyBlock.SetFloat(AlphaId, GhostAlpha);
+            _materialPropertyBlock.SetFloat(SourceTransparentId, sourceWasTransparent ? 1f : 0f);
+            _materialPropertyBlock.SetColor(GlowColorId, Color.white);
+            _materialPropertyBlock.SetFloat(GlowIntensityId, sourceWasTransparent ? 1.35f : 0f);
+            _materialPropertyBlock.SetFloat(GlowWidthId, 3.2f);
+            renderer.SetPropertyBlock(_materialPropertyBlock);
+        }
     }
 
     private static void DisableInteraction(GameObject ghostPieceObject)

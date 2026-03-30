@@ -3,6 +3,7 @@ public class PieceMaterials
 {
     private Material _baseMaterial;
     private Material _transparentMaterial;
+    private Material _ghostMaterial;
 
     public Material BaseMaterial
     {
@@ -23,6 +24,17 @@ public class PieceMaterials
                 _transparentMaterial = Resources.Load<Material>("Materials/Piece/TranslucentPieceMaterial");
             
             return _transparentMaterial;
+        }
+    }
+
+    public Material GhostMaterial
+    {
+        get
+        {
+            if (_ghostMaterial == null)
+                _ghostMaterial = Resources.Load<Material>("Materials/Piece/GhostPieceMaterial");
+
+            return _ghostMaterial;
         }
     }
 
