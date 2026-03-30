@@ -75,4 +75,10 @@ public class BrickPieceTemplate : IPieceTemplate
     }
 
     public IEnumerable<PieceTag> GetTags() => Enumerable.Empty<PieceTag>();
+
+    public bool IsSymmetricOnXAxis() => true;
+
+    public bool IsSymmetricOnYAxis() => true;
+
+    public bool IsSymmetricOnAllAxes() => _width == _length;
 }

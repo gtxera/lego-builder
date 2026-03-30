@@ -15,6 +15,15 @@ public class MeshPieceTemplate : IPieceTemplate
     [SerializeField]
     private string[] _pieceTagNames;
 
+    [SerializeField]
+    private bool _isSymmetricOnXAxis;
+
+    [SerializeField]
+    private bool _isSymmetricOnYAxis;
+
+    [SerializeField]
+    private bool _isSymmetricOnAllAxes;
+
     private MeshPiece _meshPiece;
     private MeshPiece MeshPiece
     {
@@ -78,4 +87,10 @@ public class MeshPieceTemplate : IPieceTemplate
     public IEnumerable<Vector3> GetStudPositions() => Enumerable.Empty<Vector3>();
 
     public IEnumerable<PieceTag> GetTags() => PieceTags;
+
+    public bool IsSymmetricOnXAxis() => _isSymmetricOnXAxis;
+
+    public bool IsSymmetricOnYAxis() => _isSymmetricOnYAxis;
+
+    public bool IsSymmetricOnAllAxes() => _isSymmetricOnAllAxes;
 }

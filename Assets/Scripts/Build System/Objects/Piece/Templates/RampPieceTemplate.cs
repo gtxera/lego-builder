@@ -105,4 +105,10 @@ public class RampPieceTemplate : IPieceTemplate
     }
 
     public IEnumerable<PieceTag> GetTags() => Enumerable.Empty<PieceTag>();
+
+    public bool IsSymmetricOnXAxis() => true;
+
+    public bool IsSymmetricOnYAxis() => false;
+
+    public bool IsSymmetricOnAllAxes() => false;
 }

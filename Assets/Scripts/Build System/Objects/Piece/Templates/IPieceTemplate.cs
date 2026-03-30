@@ -17,4 +17,10 @@ public interface IPieceTemplate
     IEnumerable<Vector3> GetStudPositions();
 
     IEnumerable<PieceTag> GetTags();
+
+    bool IsSymmetricOnXAxis();
+
+    bool IsSymmetricOnYAxis();
+
+    bool IsSymmetricOnAllAxes();
 }

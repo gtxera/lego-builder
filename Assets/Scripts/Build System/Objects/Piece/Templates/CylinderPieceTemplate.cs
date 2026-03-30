@@ -66,6 +66,12 @@ public class CylinderPieceTemplate : IPieceTemplate
 
     public IEnumerable<PieceTag> GetTags() => Enumerable.Empty<PieceTag>();
 
+    public bool IsSymmetricOnXAxis() => true;
+
+    public bool IsSymmetricOnYAxis() => true;
+
+    public bool IsSymmetricOnAllAxes() => true;
+
     private IEnumerable<Vector3> GetConnectorPositions(float height)
     {
         var size = GetSize();

@@ -11,6 +11,6 @@ public class JsonBuildSaver : ValidatedMonoBehaviour
     private void Update()
     {
         if (Keyboard.current.kKey.wasReleasedThisFrame)
-            JsonBuild.Create(_build.GetBuildData());
+            JsonBuild.Create(_build.GetBuildData().GetCentered());
     }
 }
