@@ -45,19 +45,12 @@ public static class ExactBuildRequirementMatcher
     private static PieceSignature CreateSignature(PieceData pieceData)
     {
         var transientData = pieceData.TransientData;
-        var namedColors = transientData.Colors?.Select(GetNamedColor).ToArray() ?? Array.Empty<NamedColor>();
 
         return new PieceSignature(
             GetTemplateSignature(pieceData.Template),
             pieceData.Template,
             transientData.LocalPosition,
-            transientData.Rotation,
-            namedColors);
-    }
-
-    private static NamedColor GetNamedColor(PieceColor pieceColor)
-    {
-        return pieceColor?.NamedColor;
+            transientData.Rotation);
     }
 
     private static int FindMatch(
@@ -116,37 +109,20 @@ public static class ExactBuildRequirementMatcher
         private readonly IPieceTemplate _template;
         private readonly Vector3 _localPosition;
         private readonly PieceRotation _rotation;
-        private readonly NamedColor[] _colors;
 
-        public PieceSignature(string templateSignature, IPieceTemplate template, Vector3 localPosition, PieceRotation rotation, NamedColor[] colors)
+        public PieceSignature(string templateSignature, IPieceTemplate template, Vector3 localPosition, PieceRotation rotation)
         {
             _templateSignature = templateSignature;
             _template = template;
             _localPosition = localPosition;
             _rotation = rotation;
-            _colors = colors;
         }
 
         public bool Matches(PieceSignature other)
         {
             return _templateSignature == other._templateSignature &&
                    (_localPosition - other._localPosition).sqrMagnitude <= PositionTolerance &&
-                   AreEquivalentRotations(_template, _rotation, other._rotation) &&
-                   ColorsMatch(other._colors);
-        }
-
-        private bool ColorsMatch(IReadOnlyList<NamedColor> otherColors)
-        {
-            if (_colors.Length != otherColors.Count)
-                return false;
-
-            for (var i = 0; i < _colors.Length; i++)
-            {
-                if (!Equals(_colors[i], otherColors[i]))
-                    return false;
-            }
-
-            return true;
+                   AreEquivalentRotations(_template, _rotation, other._rotation);
         }
     }
 
