@@ -76,6 +76,7 @@ public class ToolController
         _cameraControlInputContext.CameraZoomRequested += OnCameraZoomRequested;
 
         _buildActionMenu.ColorRequested += OnColorRequested;
+        _buildActionMenu.SaveSetRequested += OnSaveSetRequested;
         _buildActionMenu.RotateRightRequested += OnRotateRightRequested;
         _buildActionMenu.RotateLeftRequested += OnRotateLeftRequested;
         _buildActionMenu.RemoveRequested += OnRemoveRequested;
@@ -94,6 +95,7 @@ public class ToolController
     public event Action<ITool> ToolSelected = delegate { };
     public event Action<ITool> ToolDeselected = delegate { };
     public event Action<IReadOnlyList<Piece>> ColorSelectionRequested = delegate { };
+    public event Action SaveSelectionRequested = delegate { };
 
     public void PickTool(ITool tool)
     {
@@ -379,6 +381,17 @@ public class ToolController
         CloseActionColorMenu();
         HideActionMenu();
         RotateSelection(RotateDirection.CounterClockwise);
+    }
+
+    private void OnSaveSetRequested()
+    {
+        CloseActionColorMenu();
+        HideActionMenu();
+
+        if (_buildEditor.Build == null || !_buildSelection.HasSelection)
+            return;
+
+        SaveSelectionRequested();
     }
 
     private void OnRemoveRequested()

@@ -45,14 +45,15 @@ public class PieceSelectorArea : MonoBehaviour
     [SerializeField]
     private Color _normalCategoryColor;
 
+    [SerializeField]
+    private Button _deleteSelectionButton;
+
     private readonly List<CategoryDefinition> _runtimeCategories = new();
     private readonly List<GameObject> _savedSetEntries = new();
 
     private PieceSelectorCategoryButton _selectedCategoryButton;
     private RectTransform _activePanel;
     private CategoryDefinition _savedSetsCategory;
-    private Button _saveSelectionButton;
-    private Button _deleteSelectionButton;
 
     private void Awake()
     {
@@ -66,7 +67,12 @@ public class PieceSelectorArea : MonoBehaviour
         if (_runtimeCategories.Count == 0)
             return;
 
-        CreateSavedSetsCategory();
+        if (_savedSetsCategory == null)
+        {
+            Debug.LogWarning($"{nameof(PieceSelectorArea)} has no configured saved sets category.", this);
+            return;
+        }
+
         SelectCategory(_runtimeCategories[0]);
         RefreshSavedSetsCategory();
         RefreshActionButtons();
@@ -74,6 +80,7 @@ public class PieceSelectorArea : MonoBehaviour
         _savedPieceSetLibrary.Changed += OnSavedSetsChanged;
         _buildSelection.SelectionChanged += OnSelectionChanged;
         _buildTemplateSelector.ItemSelected += OnSelectedItemChanged;
+        _toolController.SaveSelectionRequested += OnSaveSelectionRequested;
         _buildEditor.StartedEditing += OnBuildEditorStateChanged;
         _buildEditor.FinishedEditing += OnBuildEditorStateChanged;
     }
@@ -83,6 +90,7 @@ public class PieceSelectorArea : MonoBehaviour
         _savedPieceSetLibrary.Changed -= OnSavedSetsChanged;
         _buildSelection.SelectionChanged -= OnSelectionChanged;
         _buildTemplateSelector.ItemSelected -= OnSelectedItemChanged;
+        _toolController.SaveSelectionRequested -= OnSaveSelectionRequested;
         _buildEditor.StartedEditing -= OnBuildEditorStateChanged;
         _buildEditor.FinishedEditing -= OnBuildEditorStateChanged;
     }
@@ -100,56 +108,11 @@ public class PieceSelectorArea : MonoBehaviour
 
             category.Root.gameObject.SetActive(false);
             _runtimeCategories.Add(category);
+            if (category.Kind == BuildCatalogCategory.SavedSet)
+                _savedSetsCategory = category;
             CreateCategoryButton(category);
             PopulateCategory(category);
         }
-    }
-
-    private void CreateSavedSetsCategory()
-    {
-        RectTransform templateRoot = null;
-        foreach (var category in _runtimeCategories)
-        {
-            if (category.Root == null)
-                continue;
-
-            templateRoot = category.Root;
-            break;
-        }
-
-        if (templateRoot == null)
-            return;
-
-        var panelsRoot = templateRoot.parent as RectTransform;
-        if (panelsRoot == null)
-            return;
-
-        var templateGrid = templateRoot.GetComponent<GridLayoutGroup>();
-        var rootObject = new GameObject("Saved Sets", typeof(RectTransform), typeof(GridLayoutGroup));
-        var rootTransform = (RectTransform)rootObject.transform;
-        rootTransform.SetParent(panelsRoot, false);
-        rootTransform.anchorMin = Vector2.zero;
-        rootTransform.anchorMax = Vector2.one;
-        rootTransform.sizeDelta = Vector2.zero;
-        rootTransform.anchoredPosition = Vector2.zero;
-
-        var rootGrid = rootObject.GetComponent<GridLayoutGroup>();
-        if (templateGrid != null)
-        {
-            rootGrid.cellSize = templateGrid.cellSize;
-            rootGrid.spacing = templateGrid.spacing;
-            rootGrid.constraint = templateGrid.constraint;
-            rootGrid.constraintCount = templateGrid.constraintCount;
-            rootGrid.startAxis = templateGrid.startAxis;
-            rootGrid.startCorner = templateGrid.startCorner;
-            rootGrid.childAlignment = templateGrid.childAlignment;
-            rootGrid.padding = templateGrid.padding;
-        }
-
-        _savedSetsCategory = new CategoryDefinition("Conjuntos", BuildCatalogCategory.SavedSet, rootTransform);
-        _savedSetsCategory.Root.gameObject.SetActive(false);
-        _runtimeCategories.Add(_savedSetsCategory);
-        CreateCategoryButton(_savedSetsCategory);
     }
 
     private void CreateCategoryButton(CategoryDefinition category)
@@ -182,9 +145,6 @@ public class PieceSelectorArea : MonoBehaviour
 
         _savedSetEntries.Clear();
 
-        _saveSelectionButton = CreateActionButton("Salvar\nSelecao", OnSaveSelectionRequested);
-        _deleteSelectionButton = CreateActionButton("Excluir\nConjunto", OnDeleteSelectionRequested);
-
         foreach (var item in _buildCatalogService.GetItems(BuildCatalogCategory.SavedSet))
         {
             var button = Instantiate(_pieceSelectorButtonPrefab, _savedSetsCategory.Root);
@@ -194,14 +154,6 @@ public class PieceSelectorArea : MonoBehaviour
 
         EnsureSelectedItemExists();
         RefreshActionButtons();
-    }
-
-    private Button CreateActionButton(string label, Action onClick)
-    {
-        var actionButton = Instantiate(_categoryButtonPrefab, _savedSetsCategory.Root);
-        actionButton.Initialize(label, onClick);
-        _savedSetEntries.Add(actionButton.gameObject);
-        return actionButton.GetComponent<Button>();
     }
 
     private void SelectCategory(CategoryDefinition category)
@@ -287,11 +239,11 @@ public class PieceSelectorArea : MonoBehaviour
 
     private void RefreshActionButtons()
     {
-        if (_saveSelectionButton != null)
-            _saveSelectionButton.interactable = _buildEditor.Build != null && _buildSelection.HasSelection;
-
         if (_deleteSelectionButton != null)
+        {
             _deleteSelectionButton.interactable = _buildTemplateSelector.SelectedItem is SavedPieceSetCatalogItem;
+            _deleteSelectionButton.gameObject.SetActive(_buildEditor.Build != null);
+        }
     }
 
     [Serializable]

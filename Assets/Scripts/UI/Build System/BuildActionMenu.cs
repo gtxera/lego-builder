@@ -21,6 +21,7 @@ public class BuildActionMenu : IDisposable
     }
 
     public event Action ColorRequested = delegate { };
+    public event Action SaveSetRequested = delegate { };
     public event Action RotateRightRequested = delegate { };
     public event Action RotateLeftRequested = delegate { };
     public event Action RemoveRequested = delegate { };
@@ -32,6 +33,7 @@ public class BuildActionMenu : IDisposable
         var actions = new[]
         {
             new BuildRadialActionDefinition(BuildRadialActionType.Color, "Colorir", Resources.Load<Sprite>("Icons/Brush"), hasSelection),
+            new BuildRadialActionDefinition(BuildRadialActionType.SaveSet, "Salvar conjunto", null, hasSelection),
             new BuildRadialActionDefinition(BuildRadialActionType.RotateRight, "Rotacionar direita", null, hasSelection),
             new BuildRadialActionDefinition(BuildRadialActionType.RotateLeft, "Rotacionar esquerda", null, hasSelection),
             new BuildRadialActionDefinition(BuildRadialActionType.Remove, "Remover", Resources.Load<Sprite>("Icons/Remove"), hasSelection)
@@ -66,6 +68,9 @@ public class BuildActionMenu : IDisposable
         {
             case BuildRadialActionType.Color:
                 ColorRequested();
+                break;
+            case BuildRadialActionType.SaveSet:
+                SaveSetRequested();
                 break;
             case BuildRadialActionType.RotateRight:
                 RotateRightRequested();
@@ -118,6 +123,7 @@ public readonly struct BuildRadialActionDefinition
 public enum BuildRadialActionType
 {
     Color,
+    SaveSet,
     RotateRight,
     RotateLeft,
     Remove
