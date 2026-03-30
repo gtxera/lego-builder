@@ -45,6 +45,7 @@ public class LevelStarter : ValidatedMonoBehaviour
     private RectTransform _uiTransform;
     
     private readonly List<SizeRequirementIndicator> _sizeRequirementIndicators = new();
+    private readonly List<ExactBuildRequirementGhostVisualizer> _exactBuildRequirementGhostVisualizers = new();
 
     private MaterialPropertyBlock _materialPropertyBlock;
 
@@ -58,7 +59,12 @@ public class LevelStarter : ValidatedMonoBehaviour
         foreach (var requirement in _level.Requirements)
         {
             if (requirement is not SizeRequirement sizeRequirement)
+            {
+                if (requirement is ExactBuildRequirement exactBuildRequirement)
+                    _exactBuildRequirementGhostVisualizers.Add(new ExactBuildRequirementGhostVisualizer(exactBuildRequirement, _build.transform));
+
                 continue;
+            }
 
             var requirementIndicator = Instantiate(_sizeRequirementIndicatorPrefab, transform);
             requirementIndicator.Initialize(sizeRequirement);
@@ -113,6 +119,9 @@ public class LevelStarter : ValidatedMonoBehaviour
         if (level != _level)
             return;
 
+        foreach (var ghostVisualizer in _exactBuildRequirementGhostVisualizers)
+            ghostVisualizer.Show();
+
         foreach (var requirementIndicator in _sizeRequirementIndicators)
             requirementIndicator.LevelStarted(_levelController);
     }
@@ -127,6 +136,9 @@ public class LevelStarter : ValidatedMonoBehaviour
         
         if (level != _level)
             return;
+
+        foreach (var ghostVisualizer in _exactBuildRequirementGhostVisualizers)
+            ghostVisualizer.Hide();
 
         foreach (var requirementIndicator in _sizeRequirementIndicators)
             requirementIndicator.LevelFinished(_levelController);

@@ -10,8 +10,10 @@ public class NamedColor
     private readonly Shade _shade;
 
     private readonly GrayType _grayType;
+
+    private readonly bool _transparent;
     
-    public NamedColor(Color color)
+    public NamedColor(Color color, bool transparent)
     {
         Color.RGBToHSV(color, out var hue, out var saturation, out var val);
         
@@ -42,6 +44,8 @@ public class NamedColor
         {
             _shade = saturation < .6f ? Shade.Pale : Shade.Bright;
         }
+
+        _transparent = transparent;
     }
 
     public override bool Equals(object obj)
