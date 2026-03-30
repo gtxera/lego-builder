@@ -1,12 +1,16 @@
 using KBCore.Refs;
 using PrimeTween;
 using TMPro;
+using Reflex.Attributes;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class ChangeSceneButton : MonoBehaviour
 {
+    [Inject]
+    private readonly BuildEditor _buildEditor;
+
     [SerializeField]
     private int _sceneIndex = 1;
 
@@ -36,6 +40,9 @@ public class ChangeSceneButton : MonoBehaviour
 
     private void LoadTargetScene()
     {
+        if (_buildEditor?.Build != null)
+            _buildEditor.FinishEditing();
+
         var currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
         var linearSceneBuildIndex = _linearSceneBuildIndex;
         var sandboxSceneBuildIndex = ResolveSandboxSceneBuildIndex();
