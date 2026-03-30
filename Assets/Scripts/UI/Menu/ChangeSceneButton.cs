@@ -12,7 +12,7 @@ public class ChangeSceneButton : ValidatedMonoBehaviour
     private int _targetSceneBuildIndex = -1;
 
     [SerializeField]
-    private int _sandboxSceneBuildIndex = 1;
+    private int _sandboxSceneBuildIndex;
 
     [SerializeField]
     private bool _requestSkipLinearIntroWhenLeavingSandbox;

@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e6b9e4acd344913a5660e5f2cd82818, type: 3}
+  m_Name: Bridge
+  m_EditorClassIdentifier: 
+  _pieceTemplate:
+    _meshPieceName: Bridge
+    _pieceTagNames: []
+    _isSymmetricOnXAxis: 1
+    _isSymmetricOnYAxis: 1
+    _isSymmetricOnAllAxes: 0
