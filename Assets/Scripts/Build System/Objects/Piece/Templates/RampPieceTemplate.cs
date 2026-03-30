@@ -33,21 +33,23 @@ public class RampPieceTemplate : IPieceTemplate
     
     public void Configure(GameObject pieceObject)
     {
-        var rampBodyOffset = new PieceVector(0, _rampLength - _brickLength).ToWorld() / 2;
-        
         var piecePartsPool = pieceObject.scene.GetSceneContainer().Resolve<PiecePartsPool>();
 
-        var halfBodySize = new PieceVector(0, _brickLength).ToWorld() / 2;
+        var totalLength = Conversions.ToWorld(_brickLength + _rampLength);
+        var halfBodyLength = Conversions.ToWorld(_brickLength) / 2f;
+        var halfRampLength = Conversions.ToWorld(_rampLength) / 2f;
+        var bodyPosition = new Vector3(0f, 0f, halfBodyLength - totalLength / 2f + 0.01f);
+        var rampPosition = new Vector3(0f, 0f, totalLength / 2f - halfRampLength - 0.01f);
 
         var body = piecePartsPool.GetBody(BodySize);
         body.AddComponent<MeshCollider>().convex = true;
         body.transform.parent = pieceObject.transform;
-        body.transform.localPosition = rampBodyOffset - halfBodySize + new Vector3(0f, 0f, 0.01f);
+        body.transform.localPosition = bodyPosition;
 
         var ramp = piecePartsPool.GetRamp(RampSize);
         ramp.AddComponent<MeshCollider>().convex = true;
         ramp.transform.parent = pieceObject.transform;
-        ramp.transform.localPosition = rampBodyOffset + halfBodySize - new Vector3(0f, 0f, 0.01f);
+        ramp.transform.localPosition = rampPosition;
         ramp.transform.localRotation = Quaternion.Euler(0, 0, _inverted ? 180 : 0);
 
         foreach (var studPosition in GetStudPositions())

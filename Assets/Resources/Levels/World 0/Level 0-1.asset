@@ -10,18 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d3485b9488749b546b9917cd61c62716, type: 3}
-  m_Name: TestBuild
+  m_Name: Level 0-1
   m_EditorClassIdentifier: 
-  <World>k__BackingField: {fileID: 11400000, guid: b39469ff9fffaa04487a663bace57d28, type: 2}
+  <World>k__BackingField: {fileID: 11400000, guid: fda726cebe49ef249a05363d733d1b32, type: 2}
   _requiredLevelsToUnlock: []
   _requirements:
-  - rid: 2550991911553073226
-  <Name>k__BackingField: Construa uma casa!
-  <Description>k__BackingField: "Fa\xE7a uma pequena e singela casa."
+  - rid: 2550991911553073228
+  <Name>k__BackingField: "Construa uma ma\xE7\xE3!"
+  <Description>k__BackingField: "Aprenda a construir com uma simples ma\xE7\xE3."
   references:
     version: 2
     RefIds:
-    - rid: 2550991911553073226
-      type: {class: ExactBuildRequirement, ns: , asm: Assembly-CSharp}
+    - rid: 2550991911553073228
+      type: {class: MaximumSizeRequirement, ns: , asm: Assembly-CSharp}
       data:
-        _jsonBuild: {fileID: 11400000, guid: 17f79f9439133d1408509679b4987f76, type: 2}
+        _size:
+          X: 1
+          Y: 1
+          Height: 1
