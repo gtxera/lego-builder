@@ -62,8 +62,15 @@ public class MenuCamera : ValidatedMonoBehaviour
     {
         _menuButton.onClick.AddListener(() =>
         {
-            PlayReturnAnimation();
-            _levelSelector.Deselect();
+            if (Application.platform == RuntimePlatform.Android)
+            {
+                PlayReturnAnimation();
+                _levelSelector.Deselect();
+            }
+            else
+            {
+                Application.Quit();
+            }
         });
         _buttonGroup.interactable = false;
         _buttonGroup.alpha = 0f;
