@@ -30,7 +30,8 @@ public class TitleScreen : MonoBehaviour
             return;
         }
 
-        if (SceneTransitionState.ConsumeSkipLinearIntroOnce())
+        if (SceneTransitionState.ShouldSkipMenuIntroThisSession ||
+            SceneTransitionState.ConsumeSkipLinearIntroOnce())
         {
             gameObject.SetActive(false);
             _menuCamera.EnterGameplayWithoutIntro();
@@ -64,6 +65,7 @@ public class TitleScreen : MonoBehaviour
 
         if (Pointer.current != null && Pointer.current.press.wasReleasedThisFrame)
         {
+            SceneTransitionState.MarkMenuIntroPlayedThisSession();
             Tween.Alpha(_rootGroup, 0f, 1f)
                 .OnComplete(target: this, screen => screen.gameObject.SetActive(false));
             _menuCamera.PlayStartAnimation();

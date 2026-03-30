@@ -3,8 +3,10 @@ public static class SceneTransitionState
     private static bool _skipLinearIntroOnce;
     private static bool _sceneTransitionInProgress;
     private static bool _suppressMenuMusicOnce;
+    private static bool _menuIntroPlayedThisSession;
 
     public static bool IsSceneTransitionInProgress => _sceneTransitionInProgress;
+    public static bool ShouldSkipMenuIntroThisSession => _menuIntroPlayedThisSession;
 
     public static void BeginSceneTransition()
     {
@@ -38,5 +40,10 @@ public static class SceneTransitionState
 
         _suppressMenuMusicOnce = false;
         return true;
+    }
+
+    public static void MarkMenuIntroPlayedThisSession()
+    {
+        _menuIntroPlayedThisSession = true;
     }
 }
